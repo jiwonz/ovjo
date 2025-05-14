@@ -6,7 +6,8 @@ using System.Reflection;
 using System.Text.Json;
 
 const string SANDBOX_APP_NAME = "20687893280c48c787633578d3e0ca2e";
-const string ERROR_PREFIX = "[bold red]error[/]:";
+const string ERROR_PREFIX = "[bold red][[ERR]][/]:";
+const string WARN_PREFIX = "[bold yellow][[WRN]][/]:";
 
 var stderrConsole = AnsiConsole.Create(new AnsiConsoleSettings
 {
@@ -96,10 +97,12 @@ void OpenSandbox()
     }
 }
 
+/// Builds rojo project to OVDR umap
 void BuildProject()
 {
 }
 
+/// Syncbacks OVDR umap for rojo project
 void Syncback()
 {
 }
@@ -121,9 +124,19 @@ editCommand.SetHandler((string project) =>
 var rootCommand = new RootCommand("ovjo");
 rootCommand.AddCommand(editCommand);
 
-OpenSandbox();
-
-stderrConsole.MarkupLine($"{ERROR_PREFIX} bruh!");
-Environment.Exit(1);
+// Check rojo is ok
+try
+{
+    Process process = StartProcess("rojo", "syncback --help");
+    process.WaitForExit();
+    if (process.ExitCode != 0)
+    {
+        stderrConsole.MarkupLine($"{WARN_PREFIX} Failed to run `rojo syncback`(stderr: {process.StandardError.ReadToEnd().EscapeMarkup()}) The `syncback` command does not exist or does not work in the currently installed rojo. Please check the version of rojo.");
+    }
+}
+catch (Exception e)
+{
+    stderrConsole.MarkupLine($"{WARN_PREFIX} Failed to run rojo(error: {e.Message}) rojo may not be installed. rojo is required to use this program.");
+}
 
 return await rootCommand.InvokeAsync(args);
