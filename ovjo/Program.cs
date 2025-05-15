@@ -124,6 +124,12 @@ editCommand.SetHandler((string project) =>
 var rootCommand = new RootCommand("ovjo");
 rootCommand.AddCommand(editCommand);
 
+var initCommand = new Command("init", "Initializes a new rojo project");
+initCommand.SetHandler(() =>
+{
+    Console.WriteLine("Hello, init!");
+});
+
 // Check rojo is ok
 try
 {
