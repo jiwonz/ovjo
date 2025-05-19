@@ -3,7 +3,6 @@ using System.CommandLine;
 using System.Diagnostics;
 using System.Reflection;
 using FluentResults;
-using UAssetAPI.UnrealTypes;
 using UAssetAPI;
 using System.Text.RegularExpressions;
 using Newtonsoft.Json;
@@ -24,14 +23,33 @@ public class SandboxMetadata
     }
 }
 
+class Defer : IDisposable
+{
+    private readonly Action _disposal;
+
+    public Defer(Action disposal)
+    {
+        _disposal = disposal;
+    }
+
+    void IDisposable.Dispose()
+    {
+        _disposal();
+    }
+}
+
 internal class Program
 {
     const string SANDBOX_APP_NAME = "20687893280c48c787633578d3e0ca2e";
-    const string ERROR_PREFIX = "[bold red][[ERR]][/]:";
-    const string WARN_PREFIX = "[bold yellow][[WRN]][/]:";
+    const string ERROR_PREFIX = "[bold red][[ERR]][/]";
+    const string WARN_PREFIX = "[bold yellow][[WRN]][/]";
     const string DEFAULT_ROJO_PROJECT_PATH = "default.project.json";
-    const EngineVersion OVERDARE_UNREAL_ENGINE_VERSION = EngineVersion.VER_UE5_3;
+    const UAssetAPI.UnrealTypes.EngineVersion OVERDARE_UNREAL_ENGINE_VERSION = UAssetAPI.UnrealTypes.EngineVersion.VER_UE5_3;
     const string OVERDARE_UOBJECT_TYPE_LUA_PREFIX = "Lua";
+    const string WORLD_DATA_NAME = "WorldData";
+    const string WORLD_DATA_MAP_NAME = "Map";
+    const string WORLD_DATA_PLAIN_FILES_NAME = "PlainFiles";
+    const string WORLD_DATA_JSON_FILES_NAME = "JsonFiles";
 
     private static IAnsiConsole stderrConsole = AnsiConsole.Create(new AnsiConsoleSettings
     {
@@ -45,9 +63,10 @@ internal class Program
             ["name"] = name,
             ["tree"] = new Dictionary<string, object>
             {
-                ["WorldData"] = new Dictionary<string, object>
+                ["$className"] = "DataModel",
+                [WORLD_DATA_NAME] = new Dictionary<string, object>
                 {
-                    ["$path"] = "WorldData"
+                    ["$path"] = WORLD_DATA_NAME
                 }
             },
         };
@@ -72,41 +91,49 @@ internal class Program
 
         var syncbackCommand = new Command("syncback", "Performs 'syncback' for the provided project, using the `input` file given");
         {
-            var projectOpt = new Option<string>("project", "Path to the project");
-            projectOpt.SetDefaultValue("default.project.json");
-            var inputOpt = new Option<string>("input", "Path to the input file");
-            var rbxlOpt = new Option<string?>("rbxl", "Path to the rbxl file");
+            var projectArg = new Argument<string>("project", "Path to the project");
+            projectArg.SetDefaultValue(DEFAULT_ROJO_PROJECT_PATH);
+            var inputOpt = new Option<string>(["--input", "-i"], "Path to the input file");
+            var rbxlOpt = new Option<string?>("--rbxl", "Path to the rbxl file");
 
-            syncbackCommand.AddOption(projectOpt);
+            syncbackCommand.AddArgument(projectArg);
             syncbackCommand.AddOption(inputOpt);
             syncbackCommand.AddOption(rbxlOpt);
 
             syncbackCommand.SetHandler((project, input, rbxl) =>
             {
                 Syncback(project, input, rbxl);
-            }, projectOpt, inputOpt, rbxlOpt);
+            }, projectArg, inputOpt, rbxlOpt);
         }
 
         var buildCommand = new Command("build", "Builds rojo project into OVERDARE world");
         {
-            var projectOpt = new Option<string>("project", "Path to the project");
-            projectOpt.SetDefaultValue("default.project.json");
-            buildCommand.AddOption(projectOpt);
-            buildCommand.SetHandler((project) =>
+            var projectArg = new Argument<string>("project", "Path to the project");
+            projectArg.SetDefaultValue(DEFAULT_ROJO_PROJECT_PATH);
+            var outputOpt = new Option<string>(["--output", "-o"], "Path to the output file");
+
+            buildCommand.AddArgument(projectArg);
+            buildCommand.AddOption(outputOpt);
+
+            buildCommand.SetHandler((project, output) =>
             {
                 Console.WriteLine($"Hello, {project}!");
-            }, projectOpt);
+            }, projectArg, outputOpt);
         }
 
         var devCommand = new Command("dev", "Starts developing rojo project");
         {
-            var projectOpt = new Option<string>("project", "Path to the project");
-            projectOpt.SetDefaultValue(DEFAULT_ROJO_PROJECT_PATH);
-            devCommand.AddOption(projectOpt);
-            devCommand.SetHandler((project) =>
+            var projectArg = new Argument<string>("project", "Path to the project");
+            projectArg.SetDefaultValue(DEFAULT_ROJO_PROJECT_PATH);
+            var outputOpt = new Option<string?>(["--output", "-o"], "Path to the output file");
+
+            devCommand.AddArgument(projectArg);
+            devCommand.AddOption(outputOpt);
+
+            devCommand.SetHandler((project, output) =>
             {
                 Console.WriteLine($"Hello, {project}!");
-            }, projectOpt);
+            }, projectArg, outputOpt);
         }
 
         var initCommand = new Command("init", "Initializes a new rojo project");
@@ -132,7 +159,7 @@ internal class Program
         return await rootCommand.InvokeAsync(args);
     }
 
-    private static T? CreateInstance<T>(string className) where T : class
+    private static T? TryCreateInstance<T>(string className) where T : class
     {
         string fullClassName = $"RobloxFiles.{className}";
 
@@ -187,42 +214,192 @@ internal class Program
         {
             return Result.Fail(worldDataPath.Errors[0]);
         }
-
-        // Initialize data files in empty BinaryStringValue .rbxms
-        string[] dataFiles = { "Map.rbxm", "PlainFiles", "JsonFiles" };
-        foreach (string dataPath in dataFiles)
+        string? ovdrWorldPath = Path.GetDirectoryName(umapPath);
+        if (ovdrWorldPath == null)
         {
-            string rbxmPath = Path.Combine(worldDataPath.Value, dataPath);
-            if (!File.Exists(rbxmPath))
+            return Result.Fail($"{ERROR_PREFIX} Failed to get world path from umap file. Couldn't find `umap path`'s parent directory");
+        }
+
+        // Initialize data files in empty BinaryStringValue .rbxms for the syncback
+        {
+            string[] worldDataFiles =
+            [
+                Path.ChangeExtension(WORLD_DATA_MAP_NAME, "rbxm"),
+                Path.ChangeExtension(WORLD_DATA_PLAIN_FILES_NAME, "rbxm"),
+                Path.ChangeExtension(WORLD_DATA_JSON_FILES_NAME, "rbxm")
+            ];
+            foreach (string dataPath in worldDataFiles)
             {
-                RobloxFiles.BinaryRobloxFile modelFile = new();
-                RobloxFiles.BinaryStringValue binaryStringValue = new()
+                string rbxmPath = Path.Combine(worldDataPath.Value, dataPath);
+                if (!File.Exists(rbxmPath))
                 {
-                    Parent = modelFile,
-                };
-                string? dir = Path.GetDirectoryName(rbxmPath);
-                if (!string.IsNullOrEmpty(dir))
-                {
-                    Directory.CreateDirectory(dir);
+                    RobloxFiles.BinaryRobloxFile modelFile = new();
+                    RobloxFiles.BinaryStringValue binaryStringValue = new()
+                    {
+                        Parent = modelFile,
+                    };
+                    string? dir = Path.GetDirectoryName(rbxmPath);
+                    if (!string.IsNullOrEmpty(dir))
+                    {
+                        Directory.CreateDirectory(dir);
+                    }
+                    modelFile.Save(rbxmPath);
                 }
-                modelFile.Save(rbxmPath);
             }
         }
 
-        UAsset asset = new(umapPath, OVERDARE_UNREAL_ENGINE_VERSION);
-        List<RobloxFiles.Instance> instances = new();
-        foreach (UAssetAPI.ExportTypes.Export export in asset.Exports)
+        // Read umap file into memory
+        UAsset asset = new();
+        asset.FilePath = umapPath;
+        asset.Mappings = null;
+        asset.CustomSerializationFlags = CustomSerializationFlags.None;
+        asset.SetEngineVersion(OVERDARE_UNREAL_ENGINE_VERSION);
+        var stream = asset.PathToStream(umapPath);
+        if (stream == null)
         {
+            return Result.Fail($"{ERROR_PREFIX} Failed to read umap file.");
+        }
+        {
+            AssetBinaryReader reader = new(stream, asset);
+            asset.Read(reader);
+        }
+
+        // Create Roblox place file(aka. DataModel instance) with WorldData loaded (and loaded WorldData is going to be used for syncback too)
+        RobloxFiles.BinaryRobloxFile robloxDataModel = new();
+        {
+            RobloxFiles.Folder folder = new()
+            {
+                Name = WORLD_DATA_NAME,
+                Parent = robloxDataModel,
+            };
+            RobloxFiles.BinaryStringValue mapData = new()
+            {
+                Name = WORLD_DATA_MAP_NAME,
+                Value = stream.ToArray(),
+                Parent = folder,
+            };
+
+            static byte[] FilesToMessagePackBinaryString(string[] files)
+            {
+                Dictionary<string, string> filesData = new();
+                foreach (string p in files)
+                {
+                    filesData.Add(Path.GetFileNameWithoutExtension(p), File.ReadAllText(p));
+                }
+                return MessagePack.MessagePackSerializer.Serialize(filesData);
+            }
+
+            RobloxFiles.BinaryStringValue jsonFilesData = new()
+            {
+                Name = WORLD_DATA_JSON_FILES_NAME,
+                Value = FilesToMessagePackBinaryString(Directory.GetFiles(ovdrWorldPath, "*.json")),
+                Parent = folder,
+            };
+            string[] plainFiles = Directory.GetFiles(ovdrWorldPath)
+                     .Where(file =>
+                        !file.EndsWith(".json", StringComparison.OrdinalIgnoreCase) &&
+                        !file.EndsWith(".umap", StringComparison.OrdinalIgnoreCase))
+                     .ToArray();
+            RobloxFiles.BinaryStringValue plainFilesData = new()
+            {
+                Name = WORLD_DATA_PLAIN_FILES_NAME,
+                Value = FilesToMessagePackBinaryString(plainFiles),
+                Parent = folder,
+            };
+        }
+
+        Dictionary<int, (RobloxFiles.Instance Instance, int? Parent)> instances = new(); // Key integer is the PackageIndex number of the export in the asset
+        for (int packageIndex = 0; packageIndex < asset.Exports.Count; packageIndex++)
+        {
+            // Getting the current export and NormalExport
+            UAssetAPI.ExportTypes.Export export = asset.Exports[packageIndex];
             if (!(export is UAssetAPI.ExportTypes.NormalExport normalExport)) continue;
-            var parentProperty = normalExport["Parent"];
-            if (parentProperty == null) continue;
-            if (!(parentProperty is UAssetAPI.PropertyTypes.Objects.ObjectPropertyData parentObject)) continue;
+
+            // Skip if it's invisible in level browser
+            var bVisibleInLevelBrowser = normalExport["bVisibleInLevelBrowser"];
+            if (bVisibleInLevelBrowser is UAssetAPI.PropertyTypes.Objects.BoolPropertyData bVisibleInLevelBrowserBool)
+            {
+                if (bVisibleInLevelBrowserBool.Value == false) continue;
+            }
+
+            // Getting ClassType(ex. LuaPart, LuaModuleScript) of the current export
             var classTypeName = export.GetExportClassType();
             if (classTypeName == null) continue;
             var classTypeNameString = classTypeName.Value;
             if (classTypeNameString == null) continue;
+
+            // Converting OVERDARE's Lua class name to Roblox class name
             string classTypeNameWithoutLuaPrefix = Regex.Replace(classTypeNameString.Value, $"^{Regex.Escape(OVERDARE_UOBJECT_TYPE_LUA_PREFIX)}", "");
-            Console.WriteLine($"Class: {classTypeNameWithoutLuaPrefix} Raw: {classTypeNameString} FName.String(Name): {normalExport.ObjectName.Value} FName.Number: {normalExport.ObjectName.Number}");
+            Console.WriteLine($"Class: {classTypeNameWithoutLuaPrefix} Raw: {classTypeNameString} FName: {normalExport.ObjectName} PackageIndex: {packageIndex}");
+            bool isDataModel = classTypeNameWithoutLuaPrefix == "DataModel";
+            var instance = isDataModel ? robloxDataModel : TryCreateInstance<RobloxFiles.Instance>(classTypeNameWithoutLuaPrefix);
+
+            // Skips DataModel with no parent set
+            if (instance != null && isDataModel)
+            {
+                instances.Add(packageIndex, (Instance: instance, Parent: null));
+                continue;
+            }
+
+            // Getting parent
+            var parentProperty = normalExport["Parent"];
+            if (!(parentProperty is UAssetAPI.PropertyTypes.Objects.ObjectPropertyData parentObject) || !parentObject.Value.IsExport() || parentObject.Value.IsNull()) continue;
+            int parentIndex = parentObject.Value.Index - 1;
+            bool isUnknownInstance = false;
+            if (instance == null)
+            {
+                instance = new RobloxFiles.Model();
+                isUnknownInstance = true;
+            }
+
+            // Setting normal Roblox Instance up
+            var nameProperty = normalExport["Name"];
+            if (nameProperty is UAssetAPI.PropertyTypes.Objects.StrPropertyData namePropertyString)
+            {
+                Console.WriteLine($"Instance Name: {namePropertyString.Value.Value}");
+                instance.Name = namePropertyString.Value.Value;
+            }
+            else if (isUnknownInstance)
+            {
+                instance.Name = classTypeNameWithoutLuaPrefix;
+            }
+            instance.SetAttribute("ObjectName", export.ObjectName.ToString());
+            instances.Add(packageIndex, (Instance: instance, Parent: parentIndex));
+            
+            foreach ((string key, RobloxFiles.Property prop) in instance.Properties)
+            {
+                if (prop.Type is RobloxFiles.PropertyType.BrickColor)
+                {
+                    prop.Value = RobloxFiles.DataTypes.BrickColor.Red();
+                }
+            }
+        }
+        // Setting instances' parent (Not for DataModel)
+        foreach (var (key, value) in instances)
+        {
+            if (value.Parent == null) continue; // Expects a DataModel
+            if (!instances.TryGetValue((int)value.Parent, out var parent)) continue;
+            Console.WriteLine($"{value.Instance}'s parent is {parent.Instance}");
+            value.Instance.Parent = parent.Instance;
+        }
+
+        // Write Roblox place to file system for `rojo syncback`. Path is defaulted to temp file
+        string robloxPlaceFilePath = rbxlPath == null ? Path.GetTempFileName() : rbxlPath;
+        robloxDataModel.Save(robloxPlaceFilePath);
+        if (rbxlPath == null)
+        {
+            using var _ = new Defer(() =>
+            {
+
+                File.Delete(robloxPlaceFilePath);
+            });
+        }
+
+        Process process = StartProcess("rojo", $"syncback {rojoProjectPath} --input {robloxPlaceFilePath} -y");
+        process.WaitForExit();
+        if (process.ExitCode != 0)
+        {
+            return Result.Fail($"Failed to run `rojo syncback`(stderr: {process.StandardError.ReadToEnd().EscapeMarkup()})");
         }
 
         return Result.Ok();
@@ -246,12 +423,12 @@ internal class Program
 
     private static Result<string> GetWorldDataPath(JObject rojoProject)
     {
-        var path = rojoProject["tree"]?["WorldData"]?["$path"]?.ToString();
+        var path = rojoProject["tree"]?[WORLD_DATA_NAME]?["$path"]?.ToString();
         if (path is string validPath)
         {
             return validPath;
         }
-        return Result.Fail("Couldn't find `tree.WorldData[\"$path\"]` in project.json. This is required in ovjo");
+        return Result.Fail($"Couldn't find `tree.{WORLD_DATA_NAME}[\"$path\"]` in project.json. This is required in ovjo");
     }
 
     private static Process StartProcess(string command, string args = "")
