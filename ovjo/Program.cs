@@ -365,7 +365,7 @@ internal class Program
             }
             instance.SetAttribute("ObjectName", export.ObjectName.ToString());
             instances.Add(packageIndex, (Instance: instance, Parent: parentIndex));
-            
+
             foreach ((string key, RobloxFiles.Property prop) in instance.Properties)
             {
                 if (prop.Type is RobloxFiles.PropertyType.BrickColor)
