@@ -2,7 +2,6 @@
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using Spectre.Console;
 using System.CommandLine;
 using System.Diagnostics;
 using System.Reflection;
@@ -53,22 +52,38 @@ internal class Program
     const string WORLD_DATA_PLAIN_FILES_NAME = "PlainFiles";
     const string WORLD_DATA_JSON_FILES_NAME = "JsonFiles";
 
-    private static IAnsiConsole stderrConsole = AnsiConsole.Create(new AnsiConsoleSettings
-    {
-        Out = new AnsiConsoleOutput(Console.Error)
-    });
-
     private static readonly ILogger logger;
+
+    public class ResultLogger : IResultLogger
+    {
+        public void Log(string context, string content, ResultBase result, LogLevel logLevel)
+        {
+            logger.Log(logLevel, "{0} {1} <{2}>", result.Reasons.Select(reason => reason.Message), content, context);
+        }
+
+        public void Log<TContext>(string content, ResultBase result, LogLevel logLevel)
+        {
+            logger.Log(logLevel, "{0} {1} <{2}>", result.Reasons.Select(reason => reason.Message), content, typeof(TContext).FullName);
+        }
+    }
 
     static Program()
     {
         // Set up logger
         using var loggerFactory = LoggerFactory.Create(builder =>
         {
-            builder.AddConsole();
+            builder.AddConsole(options =>
+            {
+                options.LogToStandardErrorThreshold = LogLevel.Warning;
+            });
             builder.SetMinimumLevel(LogLevel.Debug);
         });
         logger = loggerFactory.CreateLogger<Program>();
+
+        var resultLogger = new ResultLogger();
+        Result.Setup(cfg => {
+            cfg.Logger = resultLogger;
+        });
     }
 
     private static Dictionary<string, object> CreateDefaultRojoProject(string name)
@@ -109,12 +124,8 @@ internal class Program
     {
         logger.LogInformation("Starting program...");
 
-        // Check rojo is ok
-        Result rojoSyncbackStatus = RequireRojoSyncback();
-        if (rojoSyncbackStatus.IsFailed)
-        {
-            stderrConsole.MarkupLine($"{WARN_PREFIX} {rojoSyncbackStatus.Errors[0].ToString().EscapeMarkup()}");
-        }
+        // Check rojo is ok and warn if not
+        RequireRojoSyncback().LogIfFailed(LogLevel.Warning);
 
         // Setup CLI Commands
         var syncbackCommand = new Command("syncback", "Performs 'syncback' for the provided project, using the `input` file given");
@@ -179,10 +190,25 @@ internal class Program
             });
         }
 
+        var studioCommand = new Command("studio", "Opens OVERDARE Studio");
+        {
+            studioCommand.SetHandler(() =>
+            {
+                var metadataResult = FindSandboxMetadata();
+                if (metadataResult.IsFailed)
+                {
+                    ExpectResult(Result.Fail($"Failed to find OVERDARE Studio metadata in the computer via Epic Games Launcher.").WithReasons(metadataResult.Errors));
+                    return;
+                }
+                StartProcess(metadataResult.Value.ProgramPath);
+            });
+        }
+
         var rootCommand = new RootCommand("ovjo");
         rootCommand.AddCommand(devCommand);
         rootCommand.AddCommand(initCommand);
         rootCommand.AddCommand(syncbackCommand);
+        rootCommand.AddCommand(studioCommand);
 
         return await rootCommand.InvokeAsync(args);
     }
@@ -213,7 +239,7 @@ internal class Program
     {
         if (result.IsFailed)
         {
-            stderrConsole.MarkupLine($"{ERROR_PREFIX} {result.Errors[0].ToString().EscapeMarkup()}");
+            result.Log(LogLevel.Error);
             Environment.Exit(1);
             throw new InvalidOperationException("unreachable");
         }
@@ -224,7 +250,7 @@ internal class Program
     {
         if (result.IsFailed)
         {
-            stderrConsole.MarkupLine($"{ERROR_PREFIX} {result.Errors[0].ToString().EscapeMarkup()}");
+            result.Log(LogLevel.Error);
             Environment.Exit(1);
             throw new InvalidOperationException("unreachable");
         }
@@ -235,7 +261,7 @@ internal class Program
         Result rojoSyncbackStatus = RequireRojoSyncback();
         if (rojoSyncbackStatus.IsFailed)
         {
-            return Result.Fail($"Rojo syncback is required to perform ovjo syncback, but got an error: {rojoSyncbackStatus.Errors[0].ToString().EscapeMarkup()}");
+            return Result.Fail($"Rojo syncback is required to perform ovjo syncback, but got an error: {rojoSyncbackStatus.Errors[0].Message}");
         }
         var rojoProject = JsonConvert.DeserializeObject<JObject>(File.ReadAllText(rojoProjectPath));
         if (rojoProject == null)
@@ -439,7 +465,7 @@ internal class Program
         process.WaitForExit();
         if (process.ExitCode != 0)
         {
-            return Result.Fail($"Failed to run `rojo syncback`(stderr: {process.StandardError.ReadToEnd().EscapeMarkup()})");
+            return Result.Fail($"Failed to run `rojo syncback`").WithReason(new Error($"rojo exited with code 0 with stderr: {process.StandardError.ReadToEnd()}"));
         }
 
         return Result.Ok();
@@ -450,7 +476,7 @@ internal class Program
         var rojoProject = JsonConvert.DeserializeObject<JObject>(File.ReadAllText(rojoProjectPath));
         if (rojoProject == null)
         {
-            return Result.Fail("{ERROR_PREFIX} Failed to parse rojo project file.");
+            return Result.Fail("Failed to parse rojo project file.");
         }
         var worldDataPath = GetWorldDataPath(rojoProject);
         if (worldDataPath.IsFailed)
