@@ -1,12 +1,14 @@
-﻿using Spectre.Console;
+﻿using FluentResults;
+using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using Spectre.Console;
 using System.CommandLine;
 using System.Diagnostics;
 using System.Reflection;
-using FluentResults;
-using UAssetAPI;
+using System.Text;
 using System.Text.RegularExpressions;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+using UAssetAPI;
 
 public class SandboxMetadata
 {
@@ -56,6 +58,19 @@ internal class Program
         Out = new AnsiConsoleOutput(Console.Error)
     });
 
+    private static readonly ILogger logger;
+
+    static Program()
+    {
+        // Set up logger
+        using var loggerFactory = LoggerFactory.Create(builder =>
+        {
+            builder.AddConsole();
+            builder.SetMinimumLevel(LogLevel.Debug);
+        });
+        logger = loggerFactory.CreateLogger<Program>();
+    }
+
     private static Dictionary<string, object> CreateDefaultRojoProject(string name)
     {
         return new()
@@ -72,23 +87,36 @@ internal class Program
         };
     }
 
-    private static async Task<int> Main(string[] args)
+    private static Result RequireRojoSyncback()
     {
-        // Check rojo is ok
         try
         {
             Process process = StartProcess("rojo", "syncback --help");
             process.WaitForExit();
             if (process.ExitCode != 0)
             {
-                stderrConsole.MarkupLine($"{WARN_PREFIX} Failed to run `rojo syncback`(stderr: {process.StandardError.ReadToEnd().EscapeMarkup()}) The `syncback` command does not exist or does not work in the currently installed rojo. Please check the version of rojo.");
+                return Result.Fail($"Failed to run `rojo syncback`(stderr: {process.StandardError.ReadToEnd()}) The `syncback` command does not exist or does not work in the currently installed rojo. Please check the version of rojo.");
             }
+            return Result.Ok();
         }
         catch (Exception e)
         {
-            stderrConsole.MarkupLine($"{WARN_PREFIX} Failed to run rojo(error: {e.Message}) rojo may not be installed. rojo is required to use this program.");
+            return Result.Fail($"Failed to run rojo(error: {e.Message}) rojo may not be installed. rojo is required to use this program.");
+        }
+    }
+
+    private static async Task<int> Main(string[] args)
+    {
+        logger.LogInformation("Starting program...");
+
+        // Check rojo is ok
+        Result rojoSyncbackStatus = RequireRojoSyncback();
+        if (rojoSyncbackStatus.IsFailed)
+        {
+            stderrConsole.MarkupLine($"{WARN_PREFIX} {rojoSyncbackStatus.Errors[0].ToString().EscapeMarkup()}");
         }
 
+        // Setup CLI Commands
         var syncbackCommand = new Command("syncback", "Performs 'syncback' for the provided project, using the `input` file given");
         {
             var projectArg = new Argument<string>("project", "Path to the project");
@@ -204,10 +232,15 @@ internal class Program
 
     private static Result Syncback(string rojoProjectPath, string umapPath, string? rbxlPath)
     {
+        Result rojoSyncbackStatus = RequireRojoSyncback();
+        if (rojoSyncbackStatus.IsFailed)
+        {
+            return Result.Fail($"Rojo syncback is required to perform ovjo syncback, but got an error: {rojoSyncbackStatus.Errors[0].ToString().EscapeMarkup()}");
+        }
         var rojoProject = JsonConvert.DeserializeObject<JObject>(File.ReadAllText(rojoProjectPath));
         if (rojoProject == null)
         {
-            return Result.Fail($"{ERROR_PREFIX} Failed to parse rojo project file.");
+            return Result.Fail("Failed to parse rojo project file.");
         }
         var worldDataPath = GetWorldDataPath(rojoProject);
         if (worldDataPath.IsFailed)
@@ -217,7 +250,7 @@ internal class Program
         string? ovdrWorldPath = Path.GetDirectoryName(umapPath);
         if (ovdrWorldPath == null)
         {
-            return Result.Fail($"{ERROR_PREFIX} Failed to get world path from umap file. Couldn't find `umap path`'s parent directory");
+            return Result.Fail("Failed to get world path from umap file. Couldn't find `umap path`'s parent directory.");
         }
 
         // Initialize data files in empty BinaryStringValue .rbxms for the syncback
@@ -257,7 +290,7 @@ internal class Program
         var stream = asset.PathToStream(umapPath);
         if (stream == null)
         {
-            return Result.Fail($"{ERROR_PREFIX} Failed to read umap file.");
+            return Result.Fail("Failed to read umap file.");
         }
         {
             AssetBinaryReader reader = new(stream, asset);
@@ -281,10 +314,15 @@ internal class Program
 
             static byte[] FilesToMessagePackBinaryString(string[] files)
             {
-                Dictionary<string, string> filesData = new();
+                Dictionary<string, byte[]> filesData = new();
                 foreach (string p in files)
                 {
-                    filesData.Add(Path.GetFileNameWithoutExtension(p), File.ReadAllText(p));
+                    byte[] content = File.ReadAllBytes(p);
+                    if (Path.GetExtension(p) == ".json")
+                    {
+                        content = MessagePack.MessagePackSerializer.ConvertFromJson(Encoding.UTF8.GetString(content));
+                    }
+                    filesData.Add(Path.GetFileNameWithoutExtension(p), content);
                 }
                 return MessagePack.MessagePackSerializer.Serialize(filesData);
             }
@@ -330,7 +368,7 @@ internal class Program
 
             // Converting OVERDARE's Lua class name to Roblox class name
             string classTypeNameWithoutLuaPrefix = Regex.Replace(classTypeNameString.Value, $"^{Regex.Escape(OVERDARE_UOBJECT_TYPE_LUA_PREFIX)}", "");
-            Console.WriteLine($"Class: {classTypeNameWithoutLuaPrefix} Raw: {classTypeNameString} FName: {normalExport.ObjectName} PackageIndex: {packageIndex}");
+            logger.LogInformation($"Class: {classTypeNameWithoutLuaPrefix} Raw: {classTypeNameString} FName: {normalExport.ObjectName} PackageIndex: {packageIndex}");
             bool isDataModel = classTypeNameWithoutLuaPrefix == "DataModel";
             var instance = isDataModel ? robloxDataModel : TryCreateInstance<RobloxFiles.Instance>(classTypeNameWithoutLuaPrefix);
 
@@ -386,6 +424,7 @@ internal class Program
         // Write Roblox place to file system for `rojo syncback`. Path is defaulted to temp file
         string robloxPlaceFilePath = rbxlPath == null ? Path.GetTempFileName() : rbxlPath;
         robloxDataModel.Save(robloxPlaceFilePath);
+        // Delete the saved place file if it was a tempfile
         if (rbxlPath == null)
         {
             using var _ = new Defer(() =>
@@ -395,6 +434,7 @@ internal class Program
             });
         }
 
+        // Run `rojo syncback` from composed .rbxl place file
         Process process = StartProcess("rojo", $"syncback {rojoProjectPath} --input {robloxPlaceFilePath} -y");
         process.WaitForExit();
         if (process.ExitCode != 0)
