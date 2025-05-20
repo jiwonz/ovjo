@@ -2,7 +2,11 @@
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Serilog;
+using Serilog.Events;
 using System.CommandLine;
+using System.CommandLine.Builder;
+using System.CommandLine.Parsing;
 using System.Diagnostics;
 using System.Reflection;
 using System.Text;
@@ -42,8 +46,6 @@ class Defer : IDisposable
 internal class Program
 {
     const string SANDBOX_APP_NAME = "20687893280c48c787633578d3e0ca2e";
-    const string ERROR_PREFIX = "[bold red][[ERR]][/]";
-    const string WARN_PREFIX = "[bold yellow][[WRN]][/]";
     const string DEFAULT_ROJO_PROJECT_PATH = "default.project.json";
     const UAssetAPI.UnrealTypes.EngineVersion OVERDARE_UNREAL_ENGINE_VERSION = UAssetAPI.UnrealTypes.EngineVersion.VER_UE5_3;
     const string OVERDARE_UOBJECT_TYPE_LUA_PREFIX = "Lua";
@@ -51,39 +53,55 @@ internal class Program
     const string WORLD_DATA_MAP_NAME = "Map";
     const string WORLD_DATA_PLAIN_FILES_NAME = "PlainFiles";
     const string WORLD_DATA_JSON_FILES_NAME = "JsonFiles";
-
-    private static readonly ILogger logger;
+    const string PROGRAM_NAME = "ovjo";
 
     public class ResultLogger : IResultLogger
     {
+        private LogEventLevel GetLogEventLevel(LogLevel logLevel) =>
+            logLevel switch
+            {
+                LogLevel.Trace => LogEventLevel.Verbose,
+                LogLevel.Debug => LogEventLevel.Debug,
+                LogLevel.Information => LogEventLevel.Information,
+                LogLevel.Warning => LogEventLevel.Warning,
+                LogLevel.Error => LogEventLevel.Error,
+                LogLevel.Critical => LogEventLevel.Fatal,
+                _ => LogEventLevel.Verbose,
+            };
+
         public void Log(string context, string content, ResultBase result, LogLevel logLevel)
         {
-            logger.Log(logLevel, "{0} {1} <{2}>", result.Reasons.Select(reason => reason.Message), content, context);
+            Serilog.Log.Write(GetLogEventLevel(logLevel), FormatMessage(content, context, result, logLevel));
         }
 
         public void Log<TContext>(string content, ResultBase result, LogLevel logLevel)
         {
-            logger.Log(logLevel, "{0} {1} <{2}>", result.Reasons.Select(reason => reason.Message), content, typeof(TContext).FullName);
+            var contextName = typeof(TContext).FullName ?? typeof(TContext).Name;
+            Serilog.Log.Write(GetLogEventLevel(logLevel), FormatMessage(content, contextName, result, logLevel));
         }
-    }
 
-    static Program()
-    {
-        // Set up logger
-        using var loggerFactory = LoggerFactory.Create(builder =>
+        private string FormatMessage(string content, string context, ResultBase result, LogLevel level)
         {
-            builder.AddConsole(options =>
+            var mainReason = result.Reasons.FirstOrDefault();
+            if (mainReason == null)
             {
-                options.LogToStandardErrorThreshold = LogLevel.Warning;
+                return string.Empty;
+            }
+            var reasonLines = result.Reasons.Skip(1).Select(reason =>
+            {
+                return $"  - {reason.Message}";
             });
-            builder.SetMinimumLevel(LogLevel.Debug);
-        });
-        logger = loggerFactory.CreateLogger<Program>();
 
-        var resultLogger = new ResultLogger();
-        Result.Setup(cfg => {
-            cfg.Logger = resultLogger;
-        });
+            var reasonBlock = string.Join(Environment.NewLine, reasonLines);
+
+            return result.Reasons.Count > 1 ? $"""
+{mainReason.Message}
+Reasons ({result.Reasons.Count - 1}):
+{reasonBlock}
+""" : $"""
+{mainReason.Message}
+""";
+        }
     }
 
     private static Dictionary<string, object> CreateDefaultRojoProject(string name)
@@ -122,13 +140,15 @@ internal class Program
 
     private static async Task<int> Main(string[] args)
     {
-        logger.LogInformation("Starting program...");
-
-        // Check rojo is ok and warn if not
-        RequireRojoSyncback().LogIfFailed(LogLevel.Warning);
+        // Setup Result's logger
+        ResultLogger resultLogger = new();
+        Result.Setup(cfg =>
+        {
+            cfg.Logger = resultLogger;
+        });
 
         // Setup CLI Commands
-        var syncbackCommand = new Command("syncback", "Performs 'syncback' for the provided project, using the `input` file given");
+        Command syncbackCommand = new("syncback", "Performs 'syncback' for the provided project, using the `input` file given");
         {
             var projectArg = new Argument<string>("project", "Path to the project");
             projectArg.SetDefaultValue(DEFAULT_ROJO_PROJECT_PATH);
@@ -145,7 +165,7 @@ internal class Program
             }, projectArg, inputOpt, rbxlOpt);
         }
 
-        var buildCommand = new Command("build", "Builds rojo project into OVERDARE world");
+        Command buildCommand = new("build", "Builds rojo project into OVERDARE world");
         {
             var projectArg = new Argument<string>("project", "Path to the project");
             projectArg.SetDefaultValue(DEFAULT_ROJO_PROJECT_PATH);
@@ -160,7 +180,7 @@ internal class Program
             }, projectArg, outputOpt);
         }
 
-        var devCommand = new Command("dev", "Starts developing rojo project");
+        Command devCommand = new("dev", "Starts developing rojo project");
         {
             var projectArg = new Argument<string>("project", "Path to the project");
             projectArg.SetDefaultValue(DEFAULT_ROJO_PROJECT_PATH);
@@ -175,7 +195,7 @@ internal class Program
             }, projectArg, outputOpt);
         }
 
-        var initCommand = new Command("init", "Initializes a new rojo project");
+        Command initCommand = new("init", "Initializes a new rojo project");
         {
             initCommand.SetHandler(() =>
             {
@@ -190,7 +210,7 @@ internal class Program
             });
         }
 
-        var studioCommand = new Command("studio", "Opens OVERDARE Studio");
+        Command studioCommand = new("studio", "Opens OVERDARE Studio");
         {
             studioCommand.SetHandler(() =>
             {
@@ -204,13 +224,49 @@ internal class Program
             });
         }
 
-        var rootCommand = new RootCommand("ovjo");
+        var verbosityOption = new Option<int>(
+            aliases: ["--verbosity", "-v"], // Common aliases
+            description: "Sets the verbosity level (e.g., -v 2, --verbosity 3)."
+        )
+        {
+            // The argument name for help display (e.g., -v <level>)
+            // System.CommandLine infers the argument type is <int> from Option<int>
+            ArgumentHelpName = "level"
+        };
+        RootCommand rootCommand = new("ovjo");
+        rootCommand.AddGlobalOption(verbosityOption);
         rootCommand.AddCommand(devCommand);
         rootCommand.AddCommand(initCommand);
         rootCommand.AddCommand(syncbackCommand);
         rootCommand.AddCommand(studioCommand);
 
-        return await rootCommand.InvokeAsync(args);
+        var commandLineBuilder = new CommandLineBuilder(rootCommand);
+
+        commandLineBuilder.AddMiddleware(async (context, next) =>
+        {
+            // Setup logger with logger verbosity level
+            var verbosity = context.ParseResult.GetValueForOption(verbosityOption);
+            LogEventLevel minimumLevel = verbosity switch
+            {
+                >= 3 => LogEventLevel.Verbose,
+                2 => LogEventLevel.Debug,
+                1 => LogEventLevel.Information,
+                _ => LogEventLevel.Warning
+            };
+            Log.Logger = new LoggerConfiguration()
+                .MinimumLevel.Is(minimumLevel)
+                .WriteTo.Console(outputTemplate: $"[{{Timestamp:HH:mm:ss}} {{Level:u3}} {PROGRAM_NAME}] {{Message:lj}}{{NewLine}}{{Exception}}", standardErrorFromLevel: Serilog.Events.LogEventLevel.Warning)
+                .CreateLogger();
+
+            // Check rojo is ok and warn if not
+            RequireRojoSyncback().LogIfFailed(LogLevel.Warning);
+
+            await next(context);
+        });
+        commandLineBuilder.UseDefaults();
+        var parser = commandLineBuilder.Build();
+
+        return await parser.InvokeAsync(args);
     }
 
     private static T? TryCreateInstance<T>(string className) where T : class
@@ -394,7 +450,7 @@ internal class Program
 
             // Converting OVERDARE's Lua class name to Roblox class name
             string classTypeNameWithoutLuaPrefix = Regex.Replace(classTypeNameString.Value, $"^{Regex.Escape(OVERDARE_UOBJECT_TYPE_LUA_PREFIX)}", "");
-            logger.LogInformation($"Class: {classTypeNameWithoutLuaPrefix} Raw: {classTypeNameString} FName: {normalExport.ObjectName} PackageIndex: {packageIndex}");
+            Log.Information($"Class: {classTypeNameWithoutLuaPrefix} Raw: {classTypeNameString} FName: {normalExport.ObjectName} PackageIndex: {packageIndex}");
             bool isDataModel = classTypeNameWithoutLuaPrefix == "DataModel";
             var instance = isDataModel ? robloxDataModel : TryCreateInstance<RobloxFiles.Instance>(classTypeNameWithoutLuaPrefix);
 
@@ -420,7 +476,7 @@ internal class Program
             var nameProperty = normalExport["Name"];
             if (nameProperty is UAssetAPI.PropertyTypes.Objects.StrPropertyData namePropertyString)
             {
-                Console.WriteLine($"Instance Name: {namePropertyString.Value.Value}");
+                Log.Debug($"Instance Name: {namePropertyString.Value.Value}");
                 instance.Name = namePropertyString.Value.Value;
             }
             else if (isUnknownInstance)
@@ -443,13 +499,22 @@ internal class Program
         {
             if (value.Parent == null) continue; // Expects a DataModel
             if (!instances.TryGetValue((int)value.Parent, out var parent)) continue;
-            Console.WriteLine($"{value.Instance}'s parent is {parent.Instance}");
+            Log.Debug($"{value.Instance}'s parent is {parent.Instance}");
             value.Instance.Parent = parent.Instance;
         }
 
         // Write Roblox place to file system for `rojo syncback`. Path is defaulted to temp file
-        string robloxPlaceFilePath = rbxlPath == null ? Path.GetTempFileName() : rbxlPath;
+        string robloxPlaceFilePath = Path.ChangeExtension(rbxlPath == null ? Path.GetTempFileName() : rbxlPath, "rbxl");
         robloxDataModel.Save(robloxPlaceFilePath);
+
+        // Run `rojo syncback` from composed .rbxl place file
+        Process process = StartProcess("rojo", $"syncback {rojoProjectPath} --input {robloxPlaceFilePath} -y");
+        process.WaitForExit();
+        if (process.ExitCode != 0)
+        {
+            return Result.Fail($"Failed to run `rojo syncback`").WithReason(new Error($"rojo exited with code 0 with stderr: {process.StandardError.ReadToEnd()}"));
+        }
+
         // Delete the saved place file if it was a tempfile
         if (rbxlPath == null)
         {
@@ -458,14 +523,6 @@ internal class Program
 
                 File.Delete(robloxPlaceFilePath);
             });
-        }
-
-        // Run `rojo syncback` from composed .rbxl place file
-        Process process = StartProcess("rojo", $"syncback {rojoProjectPath} --input {robloxPlaceFilePath} -y");
-        process.WaitForExit();
-        if (process.ExitCode != 0)
-        {
-            return Result.Fail($"Failed to run `rojo syncback`").WithReason(new Error($"rojo exited with code 0 with stderr: {process.StandardError.ReadToEnd()}"));
         }
 
         return Result.Ok();
@@ -548,7 +605,7 @@ internal class Program
             string programPath = Path.Combine(installLocation, launchExecutable);
             if (!File.Exists(programPath))
             {
-                return Result.Fail($"{ERROR_PREFIX} Launch executable not found.");
+                return Result.Fail($"Launch executable not found.");
             }
 
             SandboxMetadata metadata = new()
