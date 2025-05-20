@@ -55,7 +55,7 @@ internal class Program
     const string WORLD_DATA_JSON_FILES_NAME = "JsonFiles";
     const string PROGRAM_NAME = "ovjo";
 
-    public class ResultLogger : IResultLogger
+    private class ResultLogger : IResultLogger
     {
         private LogEventLevel GetLogEventLevel(LogLevel logLevel) =>
             logLevel switch
@@ -120,21 +120,23 @@ Reasons ({result.Reasons.Count - 1}):
         };
     }
 
-    private static Result RequireRojoSyncback()
+    private static Result RequireProgram(string program, string args)
     {
         try
         {
-            Process process = StartProcess("rojo", "syncback --help");
+            Process process = StartProcess(program, args);
             process.WaitForExit();
             if (process.ExitCode != 0)
             {
-                return Result.Fail($"Failed to run `rojo syncback`(stderr: {process.StandardError.ReadToEnd()}) The `syncback` command does not exist or does not work in the currently installed rojo. Please check the version of rojo.");
+                return Result.Fail($"Execution of `{program} {args}` failed. {PROGRAM_NAME} requires `{program}` to function properly with the provided arguments: `{args}`.")
+                    .WithReason(new Error(process.StandardError.ReadToEnd()));
             }
             return Result.Ok();
         }
         catch (Exception e)
         {
-            return Result.Fail($"Failed to run rojo(error: {e.Message}) rojo may not be installed. rojo is required to use this program.");
+            return Result.Fail($"Unable to execute `{program}`. It appears that `{program}` is not installed or is inaccessible. {PROGRAM_NAME} requires `{program}` to function properly.")
+                .WithReason(new Error(e.Message));
         }
     }
 
@@ -259,7 +261,7 @@ Reasons ({result.Reasons.Count - 1}):
                 .CreateLogger();
 
             // Check rojo is ok and warn if not
-            RequireRojoSyncback().LogIfFailed(LogLevel.Warning);
+            RequireProgram("rojo", "syncback --help").LogIfFailed(LogLevel.Warning);
 
             await next(context);
         });
@@ -312,9 +314,17 @@ Reasons ({result.Reasons.Count - 1}):
         }
     }
 
+    private static string RemoveBom(string p)
+    {
+        string BOMMarkUtf8 = Encoding.UTF8.GetString(Encoding.UTF8.GetPreamble());
+        if (p.StartsWith(BOMMarkUtf8, StringComparison.Ordinal))
+            p = p.Remove(0, BOMMarkUtf8.Length);
+        return p.Replace("\0", "");
+    }
+
     private static Result Syncback(string rojoProjectPath, string umapPath, string? rbxlPath)
     {
-        Result rojoSyncbackStatus = RequireRojoSyncback();
+        Result rojoSyncbackStatus = RequireProgram("rojo", "syncback --help");
         if (rojoSyncbackStatus.IsFailed)
         {
             return Result.Fail($"Rojo syncback is required to perform ovjo syncback, but got an error: {rojoSyncbackStatus.Errors[0].Message}");
@@ -436,10 +446,9 @@ Reasons ({result.Reasons.Count - 1}):
             if (!(export is UAssetAPI.ExportTypes.NormalExport normalExport)) continue;
 
             // Skip if it's invisible in level browser
-            var bVisibleInLevelBrowser = normalExport["bVisibleInLevelBrowser"];
-            if (bVisibleInLevelBrowser is UAssetAPI.PropertyTypes.Objects.BoolPropertyData bVisibleInLevelBrowserBool)
+            if (normalExport["bVisibleInLevelBrowser"] is UAssetAPI.PropertyTypes.Objects.BoolPropertyData bVisibleInLevelBrowser)
             {
-                if (bVisibleInLevelBrowserBool.Value == false) continue;
+                if (bVisibleInLevelBrowser.Value == false) continue;
             }
 
             // Getting ClassType(ex. LuaPart, LuaModuleScript) of the current export
@@ -472,20 +481,71 @@ Reasons ({result.Reasons.Count - 1}):
                 isUnknownInstance = true;
             }
 
-            // Setting normal Roblox Instance up
-            var nameProperty = normalExport["Name"];
-            if (nameProperty is UAssetAPI.PropertyTypes.Objects.StrPropertyData namePropertyString)
+            // Setting script Roblox Instance up
+            if (normalExport["LuaCode"] is UAssetAPI.PropertyTypes.Objects.ObjectPropertyData luaCode)
             {
-                Log.Debug($"Instance Name: {namePropertyString.Value.Value}");
-                instance.Name = namePropertyString.Value.Value;
+                if (instance is not RobloxFiles.LuaSourceContainer)
+                {
+                    return Result.Fail($"LuaCode property was found in this OVERDARE Instance({classTypeName}) but its Roblox class equivalent is not a LuaSourceContainer.");
+                }
+                Log.Information($"LuaCode object index: {luaCode.Value.Index}");
+                var import = luaCode.Value.ToImport(asset);
+                if (import == null)
+                {
+                    return Result.Fail($"Couldn't find Import of ObjectPropertyData. File might be corrupted.");
+                }
+                string packagePath = "";
+                // Follow the outer chain until we reach a top-level package  
+                UAssetAPI.UnrealTypes.FPackageIndex currentOuter = import.OuterIndex;
+                while (!currentOuter.IsNull())
+                {
+                    Import outerImport = currentOuter.ToImport(asset);
+                    if (outerImport == null) break;
+
+                    // If this is a top-level package (OuterIndex is null)  
+                    if (outerImport.OuterIndex.IsNull())
+                    {
+                        packagePath = outerImport.ObjectName.ToString();
+                        break;
+                    }
+
+                    currentOuter = outerImport.OuterIndex;
+                }
+                Log.Information($"LuaCode PackagePath: {packagePath}");
+                // Remove /User/ prefix (Assumes /User/ is current directory aka. 'ovdrWorldPath')
+                string gameAssetPath = packagePath.Substring(6);
+                string luaCodePath = Path.ChangeExtension(Path.Combine(ovdrWorldPath.FixDirectorySeparatorsForDisk(), gameAssetPath.FixDirectorySeparatorsForDisk()), "lua");
+                if (!File.Exists(luaCodePath))
+                {
+                    return Result.Fail($"LuaCode file not found: {luaCodePath}");
+                }
+                string luaCodeContent = RemoveBom(File.ReadAllText(luaCodePath));
+                switch (instance)
+                {
+                    case RobloxFiles.Script script:
+                        script.Source = luaCodeContent;
+                        break;
+                    case RobloxFiles.ModuleScript moduleScript:
+                        moduleScript.Source = luaCodeContent;
+                        break;
+                }
+            }
+
+            // Setting normal Roblox Instance up
+            if (normalExport["Name"] is UAssetAPI.PropertyTypes.Objects.StrPropertyData nameProperty)
+            {
+                Log.Debug($"Instance Name: {nameProperty.Value.Value}");
+                instance.Name = nameProperty.Value.Value;
             }
             else if (isUnknownInstance)
             {
                 instance.Name = classTypeNameWithoutLuaPrefix;
+                Log.Debug($"Custom Instance Added: {classTypeNameWithoutLuaPrefix}");
             }
             instance.SetAttribute("ObjectName", export.ObjectName.ToString());
             instances.Add(packageIndex, (Instance: instance, Parent: parentIndex));
 
+            // Manually modify BrickColor properties to correct BrickColor.. because some BrickColors are serialized incorrectly (Roblox-File-Format issue)
             foreach ((string key, RobloxFiles.Property prop) in instance.Properties)
             {
                 if (prop.Type is RobloxFiles.PropertyType.BrickColor)
