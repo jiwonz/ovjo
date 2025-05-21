@@ -57,7 +57,23 @@ internal class Program
     const string WORLD_DATA_JSON_FILES_NAME = "JsonFiles";
     const string PROGRAM_NAME = "ovjo";
 
-    private static readonly ICatalog Catalog = new Catalog("localized", "./locales");
+    private static readonly ICatalog Catalog;
+
+    static Program()
+    {
+        var assembly = Assembly.GetExecutingAssembly();
+        var uiCulture = new CultureInfo(Environment.GetEnvironmentVariable("OVJO_LOCALE") ?? CultureInfo.CurrentUICulture.TwoLetterISOLanguageName);
+        var resourceName = $"ovjo.locales.{uiCulture.TwoLetterISOLanguageName}.LC_MESSAGES.localized.mo";
+
+        var stream = assembly.GetManifestResourceStream(resourceName);
+
+        if (stream == null)
+        {
+            Catalog = new Catalog();
+            return;
+        }
+        Catalog = new Catalog(stream);
+    }
 
     private static string _(string text, params object[] args)
     {
@@ -151,8 +167,6 @@ Reasons ({result.Reasons.Count - 1}):
 
     private static async Task<int> Main(string[] args)
     {
-        var currentCulture = System.Globalization.CultureInfo.CurrentCulture;
-        Console.WriteLine("Current system locale: " + currentCulture.Name);
         // Setup Result's logger
         ResultLogger resultLogger = new();
         Result.Setup(cfg =>
@@ -237,7 +251,7 @@ Reasons ({result.Reasons.Count - 1}):
             });
         }
 
-        Option<int> verboseOption = new(["--verbose", "-v"], _("Sets the verbosity level (e.g., -v 2, --verbosity 3)."))
+        Option<int> verboseOption = new(["--verbose", "-v"], _("Sets the verbosity level (e.g., -v 2, --verbose 3)."))
         {
             ArgumentHelpName = "level"
         };

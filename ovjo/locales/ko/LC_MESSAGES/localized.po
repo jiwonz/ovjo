@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-05-21 17:06+0900\n"
-"PO-Revision-Date: 2025-05-21 17:19+0900\n"
+"POT-Creation-Date: 2025-05-21 21:59+0900\n"
+"PO-Revision-Date: 2025-05-21 22:01+0900\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: ko\n"
@@ -18,154 +18,177 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 3.6\n"
 
-#: Program.cs:139
+#: Program.cs:156
 #, csharp-format
 msgid ""
-"Execution of `{0} {1}` failed. {2} requires `{0}` to function properly with the provided "
-"arguments: `{1}`."
+"Execution of `{0} {1}` failed. {2} requires `{0}` to function properly with "
+"the provided arguments: `{1}`."
 msgstr ""
-"`{0} {1}` 실행에 실패했습니다. {2}가(이) 올바르게 동작하려면 `{0}`이(가) 다음 인자를 필요로 합니"
-"다: `{1}`."
+"`{0} {1}` 실행에 실패했습니다. {2}가(이) 올바르게 동작하려면 `{0}`이(가) 다"
+"음 인자를 필요로 합니다: `{1}`."
 
-#: Program.cs:146
+#: Program.cs:163
 #, csharp-format
 msgid ""
-"Unable to execute `{0}`. It appears that `{0}` is not installed or is inaccessible. {1} requires "
-"`{0}` to function properly."
+"Unable to execute `{0}`. It appears that `{0}` is not installed or is "
+"inaccessible. {1} requires `{0}` to function properly."
 msgstr ""
-"`{0}`을(를) 실행할 수 없습니다. `{0}`이(가) 설치되어 있지 않거나 접근할 수 없는 것 같습니다. {1}"
-"이(가) 정상적으로 동작하려면 `{0}`이(가) 필요합니다."
+"`{0}`을(를) 실행할 수 없습니다. `{0}`이(가) 설치되어 있지 않거나 접근할 수 "
+"없는 것 같습니다. {1}이(가) 정상적으로 동작하려면 `{0}`이(가) 필요합니다."
 
-#: Program.cs:161
-msgid "Performs 'syncback' for the provided project, using the `input` file given"
-msgstr "제공된 프로젝트에 대해 'syncback'을 수행하며, 지정된 `input` 파일을 사용합니다"
+#: Program.cs:178
+msgid ""
+"Performs 'syncback' for the provided project, using the `input` file given"
+msgstr ""
+"제공된 프로젝트에 대해 'syncback'을 수행하며, 지정된 `input` 파일을 사용합니"
+"다"
 
-#: Program.cs:163 Program.cs:180 Program.cs:195
+#: Program.cs:180 Program.cs:197 Program.cs:212
 msgid "Path to the project"
 msgstr "프로젝트 경로"
 
-#: Program.cs:165
+#: Program.cs:182
 msgid "Path to the input file"
 msgstr "입력 파일 경로"
 
-#: Program.cs:166
+#: Program.cs:183
 msgid "Path to the rbxl file"
 msgstr "rbxl 파일 경로"
 
-#: Program.cs:178
+#: Program.cs:195
 msgid "Builds rojo project into OVERDARE world"
 msgstr "rojo 프로젝트를 OVERDARE 월드로 빌드합니다"
 
-#: Program.cs:182 Program.cs:197
+#: Program.cs:199 Program.cs:214
 msgid "Path to the output file"
 msgstr "출력 파일 경로"
 
-#: Program.cs:193
+#: Program.cs:210
 msgid "Starts developing rojo project"
 msgstr "rojo 프로젝트 개발을 시작합니다"
 
-#: Program.cs:208
+#: Program.cs:225
 msgid "Initializes a new rojo project"
 msgstr "새로운 rojo 프로젝트를 초기화합니다"
 
-#: Program.cs:223
+#: Program.cs:240
 msgid "Opens OVERDARE Studio"
 msgstr "OVERDARE Studio를 엽니다"
 
-#: Program.cs:230
-msgid "Failed to find OVERDARE Studio metadata in the computer via Epic Games Launcher."
-msgstr "Epic Games Launcher를 통해 컴퓨터에서 OVERDARE Studio 메타데이터를 찾지 못했습니다."
+#: Program.cs:247
+msgid ""
+"Failed to find OVERDARE Studio metadata in the computer via Epic Games "
+"Launcher."
+msgstr ""
+"Epic Games Launcher를 통해 컴퓨터에서 OVERDARE Studio 메타데이터를 찾지 못했"
+"습니다."
 
-#: Program.cs:237
-msgid "Sets the verbosity level (e.g., -v 2, --verbosity 3)."
-msgstr "상세 출력 레벨을 설정합니다 (예: -v 2, --verbosity 3)."
+#: Program.cs:254
+msgid "Sets the verbosity level (e.g., -v 2, --verbose 3)."
+msgstr "상세 출력 레벨을 설정합니다 (예: -v 2, --verbose 3)."
 
-#: Program.cs:333
-msgid "`rojo syncback` is required to perform `ovjo syncback`, but failed to check."
-msgstr "`ovjo syncback`을(를) 실행하려면 `rojo syncback`이(가) 필요하지만, 확인에 실패했습니다."
+#: Program.cs:350
+msgid ""
+"`rojo syncback` is required to perform `ovjo syncback`, but failed to check."
+msgstr ""
+"`ovjo syncback`을(를) 실행하려면 `rojo syncback`이(가) 필요하지만, 확인에 실"
+"패했습니다."
 
-#: Program.cs:339 Program.cs:610
+#: Program.cs:356 Program.cs:627
 msgid "Failed to parse rojo project file."
 msgstr "rojo 프로젝트 파일을 파싱하는 데 실패했습니다."
 
-#: Program.cs:344 Program.cs:615
+#: Program.cs:361 Program.cs:632
 msgid "Failed to get WorldData path."
 msgstr "WorldData 경로를 가져오는 데 실패했습니다."
 
-#: Program.cs:349
-msgid "Failed to get world path from umap file. Couldn't find `umap path`'s parent directory."
+#: Program.cs:366
+msgid ""
+"Failed to get world path from umap file. Couldn't find `umap path`'s parent "
+"directory."
 msgstr ""
-"umap 파일에서 월드 경로를 가져오는 데 실패했습니다. `umap path`의 상위 디렉터리를 찾을 수 없습니"
-"다."
+"umap 파일에서 월드 경로를 가져오는 데 실패했습니다. `umap path`의 상위 디렉"
+"터리를 찾을 수 없습니다."
 
-#: Program.cs:389
+#: Program.cs:406
 msgid "Failed to read umap file."
 msgstr "umap 파일을 읽는 데 실패했습니다."
 
-#: Program.cs:494
+#: Program.cs:511
 #, csharp-format
 msgid ""
-"LuaCode property was found in this OVERDARE Instance({0}) but its Roblox class equivalent is not "
-"a LuaSourceContainer."
+"LuaCode property was found in this OVERDARE Instance({0}) but its Roblox "
+"class equivalent is not a LuaSourceContainer."
 msgstr ""
-"이 OVERDARE 인스턴스({0})에서 LuaCode 속성이 발견되었으나, 해당 Roblox 클래스가 "
-"LuaSourceContainer가 아닙니다."
+"이 OVERDARE 인스턴스({0})에서 LuaCode 속성이 발견되었으나, 해당 Roblox 클래"
+"스가 LuaSourceContainer가 아닙니다."
 
-#: Program.cs:500
-msgid "Couldn't find Import of LuaCode ObjectPropertyData. File might be corrupted."
-msgstr "LuaCode ObjectPropertyData의 Import를 찾을 수 없습니다. 파일이 손상되었을 수 있습니다."
+#: Program.cs:517
+msgid ""
+"Couldn't find Import of LuaCode ObjectPropertyData. File might be corrupted."
+msgstr ""
+"LuaCode ObjectPropertyData의 Import를 찾을 수 없습니다. 파일이 손상되었을 "
+"수 있습니다."
 
-#: Program.cs:525
+#: Program.cs:542
 #, csharp-format
 msgid "LuaCode file not found: {0}"
 msgstr "LuaCode 파일을 찾을 수 없습니다: {0}"
 
-#: Program.cs:583
+#: Program.cs:600
 msgid "Failed to run `rojo syncback`."
 msgstr "`rojo syncback` 실행에 실패했습니다."
 
-#: Program.cs:583
+#: Program.cs:600
 #, csharp-format
 msgid "rojo exited with code 0 with stderr: {0}"
 msgstr "rojo가 코드 0으로 종료되었으며, stderr: {0}"
 
-#: Program.cs:604
-msgid "`rojo sourcemap` is required to perform `ovjo build`, but failed to check."
-msgstr "`ovjo build`를 실행하려면 `rojo sourcemap`이(가) 필요하지만, 확인에 실패했습니다."
+#: Program.cs:621
+msgid ""
+"`rojo sourcemap` is required to perform `ovjo build`, but failed to check."
+msgstr ""
+"`ovjo build`를 실행하려면 `rojo sourcemap`이(가) 필요하지만, 확인에 실패했습"
+"니다."
 
-#: Program.cs:620
+#: Program.cs:637
 #, csharp-format
 msgid "{{WorldData}}.{0} is not a `BinaryStringValue`."
 msgstr "{{WorldData}}.{0}은(는) `BinaryStringValue`가 아닙니다."
 
-#: Program.cs:637
+#: Program.cs:654
 msgid "Failed to deserialize sourcemap."
 msgstr "sourcemap 역직렬화에 실패했습니다."
 
-#: Program.cs:650
+#: Program.cs:667
 #, csharp-format
-msgid "Couldn't find `tree.{0}[\"$path\"]` in project.json. This is required in ovjo."
-msgstr "project.json에서 `tree.{0}[\"$path\"]`를 찾을 수 없습니다. 이는 ovjo에서 필요합니다."
+msgid ""
+"Couldn't find `tree.{0}[\"$path\"]` in project.json. This is required in "
+"ovjo."
+msgstr ""
+"project.json에서 `tree.{0}[\"$path\"]`를 찾을 수 없습니다. 이는 ovjo에서 필"
+"요합니다."
 
-#: Program.cs:678
+#: Program.cs:695
 msgid "Manifest folder does not exist."
 msgstr "매니페스트 폴더가 존재하지 않습니다."
 
-#: Program.cs:694
+#: Program.cs:711
 msgid "Install location not found in manifest."
 msgstr "매니페스트에서 설치 위치를 찾을 수 없습니다."
 
-#: Program.cs:699
+#: Program.cs:716
 msgid "Launch executable not found in manifest."
 msgstr "매니페스트에서 실행 파일을 찾을 수 없습니다."
 
-#: Program.cs:704
+#: Program.cs:721
 msgid "Launch executable not found."
 msgstr "실행 파일을 찾을 수 없습니다."
 
-#: Program.cs:715
+#: Program.cs:732
 msgid ""
-"Couldn't find Sandbox. Check `OVERDARE Studio` is installed in your Epic Games Launcher library."
+"Couldn't find Sandbox. Check `OVERDARE Studio` is installed in your Epic "
+"Games Launcher library."
 msgstr ""
-"Sandbox를 찾을 수 없습니다. Epic Games Launcher 라이브러리에 `OVERDARE Studio`가 설치되어 있는지 "
-"확인하세요."
+"Sandbox를 찾을 수 없습니다. Epic Games Launcher 라이브러리에 `OVERDARE "
+"Studio`가 설치되어 있는지 확인하세요."

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-05-21 17:06+0900\n"
+"POT-Creation-Date: 2025-05-21 21:59+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,154 +17,154 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: Program.cs:139
+#: Program.cs:156
 #, csharp-format
 msgid ""
 "Execution of `{0} {1}` failed. {2} requires `{0}` to function properly with "
 "the provided arguments: `{1}`."
 msgstr ""
 
-#: Program.cs:146
+#: Program.cs:163
 #, csharp-format
 msgid ""
 "Unable to execute `{0}`. It appears that `{0}` is not installed or is "
 "inaccessible. {1} requires `{0}` to function properly."
 msgstr ""
 
-#: Program.cs:161
+#: Program.cs:178
 msgid ""
 "Performs 'syncback' for the provided project, using the `input` file given"
 msgstr ""
 
-#: Program.cs:163 Program.cs:180 Program.cs:195
+#: Program.cs:180 Program.cs:197 Program.cs:212
 msgid "Path to the project"
 msgstr ""
 
-#: Program.cs:165
+#: Program.cs:182
 msgid "Path to the input file"
 msgstr ""
 
-#: Program.cs:166
+#: Program.cs:183
 msgid "Path to the rbxl file"
 msgstr ""
 
-#: Program.cs:178
+#: Program.cs:195
 msgid "Builds rojo project into OVERDARE world"
 msgstr ""
 
-#: Program.cs:182 Program.cs:197
+#: Program.cs:199 Program.cs:214
 msgid "Path to the output file"
 msgstr ""
 
-#: Program.cs:193
+#: Program.cs:210
 msgid "Starts developing rojo project"
 msgstr ""
 
-#: Program.cs:208
+#: Program.cs:225
 msgid "Initializes a new rojo project"
 msgstr ""
 
-#: Program.cs:223
+#: Program.cs:240
 msgid "Opens OVERDARE Studio"
 msgstr ""
 
-#: Program.cs:230
+#: Program.cs:247
 msgid ""
 "Failed to find OVERDARE Studio metadata in the computer via Epic Games "
 "Launcher."
 msgstr ""
 
-#: Program.cs:237
-msgid "Sets the verbosity level (e.g., -v 2, --verbosity 3)."
+#: Program.cs:254
+msgid "Sets the verbosity level (e.g., -v 2, --verbose 3)."
 msgstr ""
 
-#: Program.cs:333
+#: Program.cs:350
 msgid ""
 "`rojo syncback` is required to perform `ovjo syncback`, but failed to check."
 msgstr ""
 
-#: Program.cs:339 Program.cs:610
+#: Program.cs:356 Program.cs:627
 msgid "Failed to parse rojo project file."
 msgstr ""
 
-#: Program.cs:344 Program.cs:615
+#: Program.cs:361 Program.cs:632
 msgid "Failed to get WorldData path."
 msgstr ""
 
-#: Program.cs:349
+#: Program.cs:366
 msgid ""
 "Failed to get world path from umap file. Couldn't find `umap path`'s parent "
 "directory."
 msgstr ""
 
-#: Program.cs:389
+#: Program.cs:406
 msgid "Failed to read umap file."
 msgstr ""
 
-#: Program.cs:494
+#: Program.cs:511
 #, csharp-format
 msgid ""
 "LuaCode property was found in this OVERDARE Instance({0}) but its Roblox "
 "class equivalent is not a LuaSourceContainer."
 msgstr ""
 
-#: Program.cs:500
+#: Program.cs:517
 msgid ""
 "Couldn't find Import of LuaCode ObjectPropertyData. File might be corrupted."
 msgstr ""
 
-#: Program.cs:525
+#: Program.cs:542
 #, csharp-format
 msgid "LuaCode file not found: {0}"
 msgstr ""
 
-#: Program.cs:583
+#: Program.cs:600
 msgid "Failed to run `rojo syncback`."
 msgstr ""
 
-#: Program.cs:583
+#: Program.cs:600
 #, csharp-format
 msgid "rojo exited with code 0 with stderr: {0}"
 msgstr ""
 
-#: Program.cs:604
+#: Program.cs:621
 msgid ""
 "`rojo sourcemap` is required to perform `ovjo build`, but failed to check."
 msgstr ""
 
-#: Program.cs:620
+#: Program.cs:637
 #, csharp-format
 msgid "{{WorldData}}.{0} is not a `BinaryStringValue`."
 msgstr ""
 
-#: Program.cs:637
+#: Program.cs:654
 msgid "Failed to deserialize sourcemap."
 msgstr ""
 
-#: Program.cs:650
+#: Program.cs:667
 #, csharp-format
 msgid ""
 "Couldn't find `tree.{0}[\"$path\"]` in project.json. This is required in "
 "ovjo."
 msgstr ""
 
-#: Program.cs:678
+#: Program.cs:695
 msgid "Manifest folder does not exist."
 msgstr ""
 
-#: Program.cs:694
+#: Program.cs:711
 msgid "Install location not found in manifest."
 msgstr ""
 
-#: Program.cs:699
+#: Program.cs:716
 msgid "Launch executable not found in manifest."
 msgstr ""
 
-#: Program.cs:704
+#: Program.cs:721
 msgid "Launch executable not found."
 msgstr ""
 
-#: Program.cs:715
+#: Program.cs:732
 msgid ""
 "Couldn't find Sandbox. Check `OVERDARE Studio` is installed in your Epic "
 "Games Launcher library."
