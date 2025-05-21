@@ -651,7 +651,7 @@ Reasons ({result.Reasons.Count - 1}):
         {
             StartInfo = new ProcessStartInfo(command, args)
             {
-                RedirectStandardOutput = false,
+                RedirectStandardOutput = true,
                 RedirectStandardError = true,
                 UseShellExecute = false,
                 CreateNoWindow = true,
