@@ -492,7 +492,7 @@ Reasons ({result.Reasons.Count - 1}):
                 var import = luaCode.Value.ToImport(asset);
                 if (import == null)
                 {
-                    return Result.Fail($"Couldn't find Import of ObjectPropertyData. File might be corrupted.");
+                    return Result.Fail($"Couldn't find Import of LuaCode ObjectPropertyData. File might be corrupted.");
                 }
                 string packagePath = "";
                 // Follow the outer chain until we reach a top-level package  
@@ -575,7 +575,7 @@ Reasons ({result.Reasons.Count - 1}):
         process.WaitForExit();
         if (process.ExitCode != 0)
         {
-            return Result.Fail($"Failed to run `rojo syncback`").WithReason(new Error($"rojo exited with code 0 with stderr: {process.StandardError.ReadToEnd()}"));
+            return Result.Fail($"Failed to run `rojo syncback`.").WithReason(new Error($"rojo exited with code 0 with stderr: {process.StandardError.ReadToEnd()}"));
         }
 
         // Delete the saved place file if it was a tempfile
@@ -629,7 +629,7 @@ Reasons ({result.Reasons.Count - 1}):
         var sourcemap = JsonConvert.DeserializeObject<JObject>(process.StandardOutput.ReadToEnd());
         if (sourcemap == null)
         {
-            return Result.Fail("Failed to deserialize sourcemap");
+            return Result.Fail("Failed to deserialize sourcemap.");
         }
 
         return Result.Ok();
@@ -642,7 +642,7 @@ Reasons ({result.Reasons.Count - 1}):
         {
             return validPath;
         }
-        return Result.Fail($"Couldn't find `tree.{WORLD_DATA_NAME}[\"$path\"]` in project.json. This is required in ovjo");
+        return Result.Fail($"Couldn't find `tree.{WORLD_DATA_NAME}[\"$path\"]` in project.json. This is required in ovjo.");
     }
 
     private static Process StartProcess(string command, string args = "")
@@ -707,6 +707,6 @@ Reasons ({result.Reasons.Count - 1}):
             return Result.Ok(metadata);
         }
 
-        return Result.Fail("Couldn't find Sandbox");
+        return Result.Fail("Couldn't find Sandbox. Check `OVERDARE Studio` is installed in your Epic Games Launcher library.");
     }
 }
