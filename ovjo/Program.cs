@@ -226,28 +226,25 @@ Reasons ({result.Reasons.Count - 1}):
             });
         }
 
-        var verbosityOption = new Option<int>(
-            aliases: ["--verbosity", "-v"], // Common aliases
+        Option<int> verboseOption = new(
+            aliases: ["--verbose", "-v"],
             description: "Sets the verbosity level (e.g., -v 2, --verbosity 3)."
         )
         {
-            // The argument name for help display (e.g., -v <level>)
-            // System.CommandLine infers the argument type is <int> from Option<int>
             ArgumentHelpName = "level"
         };
         RootCommand rootCommand = new("ovjo");
-        rootCommand.AddGlobalOption(verbosityOption);
+        rootCommand.AddGlobalOption(verboseOption);
         rootCommand.AddCommand(devCommand);
         rootCommand.AddCommand(initCommand);
         rootCommand.AddCommand(syncbackCommand);
         rootCommand.AddCommand(studioCommand);
 
-        var commandLineBuilder = new CommandLineBuilder(rootCommand);
-
+        CommandLineBuilder commandLineBuilder = new(rootCommand);
         commandLineBuilder.AddMiddleware(async (context, next) =>
         {
             // Setup logger with logger verbosity level
-            var verbosity = context.ParseResult.GetValueForOption(verbosityOption);
+            var verbosity = context.ParseResult.GetValueForOption(verboseOption);
             LogEventLevel minimumLevel = verbosity switch
             {
                 >= 3 => LogEventLevel.Verbose,
@@ -483,7 +480,8 @@ Reasons ({result.Reasons.Count - 1}):
                 isUnknownInstance = true;
             }
 
-            // Setting script Roblox Instance up
+            // Setting script Roblox Instance up and sets ObjectName if needed
+            bool needObjectName = false;
             if (normalExport["LuaCode"] is UAssetAPI.PropertyTypes.Objects.ObjectPropertyData luaCode)
             {
                 if (instance is not RobloxFiles.LuaSourceContainer)
@@ -526,12 +524,16 @@ Reasons ({result.Reasons.Count - 1}):
                 {
                     case RobloxFiles.Script script:
                         script.Source = luaCodeContent;
+                        needObjectName = true;
                         break;
                     case RobloxFiles.ModuleScript moduleScript:
                         moduleScript.Source = luaCodeContent;
+                        needObjectName = true;
                         break;
                 }
             }
+            if (instance is RobloxFiles.Folder) needObjectName = true;
+            if (needObjectName) instance.SetAttribute("ObjectName", export.ObjectName.ToString());
 
             // Setting normal Roblox Instance up
             if (normalExport["Name"] is UAssetAPI.PropertyTypes.Objects.StrPropertyData nameProperty)
@@ -544,7 +546,6 @@ Reasons ({result.Reasons.Count - 1}):
                 instance.Name = classTypeNameWithoutLuaPrefix;
                 Log.Debug($"Custom Instance Added: {classTypeNameWithoutLuaPrefix}");
             }
-            instance.SetAttribute("ObjectName", export.ObjectName.ToString());
             instances.Add(packageIndex, (Instance: instance, Parent: parentIndex));
 
             // Manually modify BrickColor properties to correct BrickColor.. because some BrickColors are serialized incorrectly (Roblox-File-Format issue)
@@ -607,6 +608,28 @@ Reasons ({result.Reasons.Count - 1}):
         if (worldDataPath.IsFailed)
         {
             return Result.Fail("Failed to get WorldData path.").WithErrors(worldDataPath.Errors);
+        }
+        var mapData = RobloxFiles.BinaryRobloxFile.Open(Path.ChangeExtension(Path.Combine(worldDataPath.Value, WORLD_DATA_MAP_NAME), "rbxm")).GetChildren()[0];
+        if (mapData is not RobloxFiles.BinaryStringValue mapBinaryString)
+        {
+            return Result.Fail($"{{WorldData}}.{WORLD_DATA_MAP_NAME} is not a `BinaryStringValue`.");
+        }
+        UAsset asset = new();
+        asset.FilePath = umapPath;
+        asset.Mappings = null;
+        asset.CustomSerializationFlags = CustomSerializationFlags.None;
+        asset.SetEngineVersion(OVERDARE_UNREAL_ENGINE_VERSION);
+        {
+            MemoryStream stream = new(mapBinaryString.Value);
+            AssetBinaryReader reader = new(stream, asset);
+            asset.Read(reader);
+        }
+        Process process = StartProcess("rojo", $"sourcemap {rojoProjectPath}");
+        process.WaitForExit();
+        var sourcemap = JsonConvert.DeserializeObject<JObject>(process.StandardOutput.ReadToEnd());
+        if (sourcemap == null)
+        {
+            return Result.Fail("Failed to deserialize sourcemap");
         }
 
         return Result.Ok();
