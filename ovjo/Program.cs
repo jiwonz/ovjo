@@ -2,12 +2,14 @@
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using NGettext;
 using Serilog;
 using Serilog.Events;
 using System.CommandLine;
 using System.CommandLine.Builder;
 using System.CommandLine.Parsing;
 using System.Diagnostics;
+using System.Globalization;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -54,6 +56,13 @@ internal class Program
     const string WORLD_DATA_PLAIN_FILES_NAME = "PlainFiles";
     const string WORLD_DATA_JSON_FILES_NAME = "JsonFiles";
     const string PROGRAM_NAME = "ovjo";
+
+    private static readonly ICatalog Catalog = new Catalog("localized", "./locales");
+
+    private static string _(string text, params object[] args)
+    {
+        return Catalog.GetString(text, args);
+    }
 
     private class ResultLogger : IResultLogger
     {
@@ -128,20 +137,22 @@ Reasons ({result.Reasons.Count - 1}):
             process.WaitForExit();
             if (process.ExitCode != 0)
             {
-                return Result.Fail($"Execution of `{program} {args}` failed. {PROGRAM_NAME} requires `{program}` to function properly with the provided arguments: `{args}`.")
+                return Result.Fail(_("Execution of `{0} {1}` failed. {2} requires `{0}` to function properly with the provided arguments: `{1}`.", program, args, PROGRAM_NAME))
                     .WithReason(new Error(process.StandardError.ReadToEnd()));
             }
             return Result.Ok();
         }
         catch (Exception e)
         {
-            return Result.Fail($"Unable to execute `{program}`. It appears that `{program}` is not installed or is inaccessible. {PROGRAM_NAME} requires `{program}` to function properly.")
+            return Result.Fail(_("Unable to execute `{0}`. It appears that `{0}` is not installed or is inaccessible. {1} requires `{0}` to function properly.", program, PROGRAM_NAME))
                 .WithReason(new Error(e.Message));
         }
     }
 
     private static async Task<int> Main(string[] args)
     {
+        var currentCulture = System.Globalization.CultureInfo.CurrentCulture;
+        Console.WriteLine("Current system locale: " + currentCulture.Name);
         // Setup Result's logger
         ResultLogger resultLogger = new();
         Result.Setup(cfg =>
@@ -150,12 +161,12 @@ Reasons ({result.Reasons.Count - 1}):
         });
 
         // Setup CLI Commands
-        Command syncbackCommand = new("syncback", "Performs 'syncback' for the provided project, using the `input` file given");
+        Command syncbackCommand = new("syncback", _("Performs 'syncback' for the provided project, using the `input` file given"));
         {
-            var projectArg = new Argument<string>("project", "Path to the project");
+            var projectArg = new Argument<string>("project", _("Path to the project"));
             projectArg.SetDefaultValue(DEFAULT_ROJO_PROJECT_PATH);
-            var inputOpt = new Option<string>(["--input", "-i"], "Path to the input file");
-            var rbxlOpt = new Option<string?>("--rbxl", "Path to the rbxl file");
+            var inputOpt = new Option<string>(["--input", "-i"], _("Path to the input file"));
+            var rbxlOpt = new Option<string?>("--rbxl", _("Path to the rbxl file"));
 
             syncbackCommand.AddArgument(projectArg);
             syncbackCommand.AddOption(inputOpt);
@@ -167,11 +178,11 @@ Reasons ({result.Reasons.Count - 1}):
             }, projectArg, inputOpt, rbxlOpt);
         }
 
-        Command buildCommand = new("build", "Builds rojo project into OVERDARE world");
+        Command buildCommand = new("build", _("Builds rojo project into OVERDARE world"));
         {
-            var projectArg = new Argument<string>("project", "Path to the project");
+            var projectArg = new Argument<string>("project", _("Path to the project"));
             projectArg.SetDefaultValue(DEFAULT_ROJO_PROJECT_PATH);
-            var outputOpt = new Option<string>(["--output", "-o"], "Path to the output file");
+            var outputOpt = new Option<string>(["--output", "-o"], _("Path to the output file"));
 
             buildCommand.AddArgument(projectArg);
             buildCommand.AddOption(outputOpt);
@@ -182,11 +193,11 @@ Reasons ({result.Reasons.Count - 1}):
             }, projectArg, outputOpt);
         }
 
-        Command devCommand = new("dev", "Starts developing rojo project");
+        Command devCommand = new("dev", _("Starts developing rojo project"));
         {
-            var projectArg = new Argument<string>("project", "Path to the project");
+            var projectArg = new Argument<string>("project", _("Path to the project"));
             projectArg.SetDefaultValue(DEFAULT_ROJO_PROJECT_PATH);
-            var outputOpt = new Option<string?>(["--output", "-o"], "Path to the output file");
+            var outputOpt = new Option<string?>(["--output", "-o"], _("Path to the output file"));
 
             devCommand.AddArgument(projectArg);
             devCommand.AddOption(outputOpt);
@@ -197,7 +208,7 @@ Reasons ({result.Reasons.Count - 1}):
             }, projectArg, outputOpt);
         }
 
-        Command initCommand = new("init", "Initializes a new rojo project");
+        Command initCommand = new("init", _("Initializes a new rojo project"));
         {
             initCommand.SetHandler(() =>
             {
@@ -212,24 +223,21 @@ Reasons ({result.Reasons.Count - 1}):
             });
         }
 
-        Command studioCommand = new("studio", "Opens OVERDARE Studio");
+        Command studioCommand = new("studio", _("Opens OVERDARE Studio"));
         {
             studioCommand.SetHandler(() =>
             {
                 var metadataResult = FindSandboxMetadata();
                 if (metadataResult.IsFailed)
                 {
-                    ExpectResult(Result.Fail($"Failed to find OVERDARE Studio metadata in the computer via Epic Games Launcher.").WithReasons(metadataResult.Errors));
+                    ExpectResult(Result.Fail(_("Failed to find OVERDARE Studio metadata in the computer via Epic Games Launcher.")).WithReasons(metadataResult.Errors));
                     return;
                 }
                 StartProcess(metadataResult.Value.ProgramPath);
             });
         }
 
-        Option<int> verboseOption = new(
-            aliases: ["--verbose", "-v"],
-            description: "Sets the verbosity level (e.g., -v 2, --verbosity 3)."
-        )
+        Option<int> verboseOption = new(["--verbose", "-v"], _("Sets the verbosity level (e.g., -v 2, --verbosity 3)."))
         {
             ArgumentHelpName = "level"
         };
@@ -325,23 +333,23 @@ Reasons ({result.Reasons.Count - 1}):
             Result rojoStatus = RequireProgram("rojo", "syncback --help");
             if (rojoStatus.IsFailed)
             {
-                return Result.Fail("`rojo syncback` is required to perform `ovjo syncback`, but failed to check.").WithReasons(rojoStatus.Errors);
+                return Result.Fail(_("`rojo syncback` is required to perform `ovjo syncback`, but failed to check.")).WithReasons(rojoStatus.Errors);
             }
         }
         var rojoProject = JsonConvert.DeserializeObject<JObject>(File.ReadAllText(rojoProjectPath));
         if (rojoProject == null)
         {
-            return Result.Fail("Failed to parse rojo project file.");
+            return Result.Fail(_("Failed to parse rojo project file."));
         }
         var worldDataPath = GetWorldDataPath(rojoProject);
         if (worldDataPath.IsFailed)
         {
-            return Result.Fail("Failed to get WorldData path.").WithReasons(worldDataPath.Errors);
+            return Result.Fail(_("Failed to get WorldData path.")).WithReasons(worldDataPath.Errors);
         }
         string? ovdrWorldPath = Path.GetDirectoryName(umapPath);
         if (ovdrWorldPath == null)
         {
-            return Result.Fail("Failed to get world path from umap file. Couldn't find `umap path`'s parent directory.");
+            return Result.Fail(_("Failed to get world path from umap file. Couldn't find `umap path`'s parent directory."));
         }
 
         // Initialize data files in empty BinaryStringValue .rbxm for the syncback
@@ -381,7 +389,7 @@ Reasons ({result.Reasons.Count - 1}):
         var stream = asset.PathToStream(umapPath);
         if (stream == null)
         {
-            return Result.Fail("Failed to read umap file.");
+            return Result.Fail(_("Failed to read umap file."));
         }
         {
             AssetBinaryReader reader = new(stream, asset);
@@ -486,13 +494,13 @@ Reasons ({result.Reasons.Count - 1}):
             {
                 if (instance is not RobloxFiles.LuaSourceContainer)
                 {
-                    return Result.Fail($"LuaCode property was found in this OVERDARE Instance({classTypeName}) but its Roblox class equivalent is not a LuaSourceContainer.");
+                    return Result.Fail(_("LuaCode property was found in this OVERDARE Instance({0}) but its Roblox class equivalent is not a LuaSourceContainer.", classTypeName));
                 }
                 Log.Information($"LuaCode object index: {luaCode.Value.Index}");
                 var import = luaCode.Value.ToImport(asset);
                 if (import == null)
                 {
-                    return Result.Fail($"Couldn't find Import of LuaCode ObjectPropertyData. File might be corrupted.");
+                    return Result.Fail(_("Couldn't find Import of LuaCode ObjectPropertyData. File might be corrupted."));
                 }
                 string packagePath = "";
                 // Follow the outer chain until we reach a top-level package  
@@ -517,7 +525,7 @@ Reasons ({result.Reasons.Count - 1}):
                 string luaCodePath = Path.ChangeExtension(Path.Combine(ovdrWorldPath.FixDirectorySeparatorsForDisk(), gameAssetPath.FixDirectorySeparatorsForDisk()), "lua");
                 if (!File.Exists(luaCodePath))
                 {
-                    return Result.Fail($"LuaCode file not found: {luaCodePath}");
+                    return Result.Fail(_("LuaCode file not found: {0}", luaCodePath));
                 }
                 string luaCodeContent = RemoveBom(File.ReadAllText(luaCodePath));
                 switch (instance)
@@ -575,7 +583,7 @@ Reasons ({result.Reasons.Count - 1}):
         process.WaitForExit();
         if (process.ExitCode != 0)
         {
-            return Result.Fail($"Failed to run `rojo syncback`.").WithReason(new Error($"rojo exited with code 0 with stderr: {process.StandardError.ReadToEnd()}"));
+            return Result.Fail(_("Failed to run `rojo syncback`.")).WithReason(new Error(_("rojo exited with code 0 with stderr: {0}", process.StandardError.ReadToEnd())));
         }
 
         // Delete the saved place file if it was a tempfile
@@ -596,23 +604,23 @@ Reasons ({result.Reasons.Count - 1}):
             Result rojoStatus = RequireProgram("rojo", "sourcemap --help");
             if (rojoStatus.IsFailed)
             {
-                return Result.Fail("`rojo sourcemap` is required to perform `ovjo build`, but failed to check.").WithReasons(rojoStatus.Errors);
+                return Result.Fail(_("`rojo sourcemap` is required to perform `ovjo build`, but failed to check.")).WithReasons(rojoStatus.Errors);
             }
         }
         var rojoProject = JsonConvert.DeserializeObject<JObject>(File.ReadAllText(rojoProjectPath));
         if (rojoProject == null)
         {
-            return Result.Fail("Failed to parse rojo project file.");
+            return Result.Fail(_("Failed to parse rojo project file."));
         }
         var worldDataPath = GetWorldDataPath(rojoProject);
         if (worldDataPath.IsFailed)
         {
-            return Result.Fail("Failed to get WorldData path.").WithReasons(worldDataPath.Errors);
+            return Result.Fail(_("Failed to get WorldData path.")).WithReasons(worldDataPath.Errors);
         }
         var mapData = RobloxFiles.BinaryRobloxFile.Open(Path.ChangeExtension(Path.Combine(worldDataPath.Value, WORLD_DATA_MAP_NAME), "rbxm")).GetChildren()[0];
         if (mapData is not RobloxFiles.BinaryStringValue mapBinaryString)
         {
-            return Result.Fail($"{{WorldData}}.{WORLD_DATA_MAP_NAME} is not a `BinaryStringValue`.");
+            return Result.Fail(_("{{WorldData}}.{0} is not a `BinaryStringValue`.", WORLD_DATA_MAP_NAME));
         }
         UAsset asset = new();
         asset.FilePath = umapPath;
@@ -629,7 +637,7 @@ Reasons ({result.Reasons.Count - 1}):
         var sourcemap = JsonConvert.DeserializeObject<JObject>(process.StandardOutput.ReadToEnd());
         if (sourcemap == null)
         {
-            return Result.Fail("Failed to deserialize sourcemap.");
+            return Result.Fail(_("Failed to deserialize sourcemap."));
         }
 
         return Result.Ok();
@@ -642,7 +650,7 @@ Reasons ({result.Reasons.Count - 1}):
         {
             return validPath;
         }
-        return Result.Fail($"Couldn't find `tree.{WORLD_DATA_NAME}[\"$path\"]` in project.json. This is required in ovjo.");
+        return Result.Fail(_("Couldn't find `tree.{0}[\"$path\"]` in project.json. This is required in ovjo.", WORLD_DATA_NAME));
     }
 
     private static Process StartProcess(string command, string args = "")
@@ -670,7 +678,7 @@ Reasons ({result.Reasons.Count - 1}):
 
         if (!Directory.Exists(manifestsPath))
         {
-            return Result.Fail("Manifest folder does not exist.");
+            return Result.Fail(_("Manifest folder does not exist."));
         }
 
         string[] itemFiles = Directory.GetFiles(manifestsPath, "*.item");
@@ -686,17 +694,17 @@ Reasons ({result.Reasons.Count - 1}):
             var installLocation = manifest["InstallLocation"]?.ToString();
             if (installLocation == null)
             {
-                return Result.Fail("Install location not found in manifest.");
+                return Result.Fail(_("Install location not found in manifest."));
             }
             var launchExecutable = manifest["LaunchExecutable"]?.ToString();
             if (launchExecutable == null)
             {
-                return Result.Fail("Launch executable not found in manifest.");
+                return Result.Fail(_("Launch executable not found in manifest."));
             }
             string programPath = Path.Combine(installLocation, launchExecutable);
             if (!File.Exists(programPath))
             {
-                return Result.Fail($"Launch executable not found.");
+                return Result.Fail(_("Launch executable not found."));
             }
 
             SandboxMetadata metadata = new()
@@ -707,6 +715,6 @@ Reasons ({result.Reasons.Count - 1}):
             return Result.Ok(metadata);
         }
 
-        return Result.Fail("Couldn't find Sandbox. Check `OVERDARE Studio` is installed in your Epic Games Launcher library.");
+        return Result.Fail(_("Couldn't find Sandbox. Check `OVERDARE Studio` is installed in your Epic Games Launcher library."));
     }
 }

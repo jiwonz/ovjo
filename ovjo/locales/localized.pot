@@ -1,0 +1,171 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-05-21 17:06+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: Program.cs:139
+#, csharp-format
+msgid ""
+"Execution of `{0} {1}` failed. {2} requires `{0}` to function properly with "
+"the provided arguments: `{1}`."
+msgstr ""
+
+#: Program.cs:146
+#, csharp-format
+msgid ""
+"Unable to execute `{0}`. It appears that `{0}` is not installed or is "
+"inaccessible. {1} requires `{0}` to function properly."
+msgstr ""
+
+#: Program.cs:161
+msgid ""
+"Performs 'syncback' for the provided project, using the `input` file given"
+msgstr ""
+
+#: Program.cs:163 Program.cs:180 Program.cs:195
+msgid "Path to the project"
+msgstr ""
+
+#: Program.cs:165
+msgid "Path to the input file"
+msgstr ""
+
+#: Program.cs:166
+msgid "Path to the rbxl file"
+msgstr ""
+
+#: Program.cs:178
+msgid "Builds rojo project into OVERDARE world"
+msgstr ""
+
+#: Program.cs:182 Program.cs:197
+msgid "Path to the output file"
+msgstr ""
+
+#: Program.cs:193
+msgid "Starts developing rojo project"
+msgstr ""
+
+#: Program.cs:208
+msgid "Initializes a new rojo project"
+msgstr ""
+
+#: Program.cs:223
+msgid "Opens OVERDARE Studio"
+msgstr ""
+
+#: Program.cs:230
+msgid ""
+"Failed to find OVERDARE Studio metadata in the computer via Epic Games "
+"Launcher."
+msgstr ""
+
+#: Program.cs:237
+msgid "Sets the verbosity level (e.g., -v 2, --verbosity 3)."
+msgstr ""
+
+#: Program.cs:333
+msgid ""
+"`rojo syncback` is required to perform `ovjo syncback`, but failed to check."
+msgstr ""
+
+#: Program.cs:339 Program.cs:610
+msgid "Failed to parse rojo project file."
+msgstr ""
+
+#: Program.cs:344 Program.cs:615
+msgid "Failed to get WorldData path."
+msgstr ""
+
+#: Program.cs:349
+msgid ""
+"Failed to get world path from umap file. Couldn't find `umap path`'s parent "
+"directory."
+msgstr ""
+
+#: Program.cs:389
+msgid "Failed to read umap file."
+msgstr ""
+
+#: Program.cs:494
+#, csharp-format
+msgid ""
+"LuaCode property was found in this OVERDARE Instance({0}) but its Roblox "
+"class equivalent is not a LuaSourceContainer."
+msgstr ""
+
+#: Program.cs:500
+msgid ""
+"Couldn't find Import of LuaCode ObjectPropertyData. File might be corrupted."
+msgstr ""
+
+#: Program.cs:525
+#, csharp-format
+msgid "LuaCode file not found: {0}"
+msgstr ""
+
+#: Program.cs:583
+msgid "Failed to run `rojo syncback`."
+msgstr ""
+
+#: Program.cs:583
+#, csharp-format
+msgid "rojo exited with code 0 with stderr: {0}"
+msgstr ""
+
+#: Program.cs:604
+msgid ""
+"`rojo sourcemap` is required to perform `ovjo build`, but failed to check."
+msgstr ""
+
+#: Program.cs:620
+#, csharp-format
+msgid "{{WorldData}}.{0} is not a `BinaryStringValue`."
+msgstr ""
+
+#: Program.cs:637
+msgid "Failed to deserialize sourcemap."
+msgstr ""
+
+#: Program.cs:650
+#, csharp-format
+msgid ""
+"Couldn't find `tree.{0}[\"$path\"]` in project.json. This is required in "
+"ovjo."
+msgstr ""
+
+#: Program.cs:678
+msgid "Manifest folder does not exist."
+msgstr ""
+
+#: Program.cs:694
+msgid "Install location not found in manifest."
+msgstr ""
+
+#: Program.cs:699
+msgid "Launch executable not found in manifest."
+msgstr ""
+
+#: Program.cs:704
+msgid "Launch executable not found."
+msgstr ""
+
+#: Program.cs:715
+msgid ""
+"Couldn't find Sandbox. Check `OVERDARE Studio` is installed in your Epic "
+"Games Launcher library."
+msgstr ""
