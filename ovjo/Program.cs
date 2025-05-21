@@ -255,7 +255,7 @@ Reasons ({result.Reasons.Count - 1}):
         {
             ArgumentHelpName = "level"
         };
-        RootCommand rootCommand = new("ovjo");
+        RootCommand rootCommand = new(_("Enables professional-grade development tools for OVERDARE developers"));
         rootCommand.AddGlobalOption(verboseOption);
         rootCommand.AddCommand(devCommand);
         rootCommand.AddCommand(initCommand);
@@ -360,7 +360,7 @@ Reasons ({result.Reasons.Count - 1}):
         {
             return Result.Fail(_("Failed to get WorldData path.")).WithReasons(worldDataPath.Errors);
         }
-        string? ovdrWorldPath = Path.GetDirectoryName(umapPath);
+        string? ovdrWorldPath = new FileInfo(umapPath).Directory?.FullName;
         if (ovdrWorldPath == null)
         {
             return Result.Fail(_("Failed to get world path from umap file. Couldn't find `umap path`'s parent directory."));
@@ -626,11 +626,18 @@ Reasons ({result.Reasons.Count - 1}):
         {
             return Result.Fail(_("Failed to parse rojo project file."));
         }
+        string? ovdrWorldPath = new FileInfo(umapPath).Directory?.FullName;
+        if (ovdrWorldPath == null)
+        {
+            return Result.Fail(_("Failed to get world path from umap file. Couldn't find `umap path`'s parent directory."));
+        }
         var worldDataPath = GetWorldDataPath(rojoProject);
         if (worldDataPath.IsFailed)
         {
             return Result.Fail(_("Failed to get WorldData path.")).WithReasons(worldDataPath.Errors);
         }
+
+        // Read UAsset from the WorldData
         var mapData = RobloxFiles.BinaryRobloxFile.Open(Path.ChangeExtension(Path.Combine(worldDataPath.Value, WORLD_DATA_MAP_NAME), "rbxm")).GetChildren()[0];
         if (mapData is not RobloxFiles.BinaryStringValue mapBinaryString)
         {
@@ -646,12 +653,69 @@ Reasons ({result.Reasons.Count - 1}):
             AssetBinaryReader reader = new(stream, asset);
             asset.Read(reader);
         }
+
+        // Read and parse sourcemap from rojo project
         Process process = StartProcess("rojo", $"sourcemap {rojoProjectPath}");
         process.WaitForExit();
         var sourcemap = JsonConvert.DeserializeObject<JObject>(process.StandardOutput.ReadToEnd());
         if (sourcemap == null)
         {
             return Result.Fail(_("Failed to deserialize sourcemap."));
+        }
+
+        // Check if the project is DataModel
+        string? className = sourcemap["className"]?.ToString();
+        if (className == null)
+        {
+            return Result.Fail(_("Expected `className` field in the sourcemap."));
+        }
+        if (className != "DataModel")
+        {
+            return Result.Fail(_("Only building the DataModel project, which means the world, is supported, and other instance classes other than DataModel, which means the model, are not supported."));
+        }
+
+        // Visit the children of the source map and create and add new scripts and folders that do not exist in the Overthere World file(aka UAsset, the .umap file),
+        // and compose the Lua folder of the Overthere World folder.
+        Result VisitSourcemapChild(JToken node)
+        {
+            string? className = node["className"]?.ToString();
+            if (className == null)
+            {
+                return Result.Fail(_("Expected `className` field in the child of sourcemap."));
+            }
+            string? name = node["name"]?.ToString();
+            if (name == null)
+            {
+                return Result.Fail(_("Expected `name` field in the child of sourcemap."));
+            }
+
+            var childrenProp = node["children"];
+            if (childrenProp is JArray children)
+            {
+                foreach (var child in children)
+                {
+                    Result visitResult = VisitSourcemapChild(child);
+                    if (visitResult.IsFailed)
+                    {
+                        return Result.Fail(_("Failed to visit child of sourcemap's child({0}<name: {1}>).", className, name)).WithReasons(visitResult.Errors);
+                    }
+                }
+            }
+
+            var filePathsProp = node["filePaths"];
+            if (filePathsProp is not JArray filePaths) filePaths = new JArray();
+            //switch (className)
+            //{
+            //    case "Folder":
+
+            //}
+
+            return Result.Ok();
+        }
+        Result visitResult = VisitSourcemapChild(sourcemap);
+        if (visitResult.IsFailed)
+        {
+            return Result.Fail(_("Failed to visit sourcemap.")).WithReasons(visitResult.Errors);
         }
 
         return Result.Ok();
