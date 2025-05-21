@@ -324,10 +324,12 @@ Reasons ({result.Reasons.Count - 1}):
 
     private static Result Syncback(string rojoProjectPath, string umapPath, string? rbxlPath)
     {
-        Result rojoSyncbackStatus = RequireProgram("rojo", "syncback --help");
-        if (rojoSyncbackStatus.IsFailed)
         {
-            return Result.Fail($"Rojo syncback is required to perform ovjo syncback, but got an error: {rojoSyncbackStatus.Errors[0].Message}");
+            Result rojoStatus = RequireProgram("rojo", "syncback --help");
+            if (rojoStatus.IsFailed)
+            {
+                return Result.Fail("`rojo syncback` is required to perform `ovjo syncback`, but failed to check.").WithErrors(rojoStatus.Errors);
+            }
         }
         var rojoProject = JsonConvert.DeserializeObject<JObject>(File.ReadAllText(rojoProjectPath));
         if (rojoProject == null)
@@ -337,7 +339,7 @@ Reasons ({result.Reasons.Count - 1}):
         var worldDataPath = GetWorldDataPath(rojoProject);
         if (worldDataPath.IsFailed)
         {
-            return Result.Fail(worldDataPath.Errors[0]);
+            return Result.Fail("Failed to get WorldData path.").WithErrors(worldDataPath.Errors);
         }
         string? ovdrWorldPath = Path.GetDirectoryName(umapPath);
         if (ovdrWorldPath == null)
@@ -345,7 +347,7 @@ Reasons ({result.Reasons.Count - 1}):
             return Result.Fail("Failed to get world path from umap file. Couldn't find `umap path`'s parent directory.");
         }
 
-        // Initialize data files in empty BinaryStringValue .rbxms for the syncback
+        // Initialize data files in empty BinaryStringValue .rbxm for the syncback
         {
             string[] worldDataFiles =
             [
@@ -580,7 +582,6 @@ Reasons ({result.Reasons.Count - 1}):
         {
             using var _ = new Defer(() =>
             {
-
                 File.Delete(robloxPlaceFilePath);
             });
         }
@@ -590,6 +591,13 @@ Reasons ({result.Reasons.Count - 1}):
 
     private static Result Build(string rojoProjectPath, string umapPath)
     {
+        {
+            Result rojoStatus = RequireProgram("rojo", "sourcemap --help");
+            if (rojoStatus.IsFailed)
+            {
+                return Result.Fail("`rojo sourcemap` is required to perform `ovjo build`, but failed to check.").WithErrors(rojoStatus.Errors);
+            }
+        }
         var rojoProject = JsonConvert.DeserializeObject<JObject>(File.ReadAllText(rojoProjectPath));
         if (rojoProject == null)
         {
@@ -598,7 +606,7 @@ Reasons ({result.Reasons.Count - 1}):
         var worldDataPath = GetWorldDataPath(rojoProject);
         if (worldDataPath.IsFailed)
         {
-            return Result.Fail(worldDataPath.Errors[0]);
+            return Result.Fail("Failed to get WorldData path.").WithErrors(worldDataPath.Errors);
         }
 
         return Result.Ok();
