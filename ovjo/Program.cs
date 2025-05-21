@@ -188,7 +188,7 @@ Reasons ({result.Reasons.Count - 1}):
 
             syncbackCommand.SetHandler((project, input, rbxl) =>
             {
-                Syncback(project, input, rbxl);
+                ExpectResult(Syncback(project, input, rbxl));
             }, projectArg, inputOpt, rbxlOpt);
         }
 
