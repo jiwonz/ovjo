@@ -57,7 +57,7 @@ internal class Program
     const string WORLD_DATA_JSON_FILES_NAME = "JsonFiles";
     const string PROGRAM_NAME = "ovjo";
 
-    private static readonly ICatalog Catalog;
+    private static readonly ICatalog _catalog;
 
     static Program()
     {
@@ -69,15 +69,15 @@ internal class Program
 
         if (stream == null)
         {
-            Catalog = new Catalog();
+            _catalog = new Catalog();
             return;
         }
-        Catalog = new Catalog(stream);
+        _catalog = new Catalog(stream);
     }
 
     private static string _(string text, params object[] args)
     {
-        return Catalog.GetString(text, args);
+        return _catalog.GetString(text, args);
     }
 
     private class ResultLogger : IResultLogger
