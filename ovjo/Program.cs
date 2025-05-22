@@ -431,7 +431,7 @@ Reasons ({result.Reasons.Count - 1}):
                 foreach (string p in files)
                 {
                     byte[] content = File.ReadAllBytes(p);
-                    if (Path.GetExtension(p) == ".json")
+                    if (Path.GetExtension(p).Equals(".json", StringComparison.OrdinalIgnoreCase))
                     {
                         content = MessagePack.MessagePackSerializer.ConvertFromJson(Encoding.UTF8.GetString(content));
                     }
@@ -448,8 +448,8 @@ Reasons ({result.Reasons.Count - 1}):
             };
             string[] plainFiles = Directory.GetFiles(ovdrWorldPath)
                      .Where(file =>
-                        !file.EndsWith(".json", StringComparison.OrdinalIgnoreCase) &&
-                        !file.EndsWith(".umap", StringComparison.OrdinalIgnoreCase))
+                        !Path.GetExtension(file).Equals(".json", StringComparison.OrdinalIgnoreCase) &&
+                        !Path.GetExtension(file).Equals(".umap", StringComparison.OrdinalIgnoreCase))
                      .ToArray();
             RobloxFiles.BinaryStringValue plainFilesData = new()
             {
