@@ -502,8 +502,7 @@ Reasons ({result.Reasons.Count - 1}):
                 isUnknownInstance = true;
             }
 
-            // Setting script Roblox Instance up and sets ObjectName if needed
-            bool needObjectName = false;
+            // Setting script Roblox Instance up
             if (normalExport["LuaCode"] is UAssetAPI.PropertyTypes.Objects.ObjectPropertyData luaCode)
             {
                 if (instance is not RobloxFiles.LuaSourceContainer)
@@ -546,18 +545,15 @@ Reasons ({result.Reasons.Count - 1}):
                 {
                     case RobloxFiles.Script script:
                         script.Source = luaCodeContent;
-                        needObjectName = true;
                         break;
                     case RobloxFiles.ModuleScript moduleScript:
                         moduleScript.Source = luaCodeContent;
-                        needObjectName = true;
                         break;
                 }
             }
-            if (instance is RobloxFiles.Folder) needObjectName = true;
-            if (needObjectName) instance.SetAttribute("ObjectName", export.ObjectName.ToString());
 
             // Setting normal Roblox Instance up
+            instance.SetAttribute("ObjectName", export.ObjectName.ToString());
             if (normalExport["Name"] is UAssetAPI.PropertyTypes.Objects.StrPropertyData nameProperty)
             {
                 Log.Debug($"Instance Name: {nameProperty.Value.Value}");
@@ -676,6 +672,8 @@ Reasons ({result.Reasons.Count - 1}):
 
         // Visit every children of the source map and create and add new scripts and folders that do not exist in the Overthere World file(aka UAsset, the .umap file),
         // and compose the Lua folder of the Overthere World folder.
+        // Checks "ObjectName" attribute from .meta.json file and validate them based on WorldData. (Verifies parent/child relationships between instances and their presence in map data)
+        // Invalid things are considered as "Out of sync". and ovjo will throw an error for this and require a syncback process.
         Result VisitSourcemapChild(JToken node)
         {
             string? className = node["className"]?.ToString();
