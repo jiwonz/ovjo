@@ -670,8 +670,8 @@ Reasons ({result.Reasons.Count - 1}):
             return Result.Fail(_("Only building the DataModel project, which means the world, is supported, and other instance classes other than DataModel, which means the model, are not supported."));
         }
 
-        // Visit every children of the source map and create and add new scripts and folders that do not exist in the Overthere World file(aka UAsset, the.umap file),
-        // and compose the Lua folder of the Overthere World folder.
+        // Visit every children of the source map and create and add new scripts and folders that do not exist in the OVERDARE World file(aka UAsset, the.umap file),
+        // and compose the Lua folder of the OVERDARE World folder.
         // Checks "ObjectName" attribute from .meta.json file and validate them based on WorldData. (Verifies parent / child relationships between instances and their presence in map data)
         // Invalid things are considered as "Out of sync".and ovjo will throw an error for this and require a syncback process.
         Result VisitSourcemapChild(JToken node)
