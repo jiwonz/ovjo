@@ -674,7 +674,7 @@ Reasons ({result.Reasons.Count - 1}):
             return Result.Fail(_("Only building the DataModel project, which means the world, is supported, and other instance classes other than DataModel, which means the model, are not supported."));
         }
 
-        // Visit the children of the source map and create and add new scripts and folders that do not exist in the Overthere World file(aka UAsset, the .umap file),
+        // Visit every children of the source map and create and add new scripts and folders that do not exist in the Overthere World file(aka UAsset, the .umap file),
         // and compose the Lua folder of the Overthere World folder.
         Result VisitSourcemapChild(JToken node)
         {
