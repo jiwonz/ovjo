@@ -251,7 +251,7 @@ Reasons ({result.Reasons.Count - 1}):
             });
         }
 
-        Option<int> verboseOption = new(["--verbose", "-v"], _("Sets the verbosity level (e.g., -v 2, --verbose 3)."))
+        Option<int> verboseOption = new(["--verbose", "-v"], _("Sets the verbosity level (e.g., -v 2, --verbose 3)"))
         {
             ArgumentHelpName = "level"
         };
