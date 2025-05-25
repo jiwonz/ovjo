@@ -7,6 +7,7 @@ using Serilog.Events;
 using System.CommandLine;
 using System.CommandLine.Builder;
 using System.CommandLine.Parsing;
+using static Ovjo.LocalizationCatalog.Program;
 
 namespace Ovjo
 {
@@ -107,7 +108,7 @@ namespace Ovjo
 
                 syncbackCommand.SetHandler((project, input, rbxl) =>
                 {
-                    ExpectResult(Syncback(project, input, rbxl));
+                    ExpectResult(LibOvjo.Syncback(project, input, rbxl));
                 }, projectArg, inputOpt, rbxlOpt);
             }
 
@@ -152,7 +153,7 @@ namespace Ovjo
                     string directoryName = Path.GetFileName(currentDirectoryPath);
                     File.WriteAllText(_defaultRojoProjectPath, JsonConvert.SerializeObject(CreateDefaultRojoProject(directoryName), Formatting.Indented));
 
-                    ExpectResult(Syncback(_defaultRojoProjectPath, umapPath, null));
+                    ExpectResult(LibOvjo.Syncback(_defaultRojoProjectPath, umapPath, null));
                 });
             }
 
