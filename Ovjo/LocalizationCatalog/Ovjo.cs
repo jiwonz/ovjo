@@ -2,13 +2,13 @@
 
 namespace Ovjo.LocalizationCatalog
 {
-    internal static class Program
+    internal static class Ovjo
     {
         private static readonly ICatalog _catalog;
 
-        static Program()
+        static Ovjo()
         {
-            _catalog = LocalizationCatalogHelper.CreateCatalog("program");
+            _catalog = LocalizationCatalogHelper.CreateCatalog("ovjo");
         }
 
         internal static string _(string text, params object[] args)

@@ -2,12 +2,13 @@
 using System.Diagnostics;
 using System.Reflection;
 using System.Text;
+using static Ovjo.LocalizationCatalog.Ovjo;
 
 namespace Ovjo
 {
     internal static class UtilityFunctions
     {
-        public static T? TryCreateInstance<T>(string className) where T : class
+        public static T? TryCreateRobloxInstance<T>(string className) where T : class
         {
             string fullClassName = $"RobloxFiles.{className}";
 
@@ -63,14 +64,14 @@ namespace Ovjo
                 process.WaitForExit();
                 if (process.ExitCode != 0)
                 {
-                    return Result.Fail(_("Execution of `{0} {1}` failed. {2} requires `{0}` to function properly with the provided arguments: `{1}`.", program, args, AppName))
+                    return Result.Fail(_("Execution of `{0} {1}` failed. {2} requires `{0}` to function properly with the provided arguments: `{1}`.", program, args, Program.AppName))
                         .WithReason(new Error(process.StandardError.ReadToEnd()));
                 }
                 return Result.Ok();
             }
             catch (Exception e)
             {
-                return Result.Fail(_("Unable to execute `{0}`. It appears that `{0}` is not installed or is inaccessible. {1} requires `{0}` to function properly.", program, AppName))
+                return Result.Fail(_("Unable to execute `{0}`. It appears that `{0}` is not installed or is inaccessible. {1} requires `{0}` to function properly.", program, Program.AppName))
                     .WithReason(new Error(e.Message));
             }
         }
@@ -89,5 +90,10 @@ namespace Ovjo
         {
             _disposal();
         }
+    }
+
+    internal class EasyUAsset
+    {
+
     }
 }

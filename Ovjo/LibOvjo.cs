@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Text;
 using System.Text.RegularExpressions;
 using UAssetAPI;
+using static Ovjo.LocalizationCatalog.Ovjo;
 
 namespace Ovjo
 {

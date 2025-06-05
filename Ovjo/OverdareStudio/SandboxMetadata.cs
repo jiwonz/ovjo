@@ -1,24 +1,26 @@
 ﻿using FluentResults;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
+using static Ovjo.LocalizationCatalog.OverdareStudio;
 
-namespace Ovjo
+namespace Ovjo.OverdareStudio
 {
     public class SandboxMetadata
     {
-        public const string SandboxAppName = "20687893280c48c787633578d3e0ca2e";
+        public const UAssetAPI.UnrealTypes.EngineVersion UnrealEngineVersion = UAssetAPI.UnrealTypes.EngineVersion.VER_UE5_3;
+        public const string AppName = "20687893280c48c787633578d3e0ca2e";
 
-        private static string sandboxBaseplateUMapPath = Path.Combine("Sandbox", "EditorResource", "Sandbox", "WorldTemplate", "Baseplate", "Baseplate.umap");
+        public static string DefaultTemplateUmapPath = Path.Combine("Sandbox", "EditorResource", "Sandbox", "WorldTemplate", "Baseplate", "Baseplate.umap");
 
         public required string ProgramPath { get; set; }
         public required string InstallationPath { get; set; }
 
         public string GetDefaultUMapPath()
         {
-            return Path.Combine(InstallationPath, sandboxBaseplateUMapPath);
+            return Path.Combine(InstallationPath, DefaultTemplateUmapPath);
         }
 
-        public static Result<SandboxMetadata> TryFindViaEpicGamesLauncher()
+        public static Result<SandboxMetadata> TryFindFromEpicGamesLauncher()
         {
             string programDataPath = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData);
             string manifestsPath = Path.Combine(programDataPath, "Epic", "EpicGamesLauncher", "Data", "Manifests");
@@ -34,7 +36,7 @@ namespace Ovjo
             {
                 string content = File.ReadAllText(file);
                 var manifest = JsonConvert.DeserializeObject<JObject>(content);
-                if (manifest == null || manifest["AppName"]?.ToString() != SANDBOX_APP_NAME)
+                if (manifest == null || manifest["AppName"]?.ToString() != AppName)
                 {
                     continue;
                 }
