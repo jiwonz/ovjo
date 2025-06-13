@@ -7,14 +7,17 @@ using Serilog.Events;
 using System.CommandLine;
 using System.CommandLine.Builder;
 using System.CommandLine.Parsing;
-using static Ovjo.LocalizationCatalog.Ovjo;
+using static Ovjo.LocalizationCatalog.Program;
 
 namespace Ovjo
 {
     internal class Program
     {
         private const string _defaultRojoProjectPath = "default.project.json";
-        const string WordDataDirectory = "WorldData";
+        const string WORLD_DATA_NAME = "WorldData";
+        const string WORLD_DATA_MAP_NAME = "Map";
+        const string WORLD_DATA_PLAIN_FILES_NAME = "PlainFiles";
+        const string WORLD_DATA_JSON_FILES_NAME = "JsonFiles";
         public const string AppName = "ovjo";
 
         private class ResultLogger : IResultLogger
@@ -74,9 +77,9 @@ namespace Ovjo
                 ["tree"] = new Dictionary<string, object>
                 {
                     ["$className"] = "DataModel",
-                    [WordDataDirectory] = new Dictionary<string, object>
+                    [WORLD_DATA_NAME] = new Dictionary<string, object>
                     {
-                        ["$path"] = WordDataDirectory
+                        ["$path"] = WORLD_DATA_NAME
                     }
                 },
             };
@@ -143,7 +146,7 @@ namespace Ovjo
             {
                 initCommand.SetHandler(() =>
                 {
-                    var sandboxMetadata = ExpectResult(OverdareStudio.SandboxMetadata.TryFindFromEpicGamesLauncher());
+                    var sandboxMetadata = ExpectResult(FindSandboxMetadata());
                     string umapPath = sandboxMetadata.GetDefaultUMapPath();
 
                     string currentDirectoryPath = Directory.GetCurrentDirectory();
@@ -158,7 +161,7 @@ namespace Ovjo
             {
                 studioCommand.SetHandler(() =>
                 {
-                    var metadataResult = OverdareStudio.SandboxMetadata.TryFindFromEpicGamesLauncher();
+                    var metadataResult = FindSandboxMetadata();
                     if (metadataResult.IsFailed)
                     {
                         ExpectResult(Result.Fail(_("Failed to find OVERDARE Studio metadata in the computer via Epic Games Launcher.")).WithReasons(metadataResult.Errors));
@@ -233,12 +236,12 @@ namespace Ovjo
         // TODO: Abstract this into WorldData class
         private static Result<string> GetWorldDataPath(JObject rojoProject)
         {
-            var path = rojoProject["tree"]?[WordDataDirectory]?["$path"]?.ToString();
+            var path = rojoProject["tree"]?[WORLD_DATA_NAME]?["$path"]?.ToString();
             if (path is string validPath)
             {
                 return validPath;
             }
-            return Result.Fail(_("Couldn't find `tree.{0}[\"$path\"]` in project.json. This is required in ovjo.", WordDataDirectory));
+            return Result.Fail(_("Couldn't find `tree.{0}[\"$path\"]` in project.json. This is required in ovjo.", WORLD_DATA_NAME));
         }
     }
 }

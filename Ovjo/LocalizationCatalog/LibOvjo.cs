@@ -2,11 +2,11 @@
 
 namespace Ovjo.LocalizationCatalog
 {
-    internal static class OverdareStudio
+    internal static class LibOvjo
     {
         private static readonly ICatalog _catalog;
 
-        static OverdareStudio()
+        static LibOvjo()
         {
             _catalog = LocalizationCatalogHelper.CreateCatalog("lib_ovjo");
         }
