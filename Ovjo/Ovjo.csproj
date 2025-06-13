@@ -19,6 +19,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Reference Include="Overdare">
+      <HintPath>..\..\Overdare.NET\Overdare\bin\Debug\net8.0\Overdare.dll</HintPath>
+    </Reference>
     <Reference Include="RobloxFileFormat">
       <HintPath>..\..\Roblox-File-Format\bin\Debug\RobloxFileFormat.dll</HintPath>
     </Reference>
