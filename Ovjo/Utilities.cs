@@ -27,7 +27,7 @@ namespace Ovjo
                     }
                     catch
                     {
-                        return Enumerable.Empty<Type>();
+                        return [];
                     }
                 })
                 .FirstOrDefault(t => t?.FullName == fullClassName);
@@ -44,7 +44,7 @@ namespace Ovjo
         {
             string BOMMarkUtf8 = Encoding.UTF8.GetString(Encoding.UTF8.GetPreamble());
             if (p.StartsWith(BOMMarkUtf8, StringComparison.Ordinal))
-                p = p.Remove(0, BOMMarkUtf8.Length);
+                p = p[BOMMarkUtf8.Length..];
             return p.Replace("\0", "");
         }
 
@@ -107,18 +107,11 @@ namespace Ovjo
         }
     }
 
-    internal class Defer : IDisposable
+    internal class Defer(Action disposal) : IDisposable
     {
-        private readonly Action _disposal;
-
-        public Defer(Action disposal)
-        {
-            _disposal = disposal;
-        }
-
         void IDisposable.Dispose()
         {
-            _disposal();
+            disposal();
         }
     }
 }

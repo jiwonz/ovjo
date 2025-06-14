@@ -1,8 +1,6 @@
-﻿using NGettext;
-using System;
-using System.Collections.Generic;
-using System.Globalization;
+﻿using System.Globalization;
 using System.Reflection;
+using NGettext;
 
 namespace Ovjo.LocalizationCatalog
 {
@@ -11,8 +9,12 @@ namespace Ovjo.LocalizationCatalog
         public static ICatalog CreateCatalog(string catalogName)
         {
             var assembly = Assembly.GetExecutingAssembly();
-            var uiCulture = new CultureInfo(Environment.GetEnvironmentVariable("OVJO_LOCALE") ?? CultureInfo.CurrentUICulture.TwoLetterISOLanguageName);
-            var resourceName = $"Ovjo.locales.{uiCulture.TwoLetterISOLanguageName}.LC_MESSAGES.{catalogName}.mo";
+            var uiCulture = new CultureInfo(
+                Environment.GetEnvironmentVariable("OVJO_LOCALE")
+                    ?? CultureInfo.CurrentUICulture.TwoLetterISOLanguageName
+            );
+            var resourceName =
+                $"Ovjo.locales.{uiCulture.TwoLetterISOLanguageName}.LC_MESSAGES.{catalogName}.mo";
 
             var stream = assembly.GetManifestResourceStream(resourceName);
 
