@@ -1,17 +1,17 @@
-﻿using FluentResults;
+﻿using System.CommandLine;
+using System.CommandLine.Builder;
+using System.CommandLine.Parsing;
+using FluentResults;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Serilog;
 using Serilog.Events;
-using System.CommandLine;
-using System.CommandLine.Builder;
-using System.CommandLine.Parsing;
-using static Ovjo.LocalizationCatalog.Program;
+using static Ovjo.LocalizationCatalog.Ovjo;
 
 namespace Ovjo
 {
-    internal class Program
+    internal static class Program
     {
         private const string _defaultRojoProjectPath = "default.project.json";
         const string WORLD_DATA_NAME = "WorldData";
@@ -36,36 +36,51 @@ namespace Ovjo
 
             public void Log(string context, string content, ResultBase result, LogLevel logLevel)
             {
-                Serilog.Log.Write(GetLogEventLevel(logLevel), FormatMessage(content, context, result, logLevel));
+                Serilog.Log.Write(
+                    GetLogEventLevel(logLevel),
+                    FormatMessage(content, context, result, logLevel)
+                );
             }
 
             public void Log<TContext>(string content, ResultBase result, LogLevel logLevel)
             {
                 var contextName = typeof(TContext).FullName ?? typeof(TContext).Name;
-                Serilog.Log.Write(GetLogEventLevel(logLevel), FormatMessage(content, contextName, result, logLevel));
+                Serilog.Log.Write(
+                    GetLogEventLevel(logLevel),
+                    FormatMessage(content, contextName, result, logLevel)
+                );
             }
 
-            private string FormatMessage(string content, string context, ResultBase result, LogLevel level)
+            private string FormatMessage(
+                string content,
+                string context,
+                ResultBase result,
+                LogLevel level
+            )
             {
                 var mainReason = result.Reasons.FirstOrDefault();
                 if (mainReason == null)
                 {
                     return string.Empty;
                 }
-                var reasonLines = result.Reasons.Skip(1).Select(reason =>
-                {
-                    return $"  - {reason.Message}";
-                });
+                var reasonLines = result
+                    .Reasons.Skip(1)
+                    .Select(reason =>
+                    {
+                        return $"  - {reason.Message}";
+                    });
 
                 var reasonBlock = string.Join(Environment.NewLine, reasonLines);
 
-                return result.Reasons.Count > 1 ? $"""
-    {mainReason.Message}
-    Reasons ({result.Reasons.Count - 1}):
-    {reasonBlock}
-    """ : $"""
-    {mainReason.Message}
-    """;
+                return result.Reasons.Count > 1
+                    ? $"""
+                        {mainReason.Message}
+                        Reasons ({result.Reasons.Count - 1}):
+                        {reasonBlock}
+                        """
+                    : $"""
+                        {mainReason.Message}
+                        """;
             }
         }
 
@@ -79,8 +94,8 @@ namespace Ovjo
                     ["$className"] = "DataModel",
                     [WORLD_DATA_NAME] = new Dictionary<string, object>
                     {
-                        ["$path"] = WORLD_DATA_NAME
-                    }
+                        ["$path"] = WORLD_DATA_NAME,
+                    },
                 },
             };
         }
@@ -95,7 +110,10 @@ namespace Ovjo
             });
 
             // Setup CLI Commands
-            Command syncbackCommand = new("syncback", _("Performs 'syncback' for the provided project, using the `input` file given"));
+            Command syncbackCommand = new(
+                "syncback",
+                _("Performs 'syncback' for the provided project, using the `input` file given")
+            );
             {
                 var projectArg = new Argument<string>("project", _("Path to the project"));
                 projectArg.SetDefaultValue(_defaultRojoProjectPath);
@@ -106,52 +124,77 @@ namespace Ovjo
                 syncbackCommand.AddOption(inputOpt);
                 syncbackCommand.AddOption(rbxlOpt);
 
-                syncbackCommand.SetHandler((project, input, rbxl) =>
-                {
-                    ExpectResult(LibOvjo.Syncback(project, input, rbxl));
-                }, projectArg, inputOpt, rbxlOpt);
+                syncbackCommand.SetHandler(
+                    (project, input, rbxl) =>
+                    {
+                        ExpectResult(LibOvjo.Syncback(project, input, rbxl));
+                    },
+                    projectArg,
+                    inputOpt,
+                    rbxlOpt
+                );
             }
 
             Command buildCommand = new("build", _("Builds rojo project into OVERDARE world"));
             {
                 var projectArg = new Argument<string>("project", _("Path to the project"));
                 projectArg.SetDefaultValue(_defaultRojoProjectPath);
-                var outputOpt = new Option<string>(["--output", "-o"], _("Path to the output file"));
+                var outputOpt = new Option<string>(
+                    ["--output", "-o"],
+                    _("Path to the output file")
+                );
 
                 buildCommand.AddArgument(projectArg);
                 buildCommand.AddOption(outputOpt);
 
-                buildCommand.SetHandler((project, output) =>
-                {
-                    Console.WriteLine($"Hello, {project}!");
-                }, projectArg, outputOpt);
+                buildCommand.SetHandler(
+                    (project, output) =>
+                    {
+                        Console.WriteLine($"Hello, {project}!");
+                    },
+                    projectArg,
+                    outputOpt
+                );
             }
 
             Command devCommand = new("dev", _("Starts developing rojo project"));
             {
                 var projectArg = new Argument<string>("project", _("Path to the project"));
                 projectArg.SetDefaultValue(_defaultRojoProjectPath);
-                var outputOpt = new Option<string?>(["--output", "-o"], _("Path to the output file"));
+                var outputOpt = new Option<string?>(
+                    ["--output", "-o"],
+                    _("Path to the output file")
+                );
 
                 devCommand.AddArgument(projectArg);
                 devCommand.AddOption(outputOpt);
 
-                devCommand.SetHandler((project, output) =>
-                {
-                    Console.WriteLine($"Hello, {project}!");
-                }, projectArg, outputOpt);
+                devCommand.SetHandler(
+                    (project, output) =>
+                    {
+                        Console.WriteLine($"Hello, {project}!");
+                    },
+                    projectArg,
+                    outputOpt
+                );
             }
 
             Command initCommand = new("init", _("Initializes a new rojo project"));
             {
                 initCommand.SetHandler(() =>
                 {
-                    var sandboxMetadata = ExpectResult(FindSandboxMetadata());
+                    var sandboxMetadata = ExpectResult(UtilityFunctions.TryFindSandboxMetadata());
                     string umapPath = sandboxMetadata.GetDefaultUMapPath();
 
                     string currentDirectoryPath = Directory.GetCurrentDirectory();
                     string directoryName = Path.GetFileName(currentDirectoryPath);
-                    File.WriteAllText(_defaultRojoProjectPath, JsonConvert.SerializeObject(CreateDefaultRojoProject(directoryName), Formatting.Indented));
+                    File.WriteAllText(
+                        _defaultRojoProjectPath,
+                        JsonConvert.SerializeObject(
+                            CreateDefaultRojoProject(directoryName),
+                            Formatting.Indented
+                        )
+                    );
 
                     ExpectResult(LibOvjo.Syncback(_defaultRojoProjectPath, umapPath, null));
                 });
@@ -161,21 +204,34 @@ namespace Ovjo
             {
                 studioCommand.SetHandler(() =>
                 {
-                    var metadataResult = FindSandboxMetadata();
+                    var metadataResult = UtilityFunctions.TryFindSandboxMetadata();
                     if (metadataResult.IsFailed)
                     {
-                        ExpectResult(Result.Fail(_("Failed to find OVERDARE Studio metadata in the computer via Epic Games Launcher.")).WithReasons(metadataResult.Errors));
+                        ExpectResult(
+                            Result
+                                .Fail(
+                                    _(
+                                        "Failed to find OVERDARE Studio metadata in the computer via Epic Games Launcher."
+                                    )
+                                )
+                                .WithReasons(metadataResult.Errors)
+                        );
                         return;
                     }
                     UtilityFunctions.StartProcess(metadataResult.Value.ProgramPath);
                 });
             }
 
-            Option<int> verboseOption = new(["--verbose", "-v"], _("Sets the verbosity level (e.g., -v 2, --verbose 3)"))
+            Option<int> verboseOption = new(
+                ["--verbose", "-v"],
+                _("Sets the verbosity level (e.g., -v 2, --verbose 3)")
+            )
             {
-                ArgumentHelpName = "level"
+                ArgumentHelpName = "level",
             };
-            RootCommand rootCommand = new(_("Enables professional-grade development tools for OVERDARE developers"));
+            RootCommand rootCommand = new(
+                _("Enables professional-grade development tools for OVERDARE developers")
+            );
             rootCommand.AddGlobalOption(verboseOption);
             rootCommand.AddCommand(devCommand);
             rootCommand.AddCommand(initCommand);
@@ -183,34 +239,39 @@ namespace Ovjo
             rootCommand.AddCommand(studioCommand);
 
             CommandLineBuilder commandLineBuilder = new(rootCommand);
-            commandLineBuilder.AddMiddleware(async (context, next) =>
-            {
-                // Setup logger with logger verbosity level
-                var verbosity = context.ParseResult.GetValueForOption(verboseOption);
-                LogEventLevel minimumLevel = verbosity switch
+            commandLineBuilder.AddMiddleware(
+                async (context, next) =>
                 {
-                    >= 3 => LogEventLevel.Verbose,
-                    2 => LogEventLevel.Debug,
-                    1 => LogEventLevel.Information,
-                    _ => LogEventLevel.Warning
-                };
-                Log.Logger = new LoggerConfiguration()
-                    .MinimumLevel.Is(minimumLevel)
-                    .WriteTo.Console(outputTemplate: $"[{{Timestamp:HH:mm:ss}} {{Level:u3}} {AppName}] {{Message:lj}}{{NewLine}}{{Exception}}", standardErrorFromLevel: Serilog.Events.LogEventLevel.Warning)
-                    .CreateLogger();
+                    // Setup logger with logger verbosity level
+                    var verbosity = context.ParseResult.GetValueForOption(verboseOption);
+                    LogEventLevel minimumLevel = verbosity switch
+                    {
+                        >= 3 => LogEventLevel.Verbose,
+                        2 => LogEventLevel.Debug,
+                        1 => LogEventLevel.Information,
+                        _ => LogEventLevel.Warning,
+                    };
+                    Log.Logger = new LoggerConfiguration()
+                        .MinimumLevel.Is(minimumLevel)
+                        .WriteTo.Console(
+                            outputTemplate: $"[{{Timestamp:HH:mm:ss}} {{Level:u3}} {AppName}] {{Message:lj}}{{NewLine}}{{Exception}}",
+                            standardErrorFromLevel: Serilog.Events.LogEventLevel.Warning
+                        )
+                        .CreateLogger();
 
-                // Check rojo is ok and warn if not
-                UtilityFunctions.RequireProgram("rojo", "syncback --help").LogIfFailed(LogLevel.Warning);
+                    // Check rojo is ok and warn if not
+                    UtilityFunctions
+                        .RequireProgram("rojo", "syncback --help")
+                        .LogIfFailed(LogLevel.Warning);
 
-                await next(context);
-            });
+                    await next(context);
+                }
+            );
             commandLineBuilder.UseDefaults();
             var parser = commandLineBuilder.Build();
 
             return await parser.InvokeAsync(args);
         }
-
-    
 
         private static T ExpectResult<T>(Result<T> result)
         {
@@ -241,7 +302,12 @@ namespace Ovjo
             {
                 return validPath;
             }
-            return Result.Fail(_("Couldn't find `tree.{0}[\"$path\"]` in project.json. This is required in ovjo.", WORLD_DATA_NAME));
+            return Result.Fail(
+                _(
+                    "Couldn't find `tree.{0}[\"$path\"]` in project.json. This is required in ovjo.",
+                    WORLD_DATA_NAME
+                )
+            );
         }
     }
 }
