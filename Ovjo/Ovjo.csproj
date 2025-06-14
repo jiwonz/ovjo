@@ -19,6 +19,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Reference Include="LZ4">
+      <HintPath>..\..\Roblox-File-Format\packages\lz4net.1.0.15.93\lib\net4-client\LZ4.dll</HintPath>
+    </Reference>
+    <Reference Include="Overdare">
+      <HintPath>..\..\Overdare.NET\Overdare\bin\Debug\net8.0\Overdare.dll</HintPath>
+    </Reference>
     <Reference Include="RobloxFileFormat">
       <HintPath>..\..\Roblox-File-Format\bin\Debug\RobloxFileFormat.dll</HintPath>
     </Reference>
