@@ -40,6 +40,11 @@ namespace Ovjo
             return null;
         }
 
+        public static RobloxFiles.Instance? TryCreateInstance(string className)
+        {
+            return TryCreateInstance<RobloxFiles.Instance>(className);
+        }
+
         public static string RemoveBom(string p)
         {
             string BOMMarkUtf8 = Encoding.UTF8.GetString(Encoding.UTF8.GetPreamble());

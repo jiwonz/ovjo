@@ -1,5 +1,6 @@
 ﻿using System.Text;
 using LZ4;
+using Serilog;
 
 namespace Ovjo
 {
@@ -25,7 +26,11 @@ namespace Ovjo
 
         public World(BinaryReader reader)
         {
-            if (reader.ReadBytes(MagicHeader.Length) != MagicHeader)
+            var readMagicHeader = reader.ReadBytes(MagicHeader.Length);
+            Log.Debug(
+                $"{BitConverter.ToString(readMagicHeader)} == {BitConverter.ToString(MagicHeader)}"
+            );
+            if (!readMagicHeader.SequenceEqual(MagicHeader))
             {
                 throw new InvalidDataException(
                     "Invalid ovjo world file format. Got an invalid magic header."
@@ -55,14 +60,14 @@ namespace Ovjo
 
             {
                 var mapChunkSize = reader.ReadInt32();
+                Log.Debug("Map chunk size: {MapChunkSize}", mapChunkSize);
                 if (mapChunkSize < 0 || mapChunkSize > uncompressedLength)
                 {
-                    var mapChunkData = new byte[mapChunkSize];
-                    Array.Copy(uncompressed, 0, mapChunkData, 0, mapChunkSize);
-                    Map = new(mapChunkData);
+                    throw new InvalidDataException("Invalid map chunk size in ovjo world file.");
                 }
-                if (Map == null)
-                    throw new InvalidDataException("World does not contain a valid map chunk.");
+                var mapChunkData = new byte[mapChunkSize];
+                Array.Copy(uncompressed, 0, mapChunkData, 0, mapChunkSize);
+                Map = new(mapChunkData);
             }
 
             var packageCount = reader.ReadByte();

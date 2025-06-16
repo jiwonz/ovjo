@@ -4,7 +4,6 @@ using System.CommandLine.Parsing;
 using FluentResults;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using Serilog;
 using Serilog.Events;
 using static Ovjo.LocalizationCatalog.Ovjo;
@@ -14,15 +13,11 @@ namespace Ovjo
     internal static class Program
     {
         private const string _defaultRojoProjectPath = "default.project.json";
-        const string WORLD_DATA_NAME = "WorldData";
-        const string WORLD_DATA_MAP_NAME = "Map";
-        const string WORLD_DATA_PLAIN_FILES_NAME = "PlainFiles";
-        const string WORLD_DATA_JSON_FILES_NAME = "JsonFiles";
         public const string AppName = "ovjo";
 
         private class ResultLogger : IResultLogger
         {
-            private LogEventLevel GetLogEventLevel(LogLevel logLevel) =>
+            private static LogEventLevel GetLogEventLevel(LogLevel logLevel) =>
                 logLevel switch
                 {
                     LogLevel.Trace => LogEventLevel.Verbose,
@@ -51,7 +46,7 @@ namespace Ovjo
                 );
             }
 
-            private string FormatMessage(
+            private static string FormatMessage(
                 string content,
                 string context,
                 ResultBase result,
@@ -63,12 +58,7 @@ namespace Ovjo
                 {
                     return string.Empty;
                 }
-                var reasonLines = result
-                    .Reasons.Skip(1)
-                    .Select(reason =>
-                    {
-                        return $"  - {reason.Message}";
-                    });
+                var reasonLines = result.Reasons.Skip(1).Select(reason => $"  - {reason.Message}");
 
                 var reasonBlock = string.Join(Environment.NewLine, reasonLines);
 
@@ -89,14 +79,7 @@ namespace Ovjo
             return new()
             {
                 ["name"] = name,
-                ["tree"] = new Dictionary<string, object>
-                {
-                    ["$className"] = "DataModel",
-                    [WORLD_DATA_NAME] = new Dictionary<string, object>
-                    {
-                        ["$path"] = WORLD_DATA_NAME,
-                    },
-                },
+                ["tree"] = new Dictionary<string, object> { ["$className"] = "DataModel" },
             };
         }
 
@@ -104,10 +87,7 @@ namespace Ovjo
         {
             // Setup Result's logger
             ResultLogger resultLogger = new();
-            Result.Setup(cfg =>
-            {
-                cfg.Logger = resultLogger;
-            });
+            Result.Setup(cfg => cfg.Logger = resultLogger);
 
             // Setup CLI Commands
             Command syncbackCommand = new(
@@ -115,71 +95,68 @@ namespace Ovjo
                 _("Performs 'syncback' for the provided project, using the `input` file given")
             );
             {
-                var projectArg = new Argument<string>("project", _("Path to the project"));
+                Argument<string> projectArg = new("project", _("Path to the project"));
                 projectArg.SetDefaultValue(_defaultRojoProjectPath);
-                var inputOpt = new Option<string>(["--input", "-i"], _("Path to the input file"));
-                var rbxlOpt = new Option<string?>("--rbxl", _("Path to the rbxl file"));
+                Option<string> inputOpt = new(["--input", "-i"], _("Path to the input file"));
+                Option<string?> rbxlOpt = new("--rbxl", _("Path to the rbxl file"));
 
                 syncbackCommand.AddArgument(projectArg);
                 syncbackCommand.AddOption(inputOpt);
                 syncbackCommand.AddOption(rbxlOpt);
 
                 syncbackCommand.SetHandler(
-                    (project, input, rbxl) =>
-                    {
-                        ExpectResult(LibOvjo.Syncback(project, input, rbxl));
-                    },
+                    (project, input, rbxl) => ExpectResult(LibOvjo.Syncback(project, input, rbxl)),
                     projectArg,
                     inputOpt,
                     rbxlOpt
                 );
             }
 
-            Command buildCommand = new("build", _("Builds rojo project into OVERDARE world"));
+            Command buildCommand = new("build", _("Builds the project into OVERDARE world"));
             {
-                var projectArg = new Argument<string>("project", _("Path to the project"));
+                Argument<string> projectArg = new("project", _("Path to the project"));
                 projectArg.SetDefaultValue(_defaultRojoProjectPath);
-                var outputOpt = new Option<string>(
-                    ["--output", "-o"],
-                    _("Path to the output file")
-                );
+                Option<string> outputOpt = new(["--output", "-o"], _("Path to the output file"));
+                Option<string?> rbxlOpt = new("--rbxl", _("Path to the rbxl file"));
 
                 buildCommand.AddArgument(projectArg);
                 buildCommand.AddOption(outputOpt);
+                buildCommand.AddOption(rbxlOpt);
 
                 buildCommand.SetHandler(
-                    (project, output) =>
-                    {
-                        Console.WriteLine($"Hello, {project}!");
-                    },
+                    (project, output, rbxl) => ExpectResult(LibOvjo.Build(project, output, rbxl)),
                     projectArg,
-                    outputOpt
+                    outputOpt,
+                    rbxlOpt
                 );
             }
 
-            Command devCommand = new("dev", _("Starts developing rojo project"));
+            Command syncCommand = new(
+                "sync",
+                _("Synchronizes Lua sources between the project and the input OVERDARE world")
+            );
             {
-                var projectArg = new Argument<string>("project", _("Path to the project"));
+                Argument<string> projectArg = new("project", _("Path to the project"));
                 projectArg.SetDefaultValue(_defaultRojoProjectPath);
-                var outputOpt = new Option<string?>(
-                    ["--output", "-o"],
-                    _("Path to the output file")
-                );
+                Option<string> inputOpt = new(["--input", "-i"], _("Path to the input file"));
+                Option<bool> watchOpt = new(["--watch", "-w"], _("Watches source files"));
 
-                devCommand.AddArgument(projectArg);
-                devCommand.AddOption(outputOpt);
+                syncCommand.AddArgument(projectArg);
+                syncCommand.AddOption(inputOpt);
+                syncCommand.AddOption(watchOpt);
 
-                devCommand.SetHandler(
-                    (project, output) =>
-                    {
-                        Console.WriteLine($"Hello, {project}!");
-                    },
+                syncCommand.SetHandler(
+                    (project, input, watch) => ExpectResult(LibOvjo.Sync(project, input, watch)),
                     projectArg,
-                    outputOpt
+                    inputOpt,
+                    watchOpt
                 );
             }
 
-            Command initCommand = new("init", _("Initializes a new rojo project"));
+            Command initCommand = new(
+                "init",
+                _("Initializes a new ovjo project from OVERDARE Studio")
+            );
             {
                 initCommand.SetHandler(() =>
                 {
@@ -233,10 +210,11 @@ namespace Ovjo
                 _("Enables professional-grade development tools for OVERDARE developers")
             );
             rootCommand.AddGlobalOption(verboseOption);
-            rootCommand.AddCommand(devCommand);
+            rootCommand.AddCommand(syncCommand);
             rootCommand.AddCommand(initCommand);
             rootCommand.AddCommand(syncbackCommand);
             rootCommand.AddCommand(studioCommand);
+            rootCommand.AddCommand(buildCommand);
 
             CommandLineBuilder commandLineBuilder = new(rootCommand);
             commandLineBuilder.AddMiddleware(
@@ -292,22 +270,6 @@ namespace Ovjo
                 Environment.Exit(1);
                 throw new InvalidOperationException("unreachable");
             }
-        }
-
-        // TODO: Abstract this into WorldData class
-        private static Result<string> GetWorldDataPath(JObject rojoProject)
-        {
-            var path = rojoProject["tree"]?[WORLD_DATA_NAME]?["$path"]?.ToString();
-            if (path is string validPath)
-            {
-                return validPath;
-            }
-            return Result.Fail(
-                _(
-                    "Couldn't find `tree.{0}[\"$path\"]` in project.json. This is required in ovjo.",
-                    WORLD_DATA_NAME
-                )
-            );
         }
     }
 }
