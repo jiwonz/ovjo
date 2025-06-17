@@ -1,6 +1,6 @@
-﻿using System.Text;
-using LZ4;
+﻿using K4os.Compression.LZ4;
 using Serilog;
+using System.Text;
 
 namespace Ovjo
 {
@@ -61,6 +61,7 @@ namespace Ovjo
             {
                 var mapChunkSize = reader.ReadInt32();
                 Log.Debug("Map chunk size: {MapChunkSize}", mapChunkSize);
+                Log.Debug($"Uncompressed length: {uncompressed.Length}");
                 if (mapChunkSize < 0 || mapChunkSize > uncompressedLength)
                 {
                     throw new InvalidDataException("Invalid map chunk size in ovjo world file.");
@@ -107,20 +108,30 @@ namespace Ovjo
 
             using var chunksStream = Map.WriteData();
             int mapChunkSize = (int)chunksStream.Length;
+            Log.Debug($"Map chunk size: {mapChunkSize}");
             List<(string FileName, int Offset, int Size)> packageEntries = [];
             using BinaryWriter chunksWriter = new(chunksStream);
             foreach (var package in Packages)
             {
+                chunksStream.Position = chunksStream.Length;
                 packageEntries.Add(
                     (package.FileName, Offset: (int)chunksStream.Length, Size: package.Data.Length)
                 );
                 chunksWriter.Write(package.Data);
+                Log.Debug($"Package chunk written: {package.Data.Length}");
             }
             byte[] uncompressed = chunksStream.ToArray();
-            byte[] compressed = LZ4Codec.Encode(uncompressed, 0, uncompressed.Length);
+            byte[] compressed = new byte[LZ4Codec.MaximumOutputSize(uncompressed.Length)];
+            int compressedLength = LZ4Codec.Encode(
+                uncompressed, 0, uncompressed.Length,
+                compressed, 0, compressed.Length
+            );
+            Array.Resize(ref compressed, compressedLength);
 
             writer.Write(compressed.Length);
             writer.Write(uncompressed.Length);
+
+            Log.Debug($"uncompressed length: {uncompressed.Length} map size: {mapChunkSize}");
 
             writer.Write(compressed);
 
@@ -173,8 +184,10 @@ namespace Ovjo
                     continue; // Skip the map file itself
                 }
 
+                Log.Debug($"collected PackageEntry {entryPath}");
+
                 var fileName = Path.GetFileName(entryPath);
-                var data = File.ReadAllBytes(path);
+                var data = File.ReadAllBytes(entryPath);
                 switch (Path.GetExtension(entryPath).ToLowerInvariant())
                 {
                     case ".json":

@@ -1,11 +1,11 @@
-﻿using System.CommandLine;
-using System.CommandLine.Builder;
-using System.CommandLine.Parsing;
-using FluentResults;
+﻿using FluentResults;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Serilog;
 using Serilog.Events;
+using System.CommandLine;
+using System.CommandLine.Builder;
+using System.CommandLine.Parsing;
 using static Ovjo.LocalizationCatalog.Ovjo;
 
 namespace Ovjo

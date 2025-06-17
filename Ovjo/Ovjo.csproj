@@ -9,6 +9,7 @@
 
   <ItemGroup>
     <PackageReference Include="FluentResults" Version="3.16.0" />
+    <PackageReference Include="K4os.Compression.LZ4" Version="1.3.8" />
     <PackageReference Include="MessagePack" Version="3.1.3" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="9.0.5" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
@@ -19,14 +20,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="LZ4">
-      <HintPath>..\..\Roblox-File-Format\packages\lz4net.1.0.15.93\lib\net4-client\LZ4.dll</HintPath>
-    </Reference>
     <Reference Include="Overdare">
-      <HintPath>..\..\Overdare.NET\Overdare\bin\Debug\net8.0\Overdare.dll</HintPath>
+      <HintPath>..\..\Overdare.NET\Overdare\bin\Release\net8.0\Overdare.dll</HintPath>
     </Reference>
     <Reference Include="RobloxFileFormat">
-      <HintPath>..\..\Roblox-File-Format\bin\Debug\RobloxFileFormat.dll</HintPath>
+      <HintPath>..\..\Roblox-File-Format\bin\Release\RobloxFileFormat.dll</HintPath>
     </Reference>
     <Reference Include="UAssetAPI">
       <HintPath>..\..\UAssetAPI\UAssetAPI\bin\Debug\net8.0\UAssetAPI.dll</HintPath>

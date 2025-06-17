@@ -1,7 +1,7 @@
-﻿using System.Diagnostics;
-using System.Text.RegularExpressions;
-using FluentResults;
+﻿using FluentResults;
 using Serilog;
+using System.Diagnostics;
+using System.Text.RegularExpressions;
 using static Ovjo.LocalizationCatalog.Ovjo;
 
 namespace Ovjo
@@ -55,6 +55,7 @@ namespace Ovjo
                 else
                 {
                     robloxSource.Name = source.Name ?? robloxSource.ClassName;
+                    //Log.Debug($"Name written: {robloxSource.Name}");
                 }
                 robloxSource.Parent = robloxParent;
                 if (
@@ -67,28 +68,36 @@ namespace Ovjo
                         _overdareReferenceAttributeName,
                         source.SavedActor.ExportIndex
                     );
-                    Log.Debug(
-                        $"Set {_overdareReferenceAttributeName} to {source.GetFullName()}({robloxSource.GetFullName()})"
-                    );
+                    //Log.Debug(
+                    //    $"Set {_overdareReferenceAttributeName} to {source.GetFullName()}({robloxSource.GetFullName()})"
+                    //);
+                    //Log.Debug(source.SavedActor.ExportIndex.ToString());
                 }
-                else if (source is Overdare.UScriptClass.BaseLuaScript luaScript)
+                else
                 {
-                    Log.Debug($"Got Source file {luaScript.GetFullName()}: {luaScript.Source}");
-                    switch (robloxSource)
+                    // Remove reference attribute for Creatable LuaInstance
+                    robloxSource.Attributes.Remove(_overdareReferenceAttributeName);
+                    if (source is Overdare.UScriptClass.BaseLuaScript luaScript)
                     {
-                        case RobloxFiles.Script script:
-                            script.Source = luaScript.Source;
-                            break;
-                        case RobloxFiles.ModuleScript moduleScript:
-                            moduleScript.Source = luaScript.Source;
-                            break;
-                        default:
-                            return Result.Fail(
-                                _(
-                                    "LuaCode property was found in this OVERDARE Instance({0}) but its Roblox class equivalent is not a LuaSourceContainer.",
-                                    source.ClassName
-                                )
-                            );
+                        //Log.Debug($"Got Source file {luaScript.GetFullName()}: {luaScript.Source}");
+                        switch (robloxSource)
+                        {
+                            case RobloxFiles.Script script:
+                                script.Source = luaScript.Source;
+                                //Log.Debug($"Source written: {script.Source.ToString().Length}");
+                                break;
+                            case RobloxFiles.ModuleScript moduleScript:
+                                moduleScript.Source = luaScript.Source;
+                                //Log.Debug($"Source written: {moduleScript.Source.ToString().Length}");
+                                break;
+                            default:
+                                return Result.Fail(
+                                    _(
+                                        "LuaCode property was found in this OVERDARE Instance({0}) but its Roblox class equivalent is not a LuaSourceContainer.",
+                                        source.ClassName
+                                    )
+                                );
+                        }
                     }
                 }
 
@@ -114,6 +123,7 @@ namespace Ovjo
                     if (prop.Type is RobloxFiles.PropertyType.BrickColor)
                     {
                         prop.Value = RobloxFiles.DataTypes.BrickColor.Red();
+                        Log.Debug($"Value written: {prop.Value}");
                     }
                 }
 
@@ -218,13 +228,14 @@ namespace Ovjo
             {
                 Log.Debug($"Resetting {luaInstance.GetFullName()}");
                 // Reset everyone's parents
-                luaInstance.Parent = null;
+                //luaInstance.Parent = null;
                 // Skip non-NotCreatable LuaInstances
                 if (
                     (luaInstance.ClassTagFlags & Overdare.UScriptClass.ClassTagFlags.NotCreatable)
                     == 0
                 )
                 {
+                    luaInstance.Parent = null;
                     continue;
                 }
 
@@ -233,6 +244,7 @@ namespace Ovjo
                 luaInstancesFromOverdareReference[luaInstance.SavedActor.ExportIndex] = luaInstance;
                 Log.Debug($"{luaInstance.SavedActor.ExportIndex}");
             }
+            // TO-DO: Creatable LuaInstances should be destroyed from the world
             //foreach (var luaInstance in world.Map.LuaDataModel.GetDescendants())
             //{
             //    // Skip non-NotCreatable LuaInstances
@@ -266,6 +278,7 @@ namespace Ovjo
                     )
                 )
                 {
+                    Log.Debug($"new creatable thing! the parent: {ovdrParent.GetFullName()}");
                     luaInstance = robloxInstance switch
                     {
                         RobloxFiles.LocalScript localScript =>
@@ -305,8 +318,11 @@ namespace Ovjo
                 }
 
                 // If luaInstance is not a default named, then set its name to Roblox Instance's name
-                luaInstance.Name = luaInstance.Name != null ? robloxInstance.Name : null;
+                // should not be custom named if has LoadedActor already
+                if (luaInstance.SavedActor == null)
+                    luaInstance.Name = luaInstance.Name != null ? robloxInstance.Name : null;
                 luaInstance.Parent = ovdrParent;
+                Log.Debug($"New parent's children count: {ovdrParent.GetChildren().Length}");
                 foreach (var child in robloxInstance.GetChildren())
                 {
                     var visitResult = VisitRobloxInstance(child, luaInstance);
@@ -381,37 +397,80 @@ namespace Ovjo
                     return;
                 }
 
-                var oldChildren = ovdrInstance
-                    .GetChildren()
-                    .ToDictionary(ovdrChild =>
+                Dictionary<string, Overdare.UScriptClass.LuaInstance> oldChildren = [];
+                foreach (var ovdrChild in ovdrInstance.GetChildren())
+                {
+                    if (ovdrChild.SavedActor == null)
+                        continue;
+                    if ((ovdrChild.ClassTagFlags & Overdare.UScriptClass.ClassTagFlags.NotCreatable) != 0) continue;
+                    string key = ovdrChild.Name ?? ovdrChild switch
                     {
-                        if (ovdrChild.SavedActor == null)
-                            throw new UnreachableException();
-                        if (ovdrChild.Name != null)
-                            return ovdrChild.Name;
-                        // This is a default named LuaInstance, so we need to find the name from the Roblox Instance with the same ExportIndex
-                        // Also this process is needed for diffing between Roblox Instance and LuaInstance
-                        foreach (var rbxChild in robloxInstance.GetChildren())
-                        {
-                            if (
-                                rbxChild.GetAttribute(
-                                    _overdareReferenceAttributeName,
-                                    out int? ovdrRef
-                                )
-                                && ovdrRef == ovdrChild.SavedActor.ExportIndex
-                            )
-                            {
-                                return rbxChild.Name;
-                            }
-                        }
-                        throw new UnreachableException(
+                        Overdare.UScriptClass.LuaLocalScript => "LocalScript",
+                        Overdare.UScriptClass.LuaScript => "Script",
+                        Overdare.UScriptClass.LuaModuleScript => "ModuleScript",
+                        Overdare.UScriptClass.LuaFolder => "Folder",
+                        _ => throw new NotSupportedException(
                             _(
-                                "Default named LuaInstance({0}) does not have a Roblox Instance with the same ExportIndex.",
+                                "LuaInstance({0}) is not supported to be converted to Roblox Instance.",
                                 ovdrChild.ClassName
                             )
-                        );
-                    });
-                var newChildren = robloxInstance.GetChildren().ToDictionary(c => c.Name);
+                        ),
+                    };
+                    //if (key == null)
+                    //{
+                    //    key = robloxInstance
+                    //        .GetChildren()
+                    //        .FirstOrDefault(rbxChild =>
+                    //            rbxChild.GetAttribute(_overdareReferenceAttributeName, out int? ovdrRef) &&
+                    //            ovdrRef != null &&
+                    //            ovdrRef.Value == ovdrChild.SavedActor.ExportIndex
+                    //        )?.Name;
+                    //}
+                    //if (key == null)
+                    //    continue; // Skip if you can't get a key
+
+                    oldChildren[key] = ovdrChild;
+                }
+                //var oldChildren = ovdrInstance
+                //    .GetChildren()
+                //    .ToDictionary(ovdrChild =>
+                //    {
+                //        if (ovdrChild.SavedActor == null)
+                //            throw new UnreachableException();
+                //        if (ovdrChild.Name != null)
+                //            return ovdrChild.Name;
+                //        // This is a default named LuaInstance, so we need to find the name from the Roblox Instance with the same ExportIndex
+                //        // Also this process is needed for diffing between Roblox Instance and LuaInstance
+                //        foreach (var rbxChild in robloxInstance.GetChildren())
+                //        {
+                //            if (
+                //                rbxChild.GetAttribute(
+                //                    _overdareReferenceAttributeName,
+                //                    out int? ovdrRef
+                //                ) && ovdrRef != null
+                //                && ovdrRef.Value == ovdrChild.SavedActor.ExportIndex
+                //            )
+                //            {
+                //                return rbxChild.Name;
+                //            }
+                //        }
+                //        throw new UnreachableException(
+                //            _(
+                //                "Default named LuaInstance({0}, ExportIndex: {1}) does not have a Roblox Instance with the same ExportIndex.",
+                //                ovdrChild.GetFullName(),
+                //                ovdrChild.SavedActor.ExportIndex
+                //            )
+                //        );
+                //    });
+                Log.Debug(robloxInstance.GetFullName());
+                Dictionary<string, RobloxFiles.Instance> newChildren = []; // Replace RobloxInstanceType with your actual type
+                foreach (var c in robloxInstance.GetChildren())
+                {
+                    if (c is RobloxFiles.Script || c is RobloxFiles.ModuleScript || c is RobloxFiles.ModuleScript)
+                    {
+                        newChildren[c.Name] = c;
+                    }
+                }
 
                 foreach (var name in newChildren.Keys.Except(oldChildren.Keys))
                     Console.WriteLine($"Added: {name}");
