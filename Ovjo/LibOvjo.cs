@@ -1,7 +1,9 @@
-﻿using FluentResults;
-using Serilog;
-using System.Diagnostics;
+﻿using System.Diagnostics;
+using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
+using FluentResults;
+using Newtonsoft.Json;
+using Serilog;
 using static Ovjo.LocalizationCatalog.Ovjo;
 
 namespace Ovjo
@@ -10,6 +12,11 @@ namespace Ovjo
     {
         private const string _overdareUObjectTypeLuaPrefix = "Lua";
         private const string _overdareReferenceAttributeName = "ovdr_ref";
+
+        private static string RemoveLuaPrefix(string className)
+        {
+            return Regex.Replace(className, $"^{Regex.Escape(_overdareUObjectTypeLuaPrefix)}", "");
+        }
 
         public static Result Syncback(string rojoProjectPath, string? umapPath, string? rbxlPath)
         {
@@ -37,11 +44,7 @@ namespace Ovjo
             {
                 if ((source.ClassTagFlags & Overdare.UScriptClass.ClassTagFlags.NotBrowsable) != 0)
                     return Result.Ok();
-                var sourceClassNameWithoutLuaPrefix = Regex.Replace(
-                    source.ClassName,
-                    $"^{Regex.Escape(_overdareUObjectTypeLuaPrefix)}",
-                    ""
-                );
+                var sourceClassNameWithoutLuaPrefix = RemoveLuaPrefix(source.ClassName);
                 var robloxSource = UtilityFunctions.TryCreateInstance(
                     sourceClassNameWithoutLuaPrefix
                 );
@@ -164,7 +167,7 @@ namespace Ovjo
             });
 
             // Run `rojo syncback` from composed .rbxl place file
-            Process process = UtilityFunctions.StartProcess(
+            var process = UtilityFunctions.StartProcess(
                 "rojo",
                 $"syncback {rojoProjectPath} --input {robloxPlaceFilePath} -y"
             );
@@ -207,7 +210,7 @@ namespace Ovjo
                 rbxlPath ?? Path.GetTempFileName(),
                 "rbxl"
             );
-            Process process = UtilityFunctions.StartProcess(
+            var process = UtilityFunctions.StartProcess(
                 "rojo",
                 $"build {rojoProjectPath} --output {robloxPlaceFilePath}"
             );
@@ -362,141 +365,225 @@ namespace Ovjo
             return Result.Ok();
         }
 
+        private class SourcemapChild
+        {
+            [JsonPropertyName("name")]
+            public string Name { get; set; } = string.Empty;
+
+            [JsonPropertyName("className")]
+            public string ClassName { get; set; } = string.Empty;
+
+            [JsonPropertyName("filePaths")]
+            public List<string>? FilePaths { get; set; }
+
+            [JsonPropertyName("children")]
+            public List<SourcemapChild>? Children { get; set; }
+        }
+
         public static Result Sync(string rojoProjectPath, string umapPath, bool watch)
         {
             {
-                Result rojoStatus = UtilityFunctions.RequireProgram("rojo", "build --help");
+                Result rojoStatus = UtilityFunctions.RequireProgram("rojo", "sourcemap --help");
                 if (rojoStatus.IsFailed)
                 {
                     return Result
                         .Fail(
                             _(
-                                "`rojo build` is required to perform `LibOvjo.Sync`, but failed to check."
+                                "`rojo sourcemap` is required to perform `LibOvjo.Sync`, but failed to check."
                             )
                         )
                         .WithReasons(rojoStatus.Errors);
                 }
             }
 
-            // Check which items have been added or removed to OVERDARE world from Roblox place file
-            // Removed means that the Roblox instance has been added to the Roblox place file
-            // Added things besides the BaseLuaScript and LuaFolder is always invalid
-            void Diff(
-                Overdare.UScriptClass.LuaInstance ovdrInstance,
-                RobloxFiles.Instance robloxInstance
+            HashSet<string> watchingFiles = [];
+            void VisitRobloxSourcemap(
+                SourcemapChild source,
+                Overdare.UScriptClass.LuaInstance ovdrParent
             )
             {
-                if (ovdrInstance.SavedActor == null)
-                    throw new UnreachableException();
-                // Skips NotBrowsable LuaInstances
-                if (
-                    (ovdrInstance.ClassTagFlags & Overdare.UScriptClass.ClassTagFlags.NotBrowsable)
-                    != 0
-                )
+                Overdare.UScriptClass.LuaInstance? ovdrChild = null;
+                // Default named
+                foreach (var child in ovdrParent.GetChildren())
                 {
-                    return;
-                }
-
-                Dictionary<string, Overdare.UScriptClass.LuaInstance> oldChildren = [];
-                foreach (var ovdrChild in ovdrInstance.GetChildren())
-                {
-                    if (ovdrChild.SavedActor == null)
+                    if (child.Name != null)
                         continue;
-                    if ((ovdrChild.ClassTagFlags & Overdare.UScriptClass.ClassTagFlags.NotCreatable) != 0) continue;
-                    string key = ovdrChild.Name ?? ovdrChild switch
+                    var robloxClassName = RemoveLuaPrefix(child.ClassName);
+                    if (robloxClassName == source.ClassName || robloxClassName == source.Name)
                     {
-                        Overdare.UScriptClass.LuaLocalScript => "LocalScript",
-                        Overdare.UScriptClass.LuaScript => "Script",
-                        Overdare.UScriptClass.LuaModuleScript => "ModuleScript",
-                        Overdare.UScriptClass.LuaFolder => "Folder",
-                        _ => throw new NotSupportedException(
-                            _(
-                                "LuaInstance({0}) is not supported to be converted to Roblox Instance.",
-                                ovdrChild.ClassName
-                            )
-                        ),
-                    };
-                    //if (key == null)
-                    //{
-                    //    key = robloxInstance
-                    //        .GetChildren()
-                    //        .FirstOrDefault(rbxChild =>
-                    //            rbxChild.GetAttribute(_overdareReferenceAttributeName, out int? ovdrRef) &&
-                    //            ovdrRef != null &&
-                    //            ovdrRef.Value == ovdrChild.SavedActor.ExportIndex
-                    //        )?.Name;
-                    //}
-                    //if (key == null)
-                    //    continue; // Skip if you can't get a key
-
-                    oldChildren[key] = ovdrChild;
-                }
-                //var oldChildren = ovdrInstance
-                //    .GetChildren()
-                //    .ToDictionary(ovdrChild =>
-                //    {
-                //        if (ovdrChild.SavedActor == null)
-                //            throw new UnreachableException();
-                //        if (ovdrChild.Name != null)
-                //            return ovdrChild.Name;
-                //        // This is a default named LuaInstance, so we need to find the name from the Roblox Instance with the same ExportIndex
-                //        // Also this process is needed for diffing between Roblox Instance and LuaInstance
-                //        foreach (var rbxChild in robloxInstance.GetChildren())
-                //        {
-                //            if (
-                //                rbxChild.GetAttribute(
-                //                    _overdareReferenceAttributeName,
-                //                    out int? ovdrRef
-                //                ) && ovdrRef != null
-                //                && ovdrRef.Value == ovdrChild.SavedActor.ExportIndex
-                //            )
-                //            {
-                //                return rbxChild.Name;
-                //            }
-                //        }
-                //        throw new UnreachableException(
-                //            _(
-                //                "Default named LuaInstance({0}, ExportIndex: {1}) does not have a Roblox Instance with the same ExportIndex.",
-                //                ovdrChild.GetFullName(),
-                //                ovdrChild.SavedActor.ExportIndex
-                //            )
-                //        );
-                //    });
-                Log.Debug(robloxInstance.GetFullName());
-                Dictionary<string, RobloxFiles.Instance> newChildren = []; // Replace RobloxInstanceType with your actual type
-                foreach (var c in robloxInstance.GetChildren())
-                {
-                    if (c is RobloxFiles.Script || c is RobloxFiles.ModuleScript || c is RobloxFiles.ModuleScript)
-                    {
-                        newChildren[c.Name] = c;
+                        Log.Debug($"Found {source.ClassName} child: {child.GetFullName()}");
+                        ovdrChild = child;
+                        break;
                     }
                 }
-
-                foreach (var name in newChildren.Keys.Except(oldChildren.Keys))
-                    Console.WriteLine($"Added: {name}");
-
-                foreach (var name in oldChildren.Keys.Except(newChildren.Keys))
-                    Console.WriteLine($"Removed: {name}");
-
-                foreach (var name in oldChildren.Keys.Intersect(newChildren.Keys))
-                    Diff(oldChildren[name], newChildren[name]);
+                if (ovdrChild == null)
+                {
+                    // Custom named
+                    ovdrChild = ovdrParent.FindFirstChild(source.Name);
+                    if (ovdrChild == null)
+                    {
+                        // 오버데어에 없는데 로블록스에 있는 경우 -> 경고
+                        Log.Warning(
+                            $"Sourcemap child {source.Name}({source.ClassName}) not found in Overdare LuaInstance {ovdrParent.GetFullName()}. Please re-build the project."
+                        );
+                        return;
+                    }
+                }
+                // 로블록스에도 있고 오버데어에도 있는 경우 -> 스크립트 내용 동기화
+                Log.Information(
+                    $"Two instances {source.Name}({source.ClassName}) and {ovdrChild.GetFullName()} are valid."
+                );
+                if (
+                    source.ClassName == "Script"
+                    || source.ClassName == "LocalScript"
+                    || source.ClassName == "ModuleScript"
+                )
+                {
+                    var filePaths = source.FilePaths;
+                    if (filePaths == null || filePaths.Count == 0)
+                    {
+                        Log.Warning(
+                            $"Sourcemap child {source.Name}({source.ClassName}) has no file paths. Skipping script source sync."
+                        );
+                        return;
+                    }
+                    var sourceFilePath = filePaths.First(fp =>
+                    {
+                        var ext = Path.GetExtension(fp);
+                        return ext == ".lua" || ext == ".luau";
+                    });
+                    if (sourceFilePath == null)
+                    {
+                        Log.Warning(
+                            $"Sourcemap child {source.Name}({source.ClassName}) has no Lua source file. Skipping script source sync."
+                        );
+                        return;
+                    }
+                    watchingFiles.Add(Path.GetFullPath(sourceFilePath));
+                    if (ovdrChild is Overdare.UScriptClass.BaseLuaScript luaScript)
+                    {
+                        luaScript.Source = File.ReadAllText(sourceFilePath);
+                        Log.Debug(
+                            $"Synced BaseLuaScript({luaScript.GetFullName()}) with {sourceFilePath} (synced file size: {File.ReadAllText(sourceFilePath).Length})"
+                        );
+                        luaScript.SaveSource(); // Save the source to the world
+                    }
+                    else
+                    {
+                        Log.Warning(
+                            $"Sourcemap child {source.Name}({source.ClassName}) is not a LuaScript. Skipping script source sync."
+                        );
+                    }
+                }
+                if (source.Children == null)
+                    return;
+                foreach (var child in source.Children)
+                {
+                    VisitRobloxSourcemap(child, ovdrChild);
+                }
             }
+
+            // TO-DO: VisitOverdareInstance로 오버데어에서 추가된 스크립트를 프로젝트에 추가하는 기능 구현
+            //void VisitOverdareInstance(Overdare.UScriptClass.LuaInstance source, SourcemapChild sourcemapParent)
+            //{
+            //    SourcemapChild? sourcemapChild = null;
+            //    // Default named
+            //    if (source.Name == null)
+            //    {
+            //        sourcemapChild = sourcemapParent.Children?.FirstOrDefault(c => c.Name == RemoveLuaPrefix(source.ClassName));
+            //    }
+            //    if (sourcemapChild == null)
+            //    {
+            //        // Custom named
+            //        sourcemapChild = sourcemapParent.Children?.FirstOrDefault(c => c.Name == source.Name);
+            //        if (sourcemapChild == null)
+            //        {
+            //            // 로블록스에 없는데 오버데어에 있는 경우
+            //            Log.Information($"Should add {source.ClassName} in {sourcemapParent.FilePaths?[0]}");
+            //        }
+            //    }
+            //    // 로블록스에도 있고 오버데어에도 있는 경우
+
+            //}
 
             var world = World.FromOverdare(umapPath);
             string robloxPlaceFilePath = Path.ChangeExtension(Path.GetTempFileName(), "rbxl");
-            Process process = UtilityFunctions.StartProcess(
-                "rojo",
-                $"build {rojoProjectPath} --output {robloxPlaceFilePath}"
-            );
-            process.WaitForExit();
-            using var cleanup = new Defer(() =>
+            var process = new Process
             {
-                if (!File.Exists(robloxPlaceFilePath))
+                StartInfo = new ProcessStartInfo
+                {
+                    FileName = "rojo", // 실행할 프로그램
+                    Arguments = $"sourcemap {rojoProjectPath}{(watch ? " --watch" : "")}", // 인자
+                    RedirectStandardOutput = true, // 표준 출력 리디렉션
+                    UseShellExecute = false, // 필수
+                    CreateNoWindow = true, // 창 숨김(선택)
+                },
+            };
+
+            string lastSourcemapData = string.Empty;
+            void ReadSourcemap()
+            {
+                if (string.IsNullOrEmpty(lastSourcemapData))
+                {
+                    Log.Warning("No sourcemap data received yet.");
                     return;
-                File.Delete(robloxPlaceFilePath);
-            });
-            var robloxDataModel = RobloxFiles.BinaryRobloxFile.Open(robloxPlaceFilePath);
-            Diff(world.Map.LuaDataModel, robloxDataModel);
+                }
+                var source = JsonConvert.DeserializeObject<SourcemapChild>(lastSourcemapData);
+                if (source == null)
+                {
+                    Log.Warning("Failed to deserialize sourcemap child.");
+                    return;
+                }
+                if (source.Children == null)
+                {
+                    Log.Warning(umapPath + " has no children in the sourcemap child.");
+                    return;
+                }
+
+                foreach (var child in source.Children)
+                {
+                    //Log.Debug($"Visiting Roblox Instance: {instance.GetFullName()}");
+                    VisitRobloxSourcemap(child, world.Map.LuaDataModel);
+                }
+            }
+            process.OutputDataReceived += (sender, e) =>
+            {
+                if (e.Data == null)
+                    return;
+                Log.Debug($"[StandardOut] {e.Data}");
+                lastSourcemapData = e.Data;
+                ReadSourcemap();
+            };
+
+            process.Start();
+            process.BeginOutputReadLine();
+
+            Log.Debug($"watch? {watch}");
+            if (watch)
+            {
+                var watcher = new FileSystemWatcher(Directory.GetCurrentDirectory())
+                {
+                    Filter = "*.*", // 모든 파일 감시
+                    NotifyFilter = NotifyFilters.FileName | NotifyFilters.LastWrite,
+                    IncludeSubdirectories = true,
+                    EnableRaisingEvents = true,
+                };
+                watcher.Changed += (s, e) =>
+                {
+                    if (!watchingFiles.Contains(e.FullPath))
+                        return;
+                    watchingFiles.Clear();
+                    ReadSourcemap();
+                };
+                // watch 모드에서는 사용자가 종료할 때까지 대기
+                Console.WriteLine("Watching for changes... Press Enter to exit.");
+                Console.ReadLine();
+                process.Kill();
+            }
+            else
+            {
+                process.WaitForExit();
+            }
 
             return Result.Ok();
         }

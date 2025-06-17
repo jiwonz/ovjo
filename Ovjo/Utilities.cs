@@ -1,7 +1,7 @@
-﻿using FluentResults;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Reflection;
 using System.Text;
+using FluentResults;
 using static Ovjo.LocalizationCatalog.Ovjo;
 
 namespace Ovjo
@@ -75,7 +75,7 @@ namespace Ovjo
         {
             try
             {
-                Process process = StartProcess(program, args);
+                var process = StartProcess(program, args);
                 process.WaitForExit();
                 if (process.ExitCode != 0)
                 {
