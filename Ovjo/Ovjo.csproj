@@ -1,12 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <AssemblyName>ovjo</AssemblyName>
   </PropertyGroup>
-
   <ItemGroup>
     <PackageReference Include="FluentResults" Version="3.16.0" />
     <PackageReference Include="K4os.Compression.LZ4" Version="1.3.8" />
@@ -18,7 +17,6 @@
     <PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" />
     <PackageReference Include="System.CommandLine" Version="2.0.0-beta4.22272.1" />
   </ItemGroup>
-
   <ItemGroup>
     <Reference Include="Overdare">
       <HintPath>..\..\Overdare.NET\Overdare\bin\Release\net8.0\Overdare.dll</HintPath>
@@ -27,12 +25,10 @@
       <HintPath>..\..\Roblox-File-Format\bin\Release\RobloxFileFormat.dll</HintPath>
     </Reference>
     <Reference Include="UAssetAPI">
-      <HintPath>..\..\UAssetAPI\UAssetAPI\bin\Debug\net8.0\UAssetAPI.dll</HintPath>
+      <HintPath>..\..\UAssetAPI\UAssetAPI\bin\Release\net8.0\UAssetAPI.dll</HintPath>
     </Reference>
   </ItemGroup>
-
   <ItemGroup>
-	<EmbeddedResource Include="locales\**\*.mo" />
+    <EmbeddedResource Include="locales\**\*.mo" />
   </ItemGroup>
-
 </Project>
