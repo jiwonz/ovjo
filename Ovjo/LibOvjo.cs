@@ -1,9 +1,9 @@
-﻿using System.Diagnostics;
-using System.Text.Json.Serialization;
-using System.Text.RegularExpressions;
-using FluentResults;
+﻿using FluentResults;
 using Newtonsoft.Json;
 using Serilog;
+using System.Diagnostics;
+using System.Text.Json.Serialization;
+using System.Text.RegularExpressions;
 using static Ovjo.LocalizationCatalog.Ovjo;
 
 namespace Ovjo
@@ -35,7 +35,23 @@ namespace Ovjo
             }
 
             // Convert Overdare world to Roblox place file
-            var world = umapPath != null ? World.FromOverdare(umapPath) : World.Open();
+            World? world;
+            if (umapPath != null)
+            {
+                world = World.FromOverdare(umapPath);
+            }
+            else
+            {
+                // .ovjowld는 스크립트 소스를 포함하지 않으므로, 해당 .ovjowld를 빌드한 후, 오버데어 월드로 불러와야 합니다.
+                var tempFile = Path.GetTempFileName();
+                File.Delete(tempFile);
+                Directory.CreateDirectory(tempFile);
+                var newUmapPath = Path.ChangeExtension(Path.Combine(tempFile, Path.GetFileNameWithoutExtension(tempFile)), "umap");
+                Build(rojoProjectPath, newUmapPath, null);
+                world = World.FromOverdare(newUmapPath);
+                Directory.Delete(tempFile, true); // Clean up the temp directory
+            }
+
             RobloxFiles.BinaryRobloxFile robloxDataModel = new();
             static Result ToRobloxInstanceTree(
                 Overdare.UScriptClass.LuaInstance source,
