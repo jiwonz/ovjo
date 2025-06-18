@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Serilog;
 using Serilog.Events;
+using Sharprompt;
 using System.CommandLine;
 using System.CommandLine.Builder;
 using System.CommandLine.Parsing;
@@ -83,6 +84,44 @@ namespace Ovjo
             };
         }
 
+        private static Result<(string Input, bool IsResyncbacked)> TryGetUMapInput(string project)
+        {
+            string[] messages = [_("Select an input file via the GUI"), _("Perform re-syncback(build the current world and then perform a syncback, but the world will not be updated.)"), _("Abort syncback")];
+            var choice = Prompt.Select("No input file was given. Please choose from the following available options", Enumerable.Range(0, messages.Length), textSelector: i => messages[i]);
+            switch (choice)
+            {
+                case 0:
+                    var result = NativeFileDialogSharp.Dialog.FileOpen("Unreal Engine Map File (*.umap)|*.umap|All Files (*.*)|*.*");
+                    if (result.IsError)
+                    {
+                        return Result
+                            .Fail(_("Failed to open the file dialog."))
+                            .WithReason(new Error(result.ErrorMessage));
+                    }
+                    if (result.IsCancelled)
+                    {
+                        return Result
+                            .Fail(_("No input file was given. Please provide a valid .umap file."))
+                            .WithReason(new Error(_("Aborted by the user.")));
+                    }
+                    return Result.Ok((result.Path, false));
+                case 1:
+                    // This fallback is supported because the .ovjowld file is a build artifact of Overdare, which contains the world data in a compressed format.
+                    // .ovjowld는 스크립트 소스를 포함하지 않으므로, 해당 .ovjowld를 빌드한 후, 오버데어 월드로 불러와야 합니다.
+                    var tempFile = Path.GetTempFileName();
+                    File.Delete(tempFile);
+                    Directory.CreateDirectory(tempFile);
+                    var newUmapPath = Path.ChangeExtension(Path.Combine(tempFile, Path.GetFileNameWithoutExtension(tempFile)), "umap");
+                    LibOvjo.Build(project, newUmapPath, null);
+                    Directory.Delete(tempFile, true); // Clean up the temp directory
+                    return Result.Ok((newUmapPath, true));
+                default:
+                    return Result
+                        .Fail(_("No input file was given. Please provide a valid .umap file."))
+                        .WithReason(new Error(_("Aborted by the user.")));
+            }
+        }
+
         private static async Task<int> Main(string[] args)
         {
             // Setup Result's logger
@@ -97,7 +136,7 @@ namespace Ovjo
             {
                 Argument<string> projectArg = new("project", _("Path to the project"));
                 projectArg.SetDefaultValue(_defaultRojoProjectPath);
-                Option<string> inputOpt = new(["--input", "-i"], _("Path to the input file"));
+                Option<string?> inputOpt = new(["--input", "-i"], _("Path to the input file"));
                 Option<string?> rbxlOpt = new("--rbxl", _("Path to the rbxl file"));
 
                 syncbackCommand.AddArgument(projectArg);
@@ -105,7 +144,22 @@ namespace Ovjo
                 syncbackCommand.AddOption(rbxlOpt);
 
                 syncbackCommand.SetHandler(
-                    (project, input, rbxl) => ExpectResult(LibOvjo.Syncback(project, input, rbxl)),
+                    (project, input, rbxl) =>
+                    {
+                        bool isResyncbacked = false;
+                        if (string.IsNullOrWhiteSpace(input))
+                        {
+                            var inputResult = TryGetUMapInput(project);
+                            if (inputResult.IsFailed)
+                            {
+                                ExpectResult(inputResult);
+                                return;
+                            }
+                            input = inputResult.Value.Input;
+                            isResyncbacked = inputResult.Value.IsResyncbacked;
+                        }
+                        ExpectResult(LibOvjo.Syncback(project, input, rbxl, isResyncbacked));
+                    },
                     projectArg,
                     inputOpt,
                     rbxlOpt
@@ -173,7 +227,7 @@ namespace Ovjo
                         )
                     );
 
-                    ExpectResult(LibOvjo.Syncback(_defaultRojoProjectPath, umapPath, null));
+                    ExpectResult(LibOvjo.Syncback(_defaultRojoProjectPath, umapPath));
                 });
             }
 

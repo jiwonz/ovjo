@@ -15,9 +15,13 @@
     <PackageReference Include="NGettext" Version="0.6.7" />
     <PackageReference Include="Serilog" Version="4.3.0" />
     <PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" />
+    <PackageReference Include="Sharprompt" Version="3.0.0" />
     <PackageReference Include="System.CommandLine" Version="2.0.0-beta4.22272.1" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="NativeFileDialogSharp">
+      <HintPath>..\..\NativeFileDialogSharp\NativeFileDialogSharp\bin\Release\netstandard2.0\NativeFileDialogSharp.dll</HintPath>
+    </Reference>
     <Reference Include="Overdare">
       <HintPath>..\..\Overdare.NET\Overdare\bin\Release\net8.0\Overdare.dll</HintPath>
     </Reference>

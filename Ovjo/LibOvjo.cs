@@ -1,5 +1,6 @@
 ﻿using FluentResults;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Serilog;
 using System.Diagnostics;
 using System.Text.Json.Serialization;
@@ -18,7 +19,7 @@ namespace Ovjo
             return Regex.Replace(className, $"^{Regex.Escape(_overdareUObjectTypeLuaPrefix)}", "");
         }
 
-        public static Result Syncback(string rojoProjectPath, string? umapPath, string? rbxlPath)
+        public static Result Syncback(string rojoProjectPath, string umapPath, string? rbxlPath = null, bool isResyncbacked = false)
         {
             {
                 Result rojoStatus = UtilityFunctions.RequireProgram("rojo", "syncback --help");
@@ -34,28 +35,8 @@ namespace Ovjo
                 }
             }
 
-            // 싱크백 목적을 위해 빌드된 후 다시 싱크백된 경우를 의미합니다.
-            // 이 경우에는 빌드 후 변경이 있을 수 있고, 싱크백 목적으로 실행했으므로 월드를 저장하지 않습니다.
-            bool resyncbacked = false;
             // Convert Overdare world to Roblox place file
-            World? world;
-            if (umapPath != null)
-            {
-                world = World.FromOverdare(umapPath);
-            }
-            else
-            {
-                // This fallback is supported because the .ovjowld file is a build artifact of Overdare, which contains the world data in a compressed format.
-                // .ovjowld는 스크립트 소스를 포함하지 않으므로, 해당 .ovjowld를 빌드한 후, 오버데어 월드로 불러와야 합니다.
-                var tempFile = Path.GetTempFileName();
-                File.Delete(tempFile);
-                Directory.CreateDirectory(tempFile);
-                var newUmapPath = Path.ChangeExtension(Path.Combine(tempFile, Path.GetFileNameWithoutExtension(tempFile)), "umap");
-                Build(rojoProjectPath, newUmapPath, null);
-                world = World.FromOverdare(newUmapPath);
-                resyncbacked = true;
-                Directory.Delete(tempFile, true); // Clean up the temp directory
-            }
+            var world = World.FromOverdare(umapPath);
 
             RobloxFiles.BinaryRobloxFile robloxDataModel = new();
             static Result ToRobloxInstanceTree(
@@ -170,7 +151,8 @@ namespace Ovjo
             }
 
             // Save the world for the future use
-            if (!resyncbacked)
+            if (!isResyncbacked) // 싱크백 목적을 위해 빌드된 후 다시 싱크백된 경우를 의미합니다.
+                                 // 이 경우에는 빌드 후 변경이 있을 수 있고, 싱크백 목적으로 실행했으므로 월드를 저장하지 않습니다.
                 world.Save();
 
             // Write Roblox place to file system for `rojo syncback`. Path is defaulted to temp file
@@ -209,10 +191,13 @@ namespace Ovjo
             }
             Log.Information(process.StandardOutput.ReadToEnd());
 
+            // TO-DO: Extract attributes and properties into .meta.json files
+            var syncbackProjectJson = JsonConvert.DeserializeObject<JObject>(File.ReadAllText(rojoProjectPath));
+
             return Result.Ok();
         }
 
-        public static Result Build(string rojoProjectPath, string umapPath, string? rbxlPath)
+        public static Result Build(string rojoProjectPath, string umapPath, string? rbxlPath = null)
         {
             {
                 Result rojoStatus = UtilityFunctions.RequireProgram("rojo", "build --help");
