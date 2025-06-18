@@ -34,6 +34,9 @@ namespace Ovjo
                 }
             }
 
+            // 싱크백 목적을 위해 빌드된 후 다시 싱크백된 경우를 의미합니다.
+            // 이 경우에는 빌드 후 변경이 있을 수 있고, 싱크백 목적으로 실행했으므로 월드를 저장하지 않습니다.
+            bool resyncbacked = false;
             // Convert Overdare world to Roblox place file
             World? world;
             if (umapPath != null)
@@ -50,6 +53,7 @@ namespace Ovjo
                 var newUmapPath = Path.ChangeExtension(Path.Combine(tempFile, Path.GetFileNameWithoutExtension(tempFile)), "umap");
                 Build(rojoProjectPath, newUmapPath, null);
                 world = World.FromOverdare(newUmapPath);
+                resyncbacked = true;
                 Directory.Delete(tempFile, true); // Clean up the temp directory
             }
 
@@ -166,7 +170,8 @@ namespace Ovjo
             }
 
             // Save the world for the future use
-            world.Save();
+            if (!resyncbacked)
+                world.Save();
 
             // Write Roblox place to file system for `rojo syncback`. Path is defaulted to temp file
             string robloxPlaceFilePath = Path.ChangeExtension(
