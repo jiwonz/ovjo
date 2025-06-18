@@ -42,6 +42,7 @@ namespace Ovjo
             }
             else
             {
+                // This fallback is supported because the .ovjowld file is a build artifact of Overdare, which contains the world data in a compressed format.
                 // .ovjowld는 스크립트 소스를 포함하지 않으므로, 해당 .ovjowld를 빌드한 후, 오버데어 월드로 불러와야 합니다.
                 var tempFile = Path.GetTempFileName();
                 File.Delete(tempFile);
