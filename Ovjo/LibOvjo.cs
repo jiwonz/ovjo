@@ -156,8 +156,10 @@ namespace Ovjo
 
             // Save the world for the future use
             if (!isResyncbacked) // 싱크백 목적을 위해 빌드된 후 다시 싱크백된 경우를 의미합니다.
-                                 // 이 경우에는 빌드 후 변경이 있을 수 있고, 싱크백 목적으로 실행했으므로 월드를 저장하지 않습니다.
+            {
+                // 이 경우에는 빌드 후 변경이 있을 수 있고, 싱크백 목적으로 실행했으므로 월드를 저장하지 않습니다.
                 world.Save();
+            }
 
             // Write Roblox place to file system for `rojo syncback`. Path is defaulted to temp file
             string robloxPlaceFilePath = Path.ChangeExtension(
@@ -218,7 +220,7 @@ namespace Ovjo
                         Log.Warning(_("Instance {0} has no path in rojo project JSON.", key));
                         continue;
                     }
-                    if (!File.Exists(path))
+                    if (!Directory.Exists(path))
                     {
                         Log.Warning(_("Instance {0} path {1} does not exist.", key, path));
                         continue;
@@ -228,8 +230,9 @@ namespace Ovjo
                         .Where(key => instanceJson['$' + key] is JObject)
                         .Select(key =>
                         {
-                            var obj = (JObject)instanceJson[key]!;
-                            instanceJson.Remove(key); // Remove from original JObject as a side effect
+                            var metaKey = '$' + key;
+                            var obj = (JObject)instanceJson[metaKey]!;
+                            instanceJson.Remove(metaKey); // Remove from original JObject as a side effect
                             thereWasAModification = true; // Mark that there was a modification to save/update modified rojo project JSON
                             return (Key: key, Value: obj);
                         })
@@ -291,6 +294,19 @@ namespace Ovjo
                     return;
                 File.Delete(robloxPlaceFilePath);
             });
+            if (process.ExitCode != 0 || !File.Exists(robloxPlaceFilePath))
+            {
+                return Result
+                    .Fail(_("Failed to run `rojo build`."))
+                    .WithReason(
+                        new Error(
+                            _(
+                                "rojo exited with code 0 with stderr: {0}",
+                                process.StandardError.ReadToEnd()
+                            )
+                        )
+                    );
+            }
 
             var robloxDataModel = RobloxFiles.BinaryRobloxFile.Open(robloxPlaceFilePath);
             Dictionary<int, Overdare.UScriptClass.LuaInstance> luaInstancesFromOverdareReference =

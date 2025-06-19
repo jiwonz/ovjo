@@ -112,8 +112,13 @@ namespace Ovjo
                     File.Delete(tempFile);
                     Directory.CreateDirectory(tempFile);
                     var newUmapPath = Path.ChangeExtension(Path.Combine(tempFile, Path.GetFileNameWithoutExtension(tempFile)), "umap");
-                    LibOvjo.Build(project, newUmapPath, null);
-                    Directory.Delete(tempFile, true); // Clean up the temp directory
+                    ExpectResult(LibOvjo.Build(project, newUmapPath, null));
+                    Console.WriteLine(tempFile);
+                    AppDomain.CurrentDomain.ProcessExit += (s, e) =>
+                    {
+                        if (Directory.Exists(tempFile))
+                            Directory.Delete(tempFile, true); // Clean up the temp directory
+                    };
                     return Result.Ok((newUmapPath, true));
                 default:
                     return Result
