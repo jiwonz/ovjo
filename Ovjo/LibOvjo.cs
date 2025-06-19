@@ -13,6 +13,10 @@ namespace Ovjo
     {
         private const string _overdareUObjectTypeLuaPrefix = "Lua";
         private const string _overdareReferenceAttributeName = "ovdr_ref";
+        private static readonly string[] _rojoMetaProperties = [
+            "attributes",
+            "properties",
+        ];
 
         private static string RemoveLuaPrefix(string className)
         {
@@ -191,8 +195,65 @@ namespace Ovjo
             }
             Log.Information(process.StandardOutput.ReadToEnd());
 
-            // TO-DO: Extract attributes and properties into .meta.json files
+            // Extract attributes and properties into init.meta.json files
             var syncbackProjectJson = JsonConvert.DeserializeObject<JObject>(File.ReadAllText(rojoProjectPath));
+            if (syncbackProjectJson == null)
+            {
+                return Result.Fail(_("Failed to parse rojo project JSON."));
+            }
+            if (syncbackProjectJson["tree"] is JObject tree)
+            {
+                bool thereWasAModification = false;
+                foreach (var (key, value) in tree)
+                {
+                    if (key.StartsWith('$')) // Skip metadata keys
+                        continue;
+                    if (value is not JObject instanceJson)
+                    {
+                        continue;
+                    }
+                    var path = instanceJson["$path"]?.ToString();
+                    if (string.IsNullOrEmpty(path))
+                    {
+                        Log.Warning(_("Instance {0} has no path in rojo project JSON.", key));
+                        continue;
+                    }
+                    if (!File.Exists(path))
+                    {
+                        Log.Warning(_("Instance {0} path {1} does not exist.", key, path));
+                        continue;
+                    }
+
+                    var props = _rojoMetaProperties
+                        .Where(key => instanceJson['$' + key] is JObject)
+                        .Select(key =>
+                        {
+                            var obj = (JObject)instanceJson[key]!;
+                            instanceJson.Remove(key); // Remove from original JObject as a side effect
+                            thereWasAModification = true; // Mark that there was a modification to save/update modified rojo project JSON
+                            return (Key: key, Value: obj);
+                        })
+                        .ToArray();
+                    if (props.Length > 0)
+                    {
+                        JObject propsObject = new(
+                            props.Select(tuple => new JProperty(tuple.Key, tuple.Value))
+                        );
+                        File.WriteAllText(
+                            Path.Combine(
+                                path,
+                                "init.meta.json"
+                            ),
+                            propsObject.ToString(Formatting.Indented)
+                        );
+                    }
+                }
+                if (thereWasAModification)
+                {
+                    Log.Information("Modified rojo project JSON with init.meta.json files.");
+                    File.WriteAllText(rojoProjectPath, syncbackProjectJson.ToString(Formatting.Indented));
+                }
+            }
 
             return Result.Ok();
         }
@@ -236,10 +297,7 @@ namespace Ovjo
             [];
             foreach (var luaInstance in world.Map.LuaDataModel.GetDescendants())
             {
-                Log.Debug($"Resetting {luaInstance.GetFullName()}");
-                // Reset everyone's parents
-                //luaInstance.Parent = null;
-                // Skip non-NotCreatable LuaInstances
+                // Remove creatable LuaInstances
                 if (
                     (luaInstance.ClassTagFlags & Overdare.UScriptClass.ClassTagFlags.NotCreatable)
                     == 0
@@ -429,14 +487,14 @@ namespace Ovjo
                     ovdrChild = ovdrParent.FindFirstChild(source.Name);
                     if (ovdrChild == null)
                     {
-                        // 오버데어에 없는데 로블록스에 있는 경우 -> 경고
+                        // 오버데어에 없는데 로블록스에 있는 경우 -> 경고 (오버데어 스튜디오에서 편집중에 오버데어 인스턴스를 생성해서 동기화할 수 없기때문에)
                         Log.Warning(
                             $"Sourcemap child {source.Name}({source.ClassName}) not found in Overdare LuaInstance {ovdrParent.GetFullName()}. Please re-build the project."
                         );
                         return;
                     }
                 }
-                // 로블록스에도 있고 오버데어에도 있는 경우 -> 스크립트 내용 동기화
+                // 로블록스에도 있고 오버데어에도 있는 경우 -> 스크립트 내용 동기화 (스크립트는 편집중에 동기화가 가능하기 때문에)
                 Log.Information(
                     $"Two instances {source.Name}({source.ClassName}) and {ovdrChild.GetFullName()} are valid."
                 );
@@ -491,27 +549,31 @@ namespace Ovjo
             }
 
             // TO-DO: VisitOverdareInstance로 오버데어에서 추가된 스크립트를 프로젝트에 추가하는 기능 구현
-            //void VisitOverdareInstance(Overdare.UScriptClass.LuaInstance source, SourcemapChild sourcemapParent)
-            //{
-            //    SourcemapChild? sourcemapChild = null;
-            //    // Default named
-            //    if (source.Name == null)
-            //    {
-            //        sourcemapChild = sourcemapParent.Children?.FirstOrDefault(c => c.Name == RemoveLuaPrefix(source.ClassName));
-            //    }
-            //    if (sourcemapChild == null)
-            //    {
-            //        // Custom named
-            //        sourcemapChild = sourcemapParent.Children?.FirstOrDefault(c => c.Name == source.Name);
-            //        if (sourcemapChild == null)
-            //        {
-            //            // 로블록스에 없는데 오버데어에 있는 경우
-            //            Log.Information($"Should add {source.ClassName} in {sourcemapParent.FilePaths?[0]}");
-            //        }
-            //    }
-            //    // 로블록스에도 있고 오버데어에도 있는 경우
-
-            //}
+            // 이슈: 로블록스(현 프로젝트)에 없는, 오버데어에만 있는 스크립트를 새로 어떤 경로에 파일 생성해야 할지 모름(소스맵에서 확인이 어려움)
+            // 원래 기능: 오버데어에서 삭제되거나 추가된 스크립트/폴더 인스턴스를 프로젝트에 추가하거나 삭제하는 기능 (근데 구조적으로 그냥 애초에 syncback을 활용해야하는거일수도?)
+            // 현재 기능: 오버데어에서 추가된 인스턴스 위치를 알려주는 기능
+            // 메모: 파일 시스템 폴더 위치로 대충 예상하거나 모든 폴더에 init.meta.json 파일을 생성해서 파일 경로를 알아내는 방법..?
+            // workaround: 프로젝트에서 스크립트를 추가하고 빌드하거나 오버데어에서 추가 후 수동으로 프로젝트에 반영
+            void VisitOverdareInstance(Overdare.UScriptClass.LuaInstance source, SourcemapChild sourcemapParent)
+            {
+                SourcemapChild? sourcemapChild = null;
+                // Default named
+                if (source.Name == null)
+                {
+                    sourcemapChild = sourcemapParent.Children?.FirstOrDefault(c => c.Name == RemoveLuaPrefix(source.ClassName));
+                }
+                if (sourcemapChild == null)
+                {
+                    // Custom named
+                    sourcemapChild = sourcemapParent.Children?.FirstOrDefault(c => c.Name == source.Name);
+                    if (sourcemapChild == null)
+                    {
+                        // 로블록스에 없는데 오버데어에 있는 경우
+                        Log.Warning($"Should add {source.GetFullName()}({source.ClassName}) in {sourcemapParent.FilePaths?[0]}");
+                    }
+                }
+                // 로블록스에도 있고 오버데어에도 있는 경우
+            }
 
             var world = World.FromOverdare(umapPath);
             string robloxPlaceFilePath = Path.ChangeExtension(Path.GetTempFileName(), "rbxl");
@@ -549,8 +611,13 @@ namespace Ovjo
 
                 foreach (var child in source.Children)
                 {
-                    //Log.Debug($"Visiting Roblox Instance: {instance.GetFullName()}");
+                    Log.Verbose($"Visiting Roblox Instance: {child.Name}");
                     VisitRobloxSourcemap(child, world.Map.LuaDataModel);
+                }
+                foreach (var child in world.Map.LuaDataModel.GetChildren())
+                {
+                    Log.Verbose($"Visiting Overdare Instance: {child.GetFullName()}");
+                    VisitOverdareInstance(child, source);
                 }
             }
             process.OutputDataReceived += (sender, e) =>
