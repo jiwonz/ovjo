@@ -91,7 +91,7 @@ namespace Ovjo
             switch (choice)
             {
                 case 0:
-                    var result = NativeFileDialogSharp.Dialog.FileOpen("Unreal Engine Map File (*.umap)|*.umap|All Files (*.*)|*.*");
+                    var result = NativeFileDialogSharp.Dialog.FileOpen("umap", Directory.GetCurrentDirectory());
                     if (result.IsError)
                     {
                         return Result

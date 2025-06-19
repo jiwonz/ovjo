@@ -19,20 +19,15 @@
     <PackageReference Include="System.CommandLine" Version="2.0.0-beta4.22272.1" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="NativeFileDialogSharp">
-      <HintPath>..\..\NativeFileDialogSharp\NativeFileDialogSharp\bin\Release\netstandard2.0\NativeFileDialogSharp.dll</HintPath>
-    </Reference>
-    <Reference Include="Overdare">
-      <HintPath>..\..\Overdare.NET\Overdare\bin\Release\net8.0\Overdare.dll</HintPath>
-    </Reference>
-    <Reference Include="RobloxFileFormat">
-      <HintPath>..\..\Roblox-File-Format\bin\Release\RobloxFileFormat.dll</HintPath>
-    </Reference>
-    <Reference Include="UAssetAPI">
-      <HintPath>..\..\UAssetAPI\UAssetAPI\bin\Release\net8.0\UAssetAPI.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="locales\**\*.mo" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\NativeFileDialogSharp\NativeFileDialogSharp\NativeFileDialogSharp.csproj" />
+    <ProjectReference Include="..\..\Overdare.NET\Overdare\Overdare.csproj" />
+    <ProjectReference Include="..\..\Roblox-File-Format\RobloxFileFormat.csproj" />
+    <ProjectReference Include="..\..\UAssetAPI\UAssetAPI\UAssetAPI.csproj" />
+  </ItemGroup>
+	<ItemGroup>
+		<Content Include="..\..\NativeFileDialogSharp\NativeFileDialogSharp\runtimes\**" PackagePath="runtimes" Visible="false" />
+	</ItemGroup>
 </Project>
