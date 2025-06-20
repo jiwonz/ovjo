@@ -545,7 +545,7 @@ namespace Ovjo
                         );
                         return;
                     }
-                    var sourceFilePath = filePaths.First(fp =>
+                    var sourceFilePath = filePaths.FirstOrDefault(fp =>
                     {
                         var ext = Path.GetExtension(fp);
                         return ext == ".lua" || ext == ".luau";
@@ -651,6 +651,9 @@ namespace Ovjo
                     return;
                 }
 
+                Log.Verbose(
+                    $"Roblox sourcemap children count: {source.Children.Count} {string.Join(',', source.Children.Select(x => x.Name))}"
+                );
                 foreach (var child in source.Children)
                 {
                     Log.Verbose($"Visiting Roblox Instance: {child.Name}");
