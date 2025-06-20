@@ -230,18 +230,27 @@ namespace Ovjo
                     }
 
                     var props = _rojoMetaProperties
-                        .Where(key => instanceJson['$' + key] is JObject)
+                        .Where(key => instanceJson['$' + key] is not null)
                         .Select(key =>
                         {
                             var metaKey = '$' + key;
-                            var obj = (JObject)instanceJson[metaKey]!;
+                            var obj = instanceJson[metaKey]!;
                             instanceJson.Remove(metaKey); // Remove from original JObject as a side effect
                             thereWasAModification = true; // Mark that there was a modification to save/update modified rojo project JSON
                             return (Key: key, Value: obj);
                         })
-                        .ToArray();
-                    if (props.Length > 0)
+                        .ToList();
+                    if (props.Count > 0)
                     {
+                        if (instanceJson["$className"] is JToken classNameValue)
+                        {
+                            props.Add((
+                                Key: "className",
+                                Value: classNameValue
+                                )
+                            );
+                        }
+
                         JObject propsObject = new(
                             props.Select(tuple => new JProperty(tuple.Key, tuple.Value))
                         );
