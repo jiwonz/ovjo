@@ -216,7 +216,7 @@ namespace Ovjo
                             UtilityFunctions.ResolveOverdareWorldOutput(output, project)
                         );
                         var filesExceptCurrent = Directory
-                            .GetFiles(
+                            .GetFileSystemEntries(
                                 Path.GetDirectoryName(output) ?? Directory.GetCurrentDirectory()
                             )
                             .Where(f =>

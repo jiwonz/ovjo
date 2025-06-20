@@ -295,6 +295,11 @@ namespace Ovjo
             else
             {
                 string asWorldFolder = Path.Combine(path, projectName + ".umap");
+                string? dir = Path.GetDirectoryName(asWorldFolder);
+                if (!string.IsNullOrEmpty(dir))
+                {
+                    Directory.CreateDirectory(dir);
+                }
                 return Result.Ok(asWorldFolder);
             }
 
@@ -305,7 +310,7 @@ namespace Ovjo
         {
             if (OperatingSystem.IsWindows())
             {
-                if (!File.Exists(filePath))
+                if (File.Exists(filePath))
                 {
                     FileSystem.DeleteFile(
                         filePath,
@@ -315,15 +320,14 @@ namespace Ovjo
                     return;
                 }
                 FileSystem.DeleteDirectory(
-                    Path.GetDirectoryName(filePath)
-                        ?? throw new InvalidOperationException("Invalid path."),
+                    filePath,
                     UIOption.OnlyErrorDialogs,
                     RecycleOption.SendToRecycleBin
                 );
             }
             else
             {
-                if (!File.Exists(filePath))
+                if (File.Exists(filePath))
                 {
                     // No recycle bin on Linux/macOS; this will permanently delete
                     File.Delete(filePath);
