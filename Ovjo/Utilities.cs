@@ -134,6 +134,7 @@ namespace Ovjo
                 var triedPath = path;
                 path += ".project.json";
                 if (!File.Exists(path))
+                {
                     return Result.Fail(
                         _(
                             "Rojo project file does not exist at the specified path. Tried paths {0} and {1}",
@@ -141,6 +142,7 @@ namespace Ovjo
                             path
                         )
                     );
+                }
             }
             return Result.Ok(path);
         }
