@@ -1,10 +1,10 @@
-﻿using FluentResults;
+﻿using System.Diagnostics;
+using System.Text.Json.Serialization;
+using System.Text.RegularExpressions;
+using FluentResults;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Serilog;
-using System.Diagnostics;
-using System.Text.Json.Serialization;
-using System.Text.RegularExpressions;
 using static Ovjo.LocalizationCatalog.Ovjo;
 
 namespace Ovjo
@@ -13,7 +13,8 @@ namespace Ovjo
     {
         private const string _overdareUObjectTypeLuaPrefix = "Lua";
         private const string _overdareReferenceAttributeName = "ovdr_ref";
-        private static readonly string[] _rojoMetaProperties = [
+        private static readonly string[] _rojoMetaProperties =
+        [
             "attributes",
             "properties",
             "$className",
@@ -24,7 +25,12 @@ namespace Ovjo
             return Regex.Replace(className, $"^{Regex.Escape(_overdareUObjectTypeLuaPrefix)}", "");
         }
 
-        public static Result Syncback(string rojoProjectPath, string umapPath, string? rbxlPath = null, bool isResyncbacked = false)
+        public static Result Syncback(
+            string rojoProjectPath,
+            string umapPath,
+            string? rbxlPath = null,
+            bool isResyncbacked = false
+        )
         {
             {
                 Result rojoStatus = UtilityFunctions.RequireProgram("rojo", "syncback --help");
@@ -127,16 +133,6 @@ namespace Ovjo
                     }
                 }
 
-                // Manually modify BrickColor properties to correct BrickColor.. because some BrickColors are serialized incorrectly (Roblox-File-Format issue)
-                foreach ((string key, RobloxFiles.Property prop) in robloxSource.Properties)
-                {
-                    if (prop.Type is RobloxFiles.PropertyType.BrickColor)
-                    {
-                        prop.Value = RobloxFiles.DataTypes.BrickColor.Red();
-                        Log.Debug($"Value written: {prop.Value}");
-                    }
-                }
-
                 return Result.Ok();
             }
             foreach (var child in world.Map.LuaDataModel.GetChildren())
@@ -201,7 +197,9 @@ namespace Ovjo
             // Extract attributes and properties into init.meta.json files
             // We need to do this because `rojo syncback` just edits the rojo project JSON file for the attributes and properties.
             // But if there are no attributes or properties, we are unable to sync back the attributes and properties to the Roblox place file when build.
-            var syncbackProjectJson = JsonConvert.DeserializeObject<JObject>(File.ReadAllText(rojoProjectPath));
+            var syncbackProjectJson = JsonConvert.DeserializeObject<JObject>(
+                File.ReadAllText(rojoProjectPath)
+            );
             if (syncbackProjectJson == null)
             {
                 return Result.Fail(_("Failed to parse rojo project JSON."));
@@ -247,10 +245,7 @@ namespace Ovjo
                             props.Select(tuple => new JProperty(tuple.Key, tuple.Value))
                         );
                         File.WriteAllText(
-                            Path.Combine(
-                                path,
-                                "init.meta.json"
-                            ),
+                            Path.Combine(path, "init.meta.json"),
                             propsObject.ToString(Formatting.Indented)
                         );
                     }
@@ -272,7 +267,10 @@ namespace Ovjo
                 if (thereWasAModification)
                 {
                     Log.Information("Modified rojo project JSON with init.meta.json files.");
-                    File.WriteAllText(rojoProjectPath, syncbackProjectJson.ToString(Formatting.Indented));
+                    File.WriteAllText(
+                        rojoProjectPath,
+                        syncbackProjectJson.ToString(Formatting.Indented)
+                    );
                 }
             }
 
@@ -588,22 +586,31 @@ namespace Ovjo
             // 현재 기능: 오버데어에서 추가된 인스턴스 위치를 알려주는 기능
             // 메모: 파일 시스템 폴더 위치로 대충 예상하거나 모든 폴더에 init.meta.json 파일을 생성해서 파일 경로를 알아내는 방법..?
             // workaround: 프로젝트에서 스크립트를 추가하고 빌드하거나 오버데어에서 추가 후 수동으로 프로젝트에 반영
-            void VisitOverdareInstance(Overdare.UScriptClass.LuaInstance source, SourcemapChild sourcemapParent)
+            void VisitOverdareInstance(
+                Overdare.UScriptClass.LuaInstance source,
+                SourcemapChild sourcemapParent
+            )
             {
                 SourcemapChild? sourcemapChild = null;
                 // Default named
                 if (source.Name == null)
                 {
-                    sourcemapChild = sourcemapParent.Children?.FirstOrDefault(c => c.Name == RemoveLuaPrefix(source.ClassName));
+                    sourcemapChild = sourcemapParent.Children?.FirstOrDefault(c =>
+                        c.Name == RemoveLuaPrefix(source.ClassName)
+                    );
                 }
                 if (sourcemapChild == null)
                 {
                     // Custom named
-                    sourcemapChild = sourcemapParent.Children?.FirstOrDefault(c => c.Name == source.Name);
+                    sourcemapChild = sourcemapParent.Children?.FirstOrDefault(c =>
+                        c.Name == source.Name
+                    );
                     if (sourcemapChild == null)
                     {
                         // 로블록스에 없는데 오버데어에 있는 경우
-                        Log.Warning($"Should add {source.GetFullName()}({source.ClassName}) in {sourcemapParent.FilePaths?[0]}");
+                        Log.Warning(
+                            $"Should add {source.GetFullName()}({source.ClassName}) in {sourcemapParent.FilePaths?[0]}"
+                        );
                     }
                 }
                 // 로블록스에도 있고 오버데어에도 있는 경우
