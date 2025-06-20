@@ -1,12 +1,12 @@
-﻿using FluentResults;
+﻿using System.CommandLine;
+using System.CommandLine.Builder;
+using System.CommandLine.Parsing;
+using FluentResults;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Serilog;
 using Serilog.Events;
 using Sharprompt;
-using System.CommandLine;
-using System.CommandLine.Builder;
-using System.CommandLine.Parsing;
 using static Ovjo.LocalizationCatalog.Ovjo;
 
 namespace Ovjo
@@ -86,12 +86,26 @@ namespace Ovjo
 
         private static Result<(string Input, bool IsResyncbacked)> TryGetUMapInput(string project)
         {
-            string[] messages = [_("Select an input file via the GUI"), _("Perform re-syncback(build the current world and then perform a syncback, but the world will not be updated.)"), _("Abort syncback")];
-            var choice = Prompt.Select("No input file was given. Please choose from the following available options", Enumerable.Range(0, messages.Length), textSelector: i => messages[i]);
+            string[] messages =
+            [
+                _("Select an input file via the GUI"),
+                _(
+                    "Perform re-syncback(build the current world and then perform a syncback, but the world will not be updated.)"
+                ),
+                _("Abort syncback"),
+            ];
+            var choice = Prompt.Select(
+                "No input file was given. Please choose from the following available options",
+                Enumerable.Range(0, messages.Length),
+                textSelector: i => messages[i]
+            );
             switch (choice)
             {
                 case 0:
-                    var result = NativeFileDialogSharp.Dialog.FileOpen("umap", Directory.GetCurrentDirectory());
+                    var result = NativeFileDialogSharp.Dialog.FileOpen(
+                        "umap",
+                        Directory.GetCurrentDirectory()
+                    );
                     if (result.IsError)
                     {
                         return Result
@@ -111,7 +125,10 @@ namespace Ovjo
                     var tempFile = Path.GetTempFileName();
                     File.Delete(tempFile);
                     Directory.CreateDirectory(tempFile);
-                    var newUmapPath = Path.ChangeExtension(Path.Combine(tempFile, Path.GetFileNameWithoutExtension(tempFile)), "umap");
+                    var newUmapPath = Path.ChangeExtension(
+                        Path.Combine(tempFile, Path.GetFileNameWithoutExtension(tempFile)),
+                        "umap"
+                    );
                     ExpectResult(LibOvjo.Build(project, newUmapPath, null));
                     AppDomain.CurrentDomain.ProcessExit += (s, e) =>
                     {
@@ -150,6 +167,7 @@ namespace Ovjo
                 syncbackCommand.SetHandler(
                     (project, input, rbxl) =>
                     {
+                        project = ExpectResult(UtilityFunctions.ResolveRojoProject(project));
                         bool isResyncbacked = false;
                         if (string.IsNullOrWhiteSpace(input))
                         {
@@ -182,7 +200,11 @@ namespace Ovjo
                 buildCommand.AddOption(rbxlOpt);
 
                 buildCommand.SetHandler(
-                    (project, output, rbxl) => ExpectResult(LibOvjo.Build(project, output, rbxl)),
+                    (project, output, rbxl) =>
+                    {
+                        project = ExpectResult(UtilityFunctions.ResolveRojoProject(project));
+                        ExpectResult(LibOvjo.Build(project, output, rbxl));
+                    },
                     projectArg,
                     outputOpt,
                     rbxlOpt
@@ -204,7 +226,11 @@ namespace Ovjo
                 syncCommand.AddOption(watchOpt);
 
                 syncCommand.SetHandler(
-                    (project, input, watch) => ExpectResult(LibOvjo.Sync(project, input, watch)),
+                    (project, input, watch) =>
+                    {
+                        project = ExpectResult(UtilityFunctions.ResolveRojoProject(project));
+                        ExpectResult(LibOvjo.Sync(project, input, watch));
+                    },
                     projectArg,
                     inputOpt,
                     watchOpt

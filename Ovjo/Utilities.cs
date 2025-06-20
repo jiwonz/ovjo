@@ -122,6 +122,22 @@ namespace Ovjo
             }
             return false;
         }
+
+        public static Result<string> ResolveRojoProject(string path)
+        {
+            if (string.IsNullOrWhiteSpace(path))
+            {
+                return Result.Fail(_("Rojo project path cannot be null or empty."));
+            }
+            if (!File.Exists(path))
+            {
+                var triedPath = path;
+                path += ".project.json";
+                if (!File.Exists(path))
+                    return Result.Fail(_("Rojo project file does not exist at the specified path. Tried paths {0} and {1}", triedPath, path));
+            }
+            return Result.Ok(path);
+        }
     }
 
     internal class Defer(Action disposal) : IDisposable
