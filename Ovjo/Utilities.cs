@@ -319,11 +319,14 @@ namespace Ovjo
                     );
                     return;
                 }
-                FileSystem.DeleteDirectory(
-                    filePath,
-                    UIOption.OnlyErrorDialogs,
-                    RecycleOption.SendToRecycleBin
-                );
+                if (Directory.Exists(filePath))
+                {
+                    FileSystem.DeleteDirectory(
+                        filePath,
+                        UIOption.OnlyErrorDialogs,
+                        RecycleOption.SendToRecycleBin
+                    );
+                }
             }
             else
             {
@@ -333,7 +336,8 @@ namespace Ovjo
                     File.Delete(filePath);
                     return;
                 }
-                Directory.Delete(filePath, true);
+                if (Directory.Exists(filePath))
+                    Directory.Delete(filePath, true);
             }
         }
     }
