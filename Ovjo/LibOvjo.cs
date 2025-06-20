@@ -198,11 +198,14 @@ namespace Ovjo
             Log.Information(process.StandardOutput.ReadToEnd());
 
             // Extract attributes and properties into init.meta.json files
+            // We need to do this because `rojo syncback` just edits the rojo project JSON file for the attributes and properties.
+            // But if there are no attributes or properties, we are unable to sync back the attributes and properties to the Roblox place file when build.
             var syncbackProjectJson = JsonConvert.DeserializeObject<JObject>(File.ReadAllText(rojoProjectPath));
             if (syncbackProjectJson == null)
             {
                 return Result.Fail(_("Failed to parse rojo project JSON."));
             }
+            var hasGit = UtilityFunctions.IsGitRepository(Directory.GetCurrentDirectory());
             if (syncbackProjectJson["tree"] is JObject tree)
             {
                 bool thereWasAModification = false;
@@ -217,12 +220,12 @@ namespace Ovjo
                     var path = instanceJson["$path"]?.ToString();
                     if (string.IsNullOrEmpty(path))
                     {
-                        Log.Warning(_("Instance {0} has no path in rojo project JSON.", key));
+                        Log.Warning($"Instance {key} has no path in rojo project JSON.");
                         continue;
                     }
                     if (!Directory.Exists(path))
                     {
-                        Log.Warning(_("Instance {0} path {1} does not exist.", key, path));
+                        Log.Warning($"Instance {key} path {path} does not exist.");
                         continue;
                     }
 
@@ -249,6 +252,20 @@ namespace Ovjo
                             ),
                             propsObject.ToString(Formatting.Indented)
                         );
+                    }
+                    if (hasGit)
+                    {
+                        if (Directory.EnumerateFileSystemEntries(path).Any())
+                        {
+                            if (File.Exists(Path.Combine(path, ".gitkeep")))
+                            {
+                                File.Delete(Path.Combine(path, ".gitkeep"));
+                            }
+                        }
+                        else
+                        {
+                            using (File.Create(Path.Combine(path, ".gitkeep"))) { }
+                        }
                     }
                 }
                 if (thereWasAModification)

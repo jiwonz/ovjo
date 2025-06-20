@@ -113,7 +113,6 @@ namespace Ovjo
                     Directory.CreateDirectory(tempFile);
                     var newUmapPath = Path.ChangeExtension(Path.Combine(tempFile, Path.GetFileNameWithoutExtension(tempFile)), "umap");
                     ExpectResult(LibOvjo.Build(project, newUmapPath, null));
-                    Console.WriteLine(tempFile);
                     AppDomain.CurrentDomain.ProcessExit += (s, e) =>
                     {
                         if (Directory.Exists(tempFile))

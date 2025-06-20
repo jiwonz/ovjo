@@ -1,7 +1,7 @@
-﻿using System.Diagnostics;
+﻿using FluentResults;
+using System.Diagnostics;
 using System.Reflection;
 using System.Text;
-using FluentResults;
 using static Ovjo.LocalizationCatalog.Ovjo;
 
 namespace Ovjo
@@ -109,6 +109,18 @@ namespace Ovjo
         public static Result<Overdare.SandboxMetadata> TryFindSandboxMetadata()
         {
             return Result.Try(Overdare.SandboxMetadata.FromEpicGamesLauncher);
+        }
+
+        public static bool IsGitRepository(string path)
+        {
+            var dir = new DirectoryInfo(path);
+            while (dir != null)
+            {
+                if (Directory.Exists(Path.Combine(dir.FullName, ".git")))
+                    return true;
+                dir = dir.Parent;
+            }
+            return false;
         }
     }
 
