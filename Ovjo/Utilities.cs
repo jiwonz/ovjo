@@ -295,10 +295,7 @@ namespace Ovjo
             else
             {
                 string asWorldFolder = Path.Combine(path, projectName + ".umap");
-                if (File.Exists(asWorldFolder))
-                {
-                    return Result.Ok(asWorldFolder);
-                }
+                return Result.Ok(asWorldFolder);
             }
 
             return Result.Fail(_("OVERDARE World file output path does not match any files."));
@@ -308,16 +305,31 @@ namespace Ovjo
         {
             if (OperatingSystem.IsWindows())
             {
-                FileSystem.DeleteFile(
-                    filePath,
+                if (!File.Exists(filePath))
+                {
+                    FileSystem.DeleteFile(
+                        filePath,
+                        UIOption.OnlyErrorDialogs,
+                        RecycleOption.SendToRecycleBin
+                    );
+                    return;
+                }
+                FileSystem.DeleteDirectory(
+                    Path.GetDirectoryName(filePath)
+                        ?? throw new InvalidOperationException("Invalid path."),
                     UIOption.OnlyErrorDialogs,
                     RecycleOption.SendToRecycleBin
                 );
             }
             else
             {
-                // No recycle bin on Linux/macOS; this will permanently delete
-                File.Delete(filePath);
+                if (!File.Exists(filePath))
+                {
+                    // No recycle bin on Linux/macOS; this will permanently delete
+                    File.Delete(filePath);
+                    return;
+                }
+                Directory.Delete(filePath, true);
             }
         }
     }
