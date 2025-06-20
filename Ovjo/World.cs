@@ -1,6 +1,6 @@
-﻿using K4os.Compression.LZ4;
+﻿using System.Text;
+using K4os.Compression.LZ4;
 using Serilog;
-using System.Text;
 
 namespace Ovjo
 {
@@ -123,8 +123,12 @@ namespace Ovjo
             byte[] uncompressed = chunksStream.ToArray();
             byte[] compressed = new byte[LZ4Codec.MaximumOutputSize(uncompressed.Length)];
             int compressedLength = LZ4Codec.Encode(
-                uncompressed, 0, uncompressed.Length,
-                compressed, 0, compressed.Length
+                uncompressed,
+                0,
+                uncompressed.Length,
+                compressed,
+                0,
+                compressed.Length
             );
             Array.Resize(ref compressed, compressedLength);
 

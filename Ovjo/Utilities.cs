@@ -1,7 +1,7 @@
-﻿using FluentResults;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Reflection;
 using System.Text;
+using FluentResults;
 using static Ovjo.LocalizationCatalog.Ovjo;
 
 namespace Ovjo
@@ -134,7 +134,13 @@ namespace Ovjo
                 var triedPath = path;
                 path += ".project.json";
                 if (!File.Exists(path))
-                    return Result.Fail(_("Rojo project file does not exist at the specified path. Tried paths {0} and {1}", triedPath, path));
+                    return Result.Fail(
+                        _(
+                            "Rojo project file does not exist at the specified path. Tried paths {0} and {1}",
+                            triedPath,
+                            path
+                        )
+                    );
             }
             return Result.Ok(path);
         }
