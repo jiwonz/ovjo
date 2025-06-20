@@ -2,6 +2,7 @@
 using System.Reflection;
 using System.Text;
 using FluentResults;
+using Microsoft.VisualBasic.FileIO;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using static Ovjo.LocalizationCatalog.Ovjo;
@@ -246,7 +247,6 @@ namespace Ovjo
             }
 
             string projectName = Path.GetFileName(path);
-            List<string> matches = [];
 
             if (!string.IsNullOrWhiteSpace(path))
             {
@@ -302,6 +302,23 @@ namespace Ovjo
             }
 
             return Result.Fail(_("OVERDARE World file output path does not match any files."));
+        }
+
+        public static void SafeDelete(string filePath)
+        {
+            if (OperatingSystem.IsWindows())
+            {
+                FileSystem.DeleteFile(
+                    filePath,
+                    UIOption.OnlyErrorDialogs,
+                    RecycleOption.SendToRecycleBin
+                );
+            }
+            else
+            {
+                // No recycle bin on Linux/macOS; this will permanently delete
+                File.Delete(filePath);
+            }
         }
     }
 

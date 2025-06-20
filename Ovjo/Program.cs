@@ -196,24 +196,61 @@ namespace Ovjo
                 Argument<string> projectArg = new("project", _("Path to the project"));
                 projectArg.SetDefaultValue(_defaultRojoProjectPath);
                 Option<string> outputOpt = new(["--output", "-o"], _("Path to the output file"));
+                outputOpt.SetDefaultValue("build");
                 Option<string?> rbxlOpt = new("--rbxl", _("Path to the rbxl file"));
+                Option<bool> yesOpt = new(
+                    ["--yes", "-y"],
+                    _("Assumes 'yes' to all prompts, useful for scripting")
+                );
 
                 buildCommand.AddArgument(projectArg);
                 buildCommand.AddOption(outputOpt);
                 buildCommand.AddOption(rbxlOpt);
+                buildCommand.AddOption(yesOpt);
 
                 buildCommand.SetHandler(
-                    (project, output, rbxl) =>
+                    (project, output, rbxl, yes) =>
                     {
                         project = ExpectResult(UtilityFunctions.ResolveRojoProject(project));
                         output = ExpectResult(
                             UtilityFunctions.ResolveOverdareWorldOutput(output, project)
                         );
+                        var filesExceptCurrent = Directory
+                            .GetFiles(
+                                Path.GetDirectoryName(output) ?? Directory.GetCurrentDirectory()
+                            )
+                            .Where(f =>
+                                !Path.GetFullPath(f)
+                                    .Equals(
+                                        Path.GetFullPath(output),
+                                        StringComparison.OrdinalIgnoreCase
+                                    )
+                            )
+                            .ToArray();
+                        if (filesExceptCurrent.Length > 0)
+                        {
+                            if (
+                                yes
+                                || Prompt.Confirm(
+                                    _(
+                                        "The output directory already contains files other than the current output file. Would you like to recycle those files?"
+                                    ),
+                                    defaultValue: false
+                                )
+                            )
+                            {
+                                foreach (var file in filesExceptCurrent)
+                                {
+                                    UtilityFunctions.SafeDelete(file);
+                                }
+                            }
+                        }
                         ExpectResult(LibOvjo.Build(project, output, rbxl));
                     },
                     projectArg,
                     outputOpt,
-                    rbxlOpt
+                    rbxlOpt,
+                    yesOpt
                 );
             }
 

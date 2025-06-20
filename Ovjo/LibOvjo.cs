@@ -249,6 +249,7 @@ namespace Ovjo
                             propsObject.ToString(Formatting.Indented)
                         );
                     }
+                    // idk if it's necessary
                     if (hasGit)
                     {
                         if (Directory.EnumerateFileSystemEntries(path).Any())
