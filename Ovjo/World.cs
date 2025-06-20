@@ -199,6 +199,8 @@ namespace Ovjo
                             Encoding.UTF8.GetString(data)
                         );
                         break;
+                    case ".lock":
+                        continue;
                 }
                 world.Packages.Add(new(fileName, data));
             }
@@ -222,6 +224,8 @@ namespace Ovjo
                             MessagePack.MessagePackSerializer.ConvertToJson(data)
                         );
                         break;
+                    case ".lock":
+                        continue;
                 }
                 File.WriteAllBytes(filePath, data);
             }
