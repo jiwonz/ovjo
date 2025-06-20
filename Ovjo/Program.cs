@@ -1,6 +1,7 @@
 ﻿using System.CommandLine;
 using System.CommandLine.Builder;
 using System.CommandLine.Parsing;
+using System.Diagnostics;
 using FluentResults;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -15,6 +16,9 @@ namespace Ovjo
     {
         private const string _defaultRojoProjectPath = "default.project.json";
         public const string AppName = "ovjo";
+        private const string _ovdrForumUrl = "https://forum.overdare.com/";
+        private const string _ovdrCreatorUrl = "https://create.overdare.com/";
+        private const string _ovdrDocsUrl = "https://docs.overdare.com/";
 
         private class ResultLogger : IResultLogger
         {
@@ -307,8 +311,16 @@ namespace Ovjo
                 });
             }
 
-            Command studioCommand = new("studio", _("Opens OVERDARE Studio"));
+            Command ovdrCommand = new("ovdr", _("Useful commands for OVERDARE"));
             {
+                Command studioCommand = new("studio", _("Opens OVERDARE Studio"));
+                Command docsCommand = new("docs", _("Opens OVERDARE documentation in the browser"));
+                Command creatorCommand = new(
+                    "creator",
+                    _("Opens OVERDARE Creator Hub in the browser")
+                );
+                Command forumCommand = new("forum", _("Opens OVERDARE Forum in the browser"));
+
                 studioCommand.SetHandler(() =>
                 {
                     var metadataResult = UtilityFunctions.TryFindSandboxMetadata();
@@ -325,8 +337,40 @@ namespace Ovjo
                         );
                         return;
                     }
+                    Log.Information(
+                        $"Opening OVERDARE Studio at {metadataResult.Value.ProgramPath}"
+                    );
                     UtilityFunctions.StartProcess(metadataResult.Value.ProgramPath);
                 });
+
+                static void OpenUrl(string url)
+                {
+                    ProcessStartInfo psi = new() { FileName = url, UseShellExecute = true };
+                    Process.Start(psi);
+                }
+
+                docsCommand.SetHandler(() =>
+                {
+                    Log.Information($"Opening OVERDARE Documentation at {_ovdrDocsUrl}");
+                    OpenUrl(_ovdrDocsUrl);
+                });
+
+                creatorCommand.SetHandler(() =>
+                {
+                    Log.Information($"Opening OVERDARE Creator at {_ovdrCreatorUrl}");
+                    OpenUrl(_ovdrCreatorUrl);
+                });
+
+                forumCommand.SetHandler(() =>
+                {
+                    Log.Information($"Opening OVERDARE Forum at {_ovdrForumUrl}");
+                    OpenUrl(_ovdrForumUrl);
+                });
+
+                ovdrCommand.AddCommand(studioCommand);
+                ovdrCommand.AddCommand(docsCommand);
+                ovdrCommand.AddCommand(creatorCommand);
+                ovdrCommand.AddCommand(forumCommand);
             }
 
             Option<int> verboseOption = new(
@@ -343,7 +387,7 @@ namespace Ovjo
             rootCommand.AddCommand(syncCommand);
             rootCommand.AddCommand(initCommand);
             rootCommand.AddCommand(syncbackCommand);
-            rootCommand.AddCommand(studioCommand);
+            rootCommand.AddCommand(ovdrCommand);
             rootCommand.AddCommand(buildCommand);
 
             CommandLineBuilder commandLineBuilder = new(rootCommand);
