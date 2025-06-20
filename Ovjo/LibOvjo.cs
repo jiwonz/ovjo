@@ -16,6 +16,7 @@ namespace Ovjo
         private static readonly string[] _rojoMetaProperties = [
             "attributes",
             "properties",
+            "$className",
         ];
 
         private static string RemoveLuaPrefix(string className)
@@ -239,18 +240,9 @@ namespace Ovjo
                             thereWasAModification = true; // Mark that there was a modification to save/update modified rojo project JSON
                             return (Key: key, Value: obj);
                         })
-                        .ToList();
-                    if (props.Count > 0)
+                        .ToArray();
+                    if (props.Length > 0)
                     {
-                        if (instanceJson["$className"] is JToken classNameValue)
-                        {
-                            props.Add((
-                                Key: "className",
-                                Value: classNameValue
-                                )
-                            );
-                        }
-
                         JObject propsObject = new(
                             props.Select(tuple => new JProperty(tuple.Key, tuple.Value))
                         );
