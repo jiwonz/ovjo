@@ -17,7 +17,7 @@ namespace Ovjo
         [
             "attributes",
             "properties",
-            "$className",
+            "className",
         ];
 
         private static string RemoveLuaPrefix(string className)
