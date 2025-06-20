@@ -2,6 +2,8 @@
 using System.Reflection;
 using System.Text;
 using FluentResults;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using static Ovjo.LocalizationCatalog.Ovjo;
 
 namespace Ovjo
@@ -145,6 +147,161 @@ namespace Ovjo
                 }
             }
             return Result.Ok(path);
+        }
+
+        public static Result<string> ResolveOverdareWorldInput(
+            string? path,
+            string? rojoProjectPath = null
+        )
+        {
+            path ??= string.Empty;
+            if (Path.GetExtension(path).Equals(".umap", StringComparison.OrdinalIgnoreCase))
+            {
+                return Result.Ok(path);
+            }
+
+            string projectName = Path.GetFileName(path);
+            List<string> matches = [];
+
+            if (!string.IsNullOrWhiteSpace(path))
+            {
+                string withExtension = path + ".umap";
+                if (File.Exists(withExtension))
+                {
+                    matches.Add(withExtension);
+                }
+
+                string asWorldFolder = Path.Combine(path, projectName + ".umap");
+                if (File.Exists(asWorldFolder))
+                {
+                    matches.Add(asWorldFolder);
+                }
+            }
+
+            if (rojoProjectPath != null)
+            {
+                var projectJson = JsonConvert.DeserializeObject<JObject>(
+                    File.ReadAllText(rojoProjectPath)
+                );
+                if (projectJson?["name"] is JValue projectNameValue)
+                {
+                    var value = projectNameValue.Value<string>();
+                    if (value != null && !string.IsNullOrWhiteSpace(value))
+                    {
+                        projectName = value;
+                    }
+                }
+            }
+
+            if (string.IsNullOrWhiteSpace(path))
+            {
+                string withExtension = projectName + ".umap";
+                if (File.Exists(withExtension))
+                {
+                    matches.Add(withExtension);
+                }
+
+                string asWorldFolder = Path.Combine(projectName, projectName + ".umap");
+                if (File.Exists(asWorldFolder))
+                {
+                    matches.Add(asWorldFolder);
+                }
+            }
+            else
+            {
+                string asWorldFolder = Path.Combine(path, projectName + ".umap");
+                if (File.Exists(asWorldFolder))
+                {
+                    matches.Add(asWorldFolder);
+                }
+            }
+
+            if (matches.Count > 1)
+            {
+                return Result.Fail(
+                    _(
+                        "OVERDARE World file input path is ambiguous. {0} matched.",
+                        string.Join(", ", matches)
+                    )
+                );
+            }
+
+            if (matches.Count == 0)
+            {
+                return Result.Fail(_("OVERDARE World file input path does not match any files."));
+            }
+
+            return Result.Ok(matches[0]);
+        }
+
+        public static Result<string> ResolveOverdareWorldOutput(
+            string? path,
+            string? rojoProjectPath = null
+        )
+        {
+            path ??= string.Empty;
+            if (Path.GetExtension(path).Equals(".umap", StringComparison.OrdinalIgnoreCase))
+            {
+                return Result.Ok(path);
+            }
+
+            string projectName = Path.GetFileName(path);
+            List<string> matches = [];
+
+            if (!string.IsNullOrWhiteSpace(path))
+            {
+                string withExtension = path + ".umap";
+                if (File.Exists(withExtension))
+                {
+                    return Result.Ok(withExtension);
+                }
+
+                string asWorldFolder = Path.Combine(path, projectName + ".umap");
+                if (File.Exists(asWorldFolder))
+                {
+                    return Result.Ok(asWorldFolder);
+                }
+            }
+
+            if (rojoProjectPath != null)
+            {
+                var projectJson = JsonConvert.DeserializeObject<JObject>(
+                    File.ReadAllText(rojoProjectPath)
+                );
+                if (projectJson?["name"] is JValue projectNameValue)
+                {
+                    var value = projectNameValue.Value<string>();
+                    if (value != null && !string.IsNullOrWhiteSpace(value))
+                    {
+                        projectName = value;
+                    }
+                }
+            }
+
+            if (string.IsNullOrWhiteSpace(path))
+            {
+                string withExtension = projectName + ".umap";
+                if (File.Exists(withExtension))
+                {
+                    return Result.Ok(withExtension);
+                }
+
+                string asWorldFolder = Path.Combine(projectName, projectName + ".umap");
+                if (File.Exists(asWorldFolder))
+                {
+                    return Result.Ok(asWorldFolder);
+                }
+            }
+            else
+            {
+                string asWorldFolder = Path.Combine(path, projectName + ".umap");
+                if (File.Exists(asWorldFolder))
+                {
+                    return Result.Ok(asWorldFolder);
+                }
+            }
+
+            return Result.Fail(_("OVERDARE World file output path does not match any files."));
         }
     }
 

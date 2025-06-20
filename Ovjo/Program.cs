@@ -168,6 +168,9 @@ namespace Ovjo
                     (project, input, rbxl) =>
                     {
                         project = ExpectResult(UtilityFunctions.ResolveRojoProject(project));
+                        input = ExpectResult(
+                            UtilityFunctions.ResolveOverdareWorldInput(input, project)
+                        );
                         bool isResyncbacked = false;
                         if (string.IsNullOrWhiteSpace(input))
                         {
@@ -203,6 +206,9 @@ namespace Ovjo
                     (project, output, rbxl) =>
                     {
                         project = ExpectResult(UtilityFunctions.ResolveRojoProject(project));
+                        output = ExpectResult(
+                            UtilityFunctions.ResolveOverdareWorldOutput(output, project)
+                        );
                         ExpectResult(LibOvjo.Build(project, output, rbxl));
                     },
                     projectArg,
@@ -229,6 +235,9 @@ namespace Ovjo
                     (project, input, watch) =>
                     {
                         project = ExpectResult(UtilityFunctions.ResolveRojoProject(project));
+                        input = ExpectResult(
+                            UtilityFunctions.ResolveOverdareWorldInput(input, project)
+                        );
                         ExpectResult(LibOvjo.Sync(project, input, watch));
                     },
                     projectArg,
