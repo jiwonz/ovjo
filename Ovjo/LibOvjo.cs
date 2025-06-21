@@ -204,7 +204,6 @@ namespace Ovjo
             {
                 return Result.Fail(_("Failed to parse rojo project JSON."));
             }
-            var hasGit = UtilityFunctions.IsGitRepository(Directory.GetCurrentDirectory());
             if (syncbackProjectJson["tree"] is JObject tree)
             {
                 bool thereWasAModification = false;
@@ -248,21 +247,6 @@ namespace Ovjo
                             Path.Combine(path, "init.meta.json"),
                             propsObject.ToString(Formatting.Indented)
                         );
-                    }
-                    // idk if it's necessary
-                    if (hasGit)
-                    {
-                        if (Directory.EnumerateFileSystemEntries(path).Any())
-                        {
-                            if (File.Exists(Path.Combine(path, ".gitkeep")))
-                            {
-                                File.Delete(Path.Combine(path, ".gitkeep"));
-                            }
-                        }
-                        else
-                        {
-                            using (File.Create(Path.Combine(path, ".gitkeep"))) { }
-                        }
                     }
                 }
                 if (thereWasAModification)

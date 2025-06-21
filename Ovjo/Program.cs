@@ -345,8 +345,14 @@ namespace Ovjo
 
                 static void OpenUrl(string url)
                 {
-                    ProcessStartInfo psi = new() { FileName = url, UseShellExecute = true };
-                    Process.Start(psi);
+                    try
+                    {
+                        Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Error(ex, "Failed to open URL: {Url}", url);
+                    }
                 }
 
                 docsCommand.SetHandler(() =>

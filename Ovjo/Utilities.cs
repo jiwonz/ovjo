@@ -114,18 +114,6 @@ namespace Ovjo
             return Result.Try(Overdare.SandboxMetadata.FromEpicGamesLauncher);
         }
 
-        public static bool IsGitRepository(string path)
-        {
-            var dir = new DirectoryInfo(path);
-            while (dir != null)
-            {
-                if (Directory.Exists(Path.Combine(dir.FullName, ".git")))
-                    return true;
-                dir = dir.Parent;
-            }
-            return false;
-        }
-
         public static Result<string> ResolveRojoProject(string path)
         {
             if (string.IsNullOrWhiteSpace(path))
