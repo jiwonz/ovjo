@@ -340,19 +340,22 @@ namespace Ovjo
                     Log.Information(
                         $"Opening OVERDARE Studio at {metadataResult.Value.ProgramPath}"
                     );
-                    UtilityFunctions.StartProcess(metadataResult.Value.ProgramPath);
+                    var process = UtilityFunctions.StartProcess(metadataResult.Value.ProgramPath);
+                    process.WaitForExit();
                 });
 
                 static void OpenUrl(string url)
                 {
-                    try
+                    Log.Debug($"Opening URL {url}");
+                    var process = Process.Start(
+                        new ProcessStartInfo(url) { UseShellExecute = true }
+                    );
+                    if (process == null)
                     {
-                        Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
+                        Log.Error("Failed to start process for URL: {Url}", url);
+                        return;
                     }
-                    catch (Exception ex)
-                    {
-                        Log.Error(ex, "Failed to open URL: {Url}", url);
-                    }
+                    process.WaitForExit();
                 }
 
                 docsCommand.SetHandler(() =>
