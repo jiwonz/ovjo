@@ -313,35 +313,33 @@ namespace Ovjo
 
             Command ovdrCommand = new("ovdr", _("Useful commands for OVERDARE"));
             {
+                Option<bool> dryRun = new(["--dry-run"], _("Prints what will be opened"));
                 Command studioCommand = new("studio", _("Opens OVERDARE Studio"));
+                studioCommand.AddOption(dryRun);
                 Command docsCommand = new("docs", _("Opens OVERDARE documentation in the browser"));
+                docsCommand.AddOption(dryRun);
                 Command creatorCommand = new(
                     "creator",
                     _("Opens OVERDARE Creator Hub in the browser")
                 );
+                creatorCommand.AddOption(dryRun);
                 Command forumCommand = new("forum", _("Opens OVERDARE Forum in the browser"));
+                forumCommand.AddOption(dryRun);
 
-                studioCommand.SetHandler(() =>
-                {
-                    var metadataResult = UtilityFunctions.TryFindSandboxMetadata();
-                    if (metadataResult.IsFailed)
+                studioCommand.SetHandler(
+                    (dryRun) =>
                     {
-                        ExpectResult(
-                            Result
-                                .Fail(
-                                    _(
-                                        "Failed to find OVERDARE Studio metadata in the computer via Epic Games Launcher."
-                                    )
-                                )
-                                .WithReasons(metadataResult.Errors)
-                        );
-                        return;
-                    }
-                    Log.Information(
-                        $"Opening OVERDARE Studio at {metadataResult.Value.ProgramPath}"
-                    );
-                    UtilityFunctions.StartProcess(metadataResult.Value.ProgramPath);
-                });
+                        var metadata = ExpectResult(UtilityFunctions.TryFindSandboxMetadata());
+                        if (dryRun)
+                        {
+                            Console.WriteLine(metadata.ProgramPath);
+                            return;
+                        }
+                        Log.Information($"Opening OVERDARE Studio at {metadata.ProgramPath}");
+                        UtilityFunctions.StartProcess(metadata.ProgramPath);
+                    },
+                    dryRun
+                );
 
                 static void OpenUrl(string url)
                 {
@@ -352,27 +350,51 @@ namespace Ovjo
                     }
                     catch (Exception ex)
                     {
-                        Log.Error(ex, "Failed to open URL: {Url}", url);
+                        Log.Error(ex, $"Failed to open URL: {url}");
                     }
                 }
 
-                docsCommand.SetHandler(() =>
-                {
-                    Log.Information($"Opening OVERDARE Documentation at {_ovdrDocsUrl}");
-                    OpenUrl(_ovdrDocsUrl);
-                });
+                docsCommand.SetHandler(
+                    (dryRun) =>
+                    {
+                        if (dryRun)
+                        {
+                            Console.WriteLine(_ovdrDocsUrl);
+                            return;
+                        }
+                        Log.Information($"Opening OVERDARE Documentation at {_ovdrDocsUrl}");
+                        OpenUrl(_ovdrDocsUrl);
+                    },
+                    dryRun
+                );
 
-                creatorCommand.SetHandler(() =>
-                {
-                    Log.Information($"Opening OVERDARE Creator at {_ovdrCreatorUrl}");
-                    OpenUrl(_ovdrCreatorUrl);
-                });
+                creatorCommand.SetHandler(
+                    (dryRun) =>
+                    {
+                        if (dryRun)
+                        {
+                            Console.WriteLine(_ovdrCreatorUrl);
+                            return;
+                        }
+                        Log.Information($"Opening OVERDARE Creator at {_ovdrCreatorUrl}");
+                        OpenUrl(_ovdrCreatorUrl);
+                    },
+                    dryRun
+                );
 
-                forumCommand.SetHandler(() =>
-                {
-                    Log.Information($"Opening OVERDARE Forum at {_ovdrForumUrl}");
-                    OpenUrl(_ovdrForumUrl);
-                });
+                forumCommand.SetHandler(
+                    (dryRun) =>
+                    {
+                        if (dryRun)
+                        {
+                            Console.WriteLine(_ovdrForumUrl);
+                            return;
+                        }
+                        Log.Information($"Opening OVERDARE Forum at {_ovdrForumUrl}");
+                        OpenUrl(_ovdrForumUrl);
+                    },
+                    dryRun
+                );
 
                 ovdrCommand.AddCommand(studioCommand);
                 ovdrCommand.AddCommand(docsCommand);

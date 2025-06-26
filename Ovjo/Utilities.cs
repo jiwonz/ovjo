@@ -111,7 +111,18 @@ namespace Ovjo
 
         public static Result<Overdare.SandboxMetadata> TryFindSandboxMetadata()
         {
-            return Result.Try(Overdare.SandboxMetadata.FromEpicGamesLauncher);
+            var result = Result.Try(Overdare.SandboxMetadata.FromEpicGamesLauncher);
+            if (result.IsFailed)
+            {
+                return Result
+                    .Fail(
+                        _(
+                            "Failed to find OVERDARE Studio metadata in the computer via Epic Games Launcher."
+                        )
+                    )
+                    .WithReasons(result.Errors);
+            }
+            return result;
         }
 
         public static Result<string> ResolveRojoProject(string path)

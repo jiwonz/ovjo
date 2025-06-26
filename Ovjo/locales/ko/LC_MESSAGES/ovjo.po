@@ -1,5 +1,5 @@
 # Korean translations for PACKAGE package
-# PACKAGE ÆĞÅ°Áö¿¡ ´ëÇÑ ÇÑ±¹¾î ¹ø¿ª¹®.
+# PACKAGE íŒ¨í‚¤ì§€ì— ëŒ€í•œ í•œêµ­ì–´ ë²ˆì—­ë¬¸.
 # Copyright (C) 2025 THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # <EMAIL@ADDRESS>, 2025.
@@ -14,7 +14,7 @@ msgstr ""
 "Language-Team: Korean\n"
 "Language: ko\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=CP949\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 "X-Generator: Poedit 3.6\n"
@@ -24,8 +24,8 @@ msgid ""
 "`rojo syncback` is required to perform `LibOvjo.Syncback`, but failed to "
 "check."
 msgstr ""
-"`LibOvjo.Syncback`À»(¸¦) ¼öÇàÇÏ·Á¸é `rojo syncback`ÀÌ ÇÊ¿äÇÏÁö¸¸ È®ÀÎ¿¡ ½ÇÆĞ"
-"Çß½À´Ï´Ù."
+"`LibOvjo.Syncback`ì„(ë¥¼) ìˆ˜í–‰í•˜ë ¤ë©´ `rojo syncback`ì´ í•„ìš”í•˜ì§€ë§Œ í™•ì¸ì— ì‹¤íŒ¨"
+"í–ˆìŠµë‹ˆë‹¤."
 
 #: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\LibOvjo.cs:112
 #, csharp-format
@@ -33,178 +33,178 @@ msgid ""
 "LuaCode property was found in this OVERDARE Instance({0}) but its Roblox "
 "class equivalent is not a LuaSourceContainer."
 msgstr ""
-"ÀÌ OVERDARE ÀÎ½ºÅÏ½º({0})¿¡¼­ LuaCode ¼Ó¼ºÀÌ ¹ß°ßµÇ¾úÀ¸³ª, ÇØ´ç Roblox Å¬·¡½º"
-"´Â LuaSourceContainer°¡ ¾Æ´Õ´Ï´Ù."
+"ì´ OVERDARE ì¸ìŠ¤í„´ìŠ¤({0})ì—ì„œ LuaCode ì†ì„±ì´ ë°œê²¬ë˜ì—ˆìœ¼ë‚˜, í•´ë‹¹ Roblox í´ë˜ìŠ¤"
+"ëŠ” LuaSourceContainerê°€ ì•„ë‹™ë‹ˆë‹¤."
 
 #: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\LibOvjo.cs:128
 #: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\LibOvjo.cs:146
 #, csharp-format
 msgid "Failed to convert LuaInstance({0}) to Roblox Instance."
-msgstr "LuaInstance({0})¸¦ Roblox ÀÎ½ºÅÏ½º·Î º¯È¯ÇÏ´Â µ¥ ½ÇÆĞÇß½À´Ï´Ù."
+msgstr "LuaInstance({0})ë¥¼ Roblox ì¸ìŠ¤í„´ìŠ¤ë¡œ ë³€í™˜í•˜ëŠ” ë° ì‹¤íŒ¨í–ˆìŠµë‹ˆë‹¤."
 
 #: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\LibOvjo.cs:185
 msgid "Failed to run `rojo syncback`."
-msgstr "`rojo syncback` ½ÇÇà¿¡ ½ÇÆĞÇß½À´Ï´Ù."
+msgstr "`rojo syncback` ì‹¤í–‰ì— ì‹¤íŒ¨í–ˆìŠµë‹ˆë‹¤."
 
 #: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\LibOvjo.cs:189
 #: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\LibOvjo.cs:321
 #, csharp-format
 msgid "rojo exited with code 0 with stderr: {0}"
-msgstr "rojo°¡ ÄÚµå 0À¸·Î Á¾·áµÇ¾úÀ¸³ª stderr: {0}"
+msgstr "rojoê°€ ì½”ë“œ 0ìœ¼ë¡œ ì¢…ë£Œë˜ì—ˆìœ¼ë‚˜ stderr: {0}"
 
 #: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\LibOvjo.cs:205
 msgid "Failed to parse rojo project JSON."
-msgstr "rojo ÇÁ·ÎÁ§Æ® JSONÀ» ÆÄ½ÌÇÏ´Â µ¥ ½ÇÆĞÇß½À´Ï´Ù."
+msgstr "rojo í”„ë¡œì íŠ¸ JSONì„ íŒŒì‹±í•˜ëŠ” ë° ì‹¤íŒ¨í–ˆìŠµë‹ˆë‹¤."
 
 #: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\LibOvjo.cs:290
 msgid ""
 "`rojo build` is required to perform `LibOvjo.Build`, but failed to check."
 msgstr ""
-"`LibOvjo.Build`¸¦(À») ¼öÇàÇÏ·Á¸é `rojo build`°¡ ÇÊ¿äÇÏÁö¸¸ È®ÀÎ¿¡ ½ÇÆĞÇß½À´Ï"
-"´Ù."
+"`LibOvjo.Build`ë¥¼(ì„) ìˆ˜í–‰í•˜ë ¤ë©´ `rojo build`ê°€ í•„ìš”í•˜ì§€ë§Œ í™•ì¸ì— ì‹¤íŒ¨í–ˆìŠµë‹ˆ"
+"ë‹¤."
 
 #: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\LibOvjo.cs:317
 msgid "Failed to run `rojo build`."
-msgstr "`rojo build` ½ÇÇà¿¡ ½ÇÆĞÇß½À´Ï´Ù."
+msgstr "`rojo build` ì‹¤í–‰ì— ì‹¤íŒ¨í–ˆìŠµë‹ˆë‹¤."
 
 #: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\LibOvjo.cs:414
 #, csharp-format
 msgid "Roblox Instance({0}) is not supported to be converted to LuaInstance."
-msgstr "Roblox ÀÎ½ºÅÏ½º({0})´Â LuaInstance·Î º¯È¯À» Áö¿øÇÏÁö ¾Ê½À´Ï´Ù."
+msgstr "Roblox ì¸ìŠ¤í„´ìŠ¤({0})ëŠ” LuaInstanceë¡œ ë³€í™˜ì„ ì§€ì›í•˜ì§€ ì•ŠìŠµë‹ˆë‹¤."
 
 #: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\LibOvjo.cs:435
 #: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\LibOvjo.cs:453
 #, csharp-format
 msgid "Failed to visit Roblox Instance({0}) from the built place file."
-msgstr "ºôµåµÈ place ÆÄÀÏ¿¡¼­ Roblox ÀÎ½ºÅÏ½º({0})¸¦ ¹æ¹®ÇÏ´Â µ¥ ½ÇÆĞÇß½À´Ï´Ù."
+msgstr "ë¹Œë“œëœ place íŒŒì¼ì—ì„œ Roblox ì¸ìŠ¤í„´ìŠ¤({0})ë¥¼ ë°©ë¬¸í•˜ëŠ” ë° ì‹¤íŒ¨í–ˆìŠµë‹ˆë‹¤."
 
 #: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\LibOvjo.cs:490
 msgid ""
 "`rojo sourcemap` is required to perform `LibOvjo.Sync`, but failed to check."
 msgstr ""
-"`LibOvjo.Sync`¸¦(À») ¼öÇàÇÏ·Á¸é `rojo sourcemap`ÀÌ ÇÊ¿äÇÏÁö¸¸ È®ÀÎ¿¡ ½ÇÆĞÇß½À"
-"´Ï´Ù."
+"`LibOvjo.Sync`ë¥¼(ì„) ìˆ˜í–‰í•˜ë ¤ë©´ `rojo sourcemap`ì´ í•„ìš”í•˜ì§€ë§Œ í™•ì¸ì— ì‹¤íŒ¨í–ˆìŠµ"
+"ë‹ˆë‹¤."
 
 #: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:95
 msgid "Select an input file via the GUI"
-msgstr "GUI¸¦ ÅëÇØ ÀÔ·Â ÆÄÀÏÀ» ¼±ÅÃÇÏ¼¼¿ä"
+msgstr "GUIë¥¼ í†µí•´ ì…ë ¥ íŒŒì¼ì„ ì„ íƒí•˜ì„¸ìš”"
 
 #: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:97
 msgid ""
 "Perform re-syncback(build the current world and then perform a syncback, but "
 "the world will not be updated.)"
 msgstr ""
-"Àçµ¿±âÈ­ ¼öÇà(ÇöÀç ¿ùµå¸¦ ºôµåÇÑ ÈÄ µ¿±âÈ­¸¦ ¼öÇàÇÏÁö¸¸, ¿ùµå´Â ¾÷µ¥ÀÌÆ®µÇÁö "
-"¾Ê½À´Ï´Ù.)"
+"ì¬ë™ê¸°í™” ìˆ˜í–‰(í˜„ì¬ ì›”ë“œë¥¼ ë¹Œë“œí•œ í›„ ë™ê¸°í™”ë¥¼ ìˆ˜í–‰í•˜ì§€ë§Œ, ì›”ë“œëŠ” ì—…ë°ì´íŠ¸ë˜ì§€ "
+"ì•ŠìŠµë‹ˆë‹¤.)"
 
 #: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:99
 msgid "Abort syncback"
-msgstr "µ¿±âÈ­ Áß´Ü"
+msgstr "ë™ê¸°í™” ì¤‘ë‹¨"
 
 #: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:116
 msgid "Failed to open the file dialog."
-msgstr "ÆÄÀÏ ´ëÈ­»óÀÚ¸¦ ¿©´Â µ¥ ½ÇÆĞÇß½À´Ï´Ù."
+msgstr "íŒŒì¼ ëŒ€í™”ìƒìë¥¼ ì—¬ëŠ” ë° ì‹¤íŒ¨í–ˆìŠµë‹ˆë‹¤."
 
 #: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:122
 #: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:145
 msgid "No input file was given. Please provide a valid .umap file."
-msgstr "ÀÔ·Â ÆÄÀÏÀÌ Á¦°øµÇÁö ¾Ê¾Ò½À´Ï´Ù. ¿Ã¹Ù¸¥ .umap ÆÄÀÏÀ» Á¦°øÇØ ÁÖ¼¼¿ä."
+msgstr "ì…ë ¥ íŒŒì¼ì´ ì œê³µë˜ì§€ ì•Šì•˜ìŠµë‹ˆë‹¤. ì˜¬ë°”ë¥¸ .umap íŒŒì¼ì„ ì œê³µí•´ ì£¼ì„¸ìš”."
 
 #: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:123
 #: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:146
 msgid "Aborted by the user."
-msgstr "»ç¿ëÀÚ¿¡ ÀÇÇØ Áß´ÜµÇ¾ú½À´Ï´Ù."
+msgstr "ì‚¬ìš©ìì— ì˜í•´ ì¤‘ë‹¨ë˜ì—ˆìŠµë‹ˆë‹¤."
 
 #: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:159
 msgid ""
 "Performs 'syncback' for the provided project, using the `input` file given"
 msgstr ""
-"Á¦°øµÈ ÇÁ·ÎÁ§Æ®¿¡ ´ëÇØ 'µ¿±âÈ­'¸¦ ¼öÇàÇÏ¸ç, ÁöÁ¤µÈ `input` ÆÄÀÏÀ» »ç¿ëÇÕ´Ï´Ù"
+"ì œê³µëœ í”„ë¡œì íŠ¸ì— ëŒ€í•´ 'ë™ê¸°í™”'ë¥¼ ìˆ˜í–‰í•˜ë©°, ì§€ì •ëœ `input` íŒŒì¼ì„ ì‚¬ìš©í•©ë‹ˆë‹¤"
 
 #: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:162
 #: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:200
 #: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:266
 msgid "Path to the project"
-msgstr "ÇÁ·ÎÁ§Æ® °æ·Î"
+msgstr "í”„ë¡œì íŠ¸ ê²½ë¡œ"
 
 #: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:164
 #: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:268
 msgid "Path to the input file"
-msgstr "ÀÔ·Â ÆÄÀÏ °æ·Î"
+msgstr "ì…ë ¥ íŒŒì¼ ê²½ë¡œ"
 
 #: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:165
 #: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:204
 msgid "Path to the rbxl file"
-msgstr "rbxl ÆÄÀÏ °æ·Î"
+msgstr "rbxl íŒŒì¼ ê²½ë¡œ"
 
 #: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:198
 msgid "Builds the project into OVERDARE world"
-msgstr "ÇÁ·ÎÁ§Æ®¸¦ OVERDARE ¿ùµå·Î ºôµåÇÕ´Ï´Ù"
+msgstr "í”„ë¡œì íŠ¸ë¥¼ OVERDARE ì›”ë“œë¡œ ë¹Œë“œí•©ë‹ˆë‹¤"
 
 #: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:202
 msgid "Path to the output file"
-msgstr "Ãâ·Â ÆÄÀÏ °æ·Î"
+msgstr "ì¶œë ¥ íŒŒì¼ ê²½ë¡œ"
 
 #: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:207
 msgid "Assumes 'yes' to all prompts, useful for scripting"
-msgstr "¸ğµç ÇÁ·ÒÇÁÆ®¿¡ '¿¹'·Î °£ÁÖ(½ºÅ©¸³Æ® ½ÇÇà¿¡ À¯¿ë)"
+msgstr "ëª¨ë“  í”„ë¡¬í”„íŠ¸ì— 'ì˜ˆ'ë¡œ ê°„ì£¼(ìŠ¤í¬ë¦½íŠ¸ ì‹¤í–‰ì— ìœ ìš©)"
 
 #: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:240
 msgid ""
 "The output directory already contains files other than the current output "
 "file. Would you like to recycle those files?"
 msgstr ""
-"Ãâ·Â µğ·ºÅÍ¸®¿¡ ÇöÀç Ãâ·Â ÆÄÀÏ ÀÌ¿ÜÀÇ ÆÄÀÏÀÌ ÀÌ¹Ì Á¸ÀçÇÕ´Ï´Ù. ÇØ´ç ÆÄÀÏµéÀ» "
-"ÈŞÁöÅëÀ¸·Î ÀÌµ¿ÇÏ½Ã°Ú½À´Ï±î?"
+"ì¶œë ¥ ë””ë ‰í„°ë¦¬ì— í˜„ì¬ ì¶œë ¥ íŒŒì¼ ì´ì™¸ì˜ íŒŒì¼ì´ ì´ë¯¸ ì¡´ì¬í•©ë‹ˆë‹¤. í•´ë‹¹ íŒŒì¼ë“¤ì„ "
+"íœ´ì§€í†µìœ¼ë¡œ ì´ë™í•˜ì‹œê² ìŠµë‹ˆê¹Œ?"
 
 #: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:263
 msgid ""
 "Synchronizes Lua sources between the project and the input OVERDARE world"
-msgstr "ÇÁ·ÎÁ§Æ®¿Í ÀÔ·Â OVERDARE ¿ùµå °£¿¡ Lua ¼Ò½º¸¦ µ¿±âÈ­ÇÕ´Ï´Ù"
+msgstr "í”„ë¡œì íŠ¸ì™€ ì…ë ¥ OVERDARE ì›”ë“œ ê°„ì— Lua ì†ŒìŠ¤ë¥¼ ë™ê¸°í™”í•©ë‹ˆë‹¤"
 
 #: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:269
 msgid "Watches source files"
-msgstr "¼Ò½º ÆÄÀÏ °¨½Ã"
+msgstr "ì†ŒìŠ¤ íŒŒì¼ ê°ì‹œ"
 
 #: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:292
 msgid "Initializes a new ovjo project from OVERDARE Studio"
-msgstr "OVERDARE Studio¿¡¼­ »õ·Î¿î ovjo ÇÁ·ÎÁ§Æ®¸¦ ÃÊ±âÈ­ÇÕ´Ï´Ù"
+msgstr "OVERDARE Studioì—ì„œ ìƒˆë¡œìš´ ovjo í”„ë¡œì íŠ¸ë¥¼ ì´ˆê¸°í™”í•©ë‹ˆë‹¤"
 
 #: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:314
 msgid "Useful commands for OVERDARE"
-msgstr "OVERDARE¸¦ À§ÇÑ À¯¿ëÇÑ ¸í·É¾î"
+msgstr "OVERDAREë¥¼ ìœ„í•œ ìœ ìš©í•œ ëª…ë ¹ì–´"
 
 #: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:316
 msgid "Opens OVERDARE Studio"
-msgstr "OVERDARE Studio ¿­±â"
+msgstr "OVERDARE Studio ì—´ê¸°"
 
 #: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:317
 msgid "Opens OVERDARE documentation in the browser"
-msgstr "ºê¶ó¿ìÀú¿¡¼­ OVERDARE ¹®¼­ ¿­±â"
+msgstr "ë¸Œë¼ìš°ì €ì—ì„œ OVERDARE ë¬¸ì„œ ì—´ê¸°"
 
 #: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:320
 msgid "Opens OVERDARE Creator Hub in the browser"
-msgstr "ºê¶ó¿ìÀú¿¡¼­ OVERDARE Creator Hub ¿­±â"
+msgstr "ë¸Œë¼ìš°ì €ì—ì„œ OVERDARE Creator Hub ì—´ê¸°"
 
 #: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:322
 msgid "Opens OVERDARE Forum in the browser"
-msgstr "ºê¶ó¿ìÀú¿¡¼­ OVERDARE Æ÷·³ ¿­±â"
+msgstr "ë¸Œë¼ìš°ì €ì—ì„œ OVERDARE í¬ëŸ¼ ì—´ê¸°"
 
 #: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:333
 msgid ""
 "Failed to find OVERDARE Studio metadata in the computer via Epic Games "
 "Launcher."
 msgstr ""
-"Epic Games Launcher¸¦ ÅëÇØ ÄÄÇ»ÅÍ¿¡¼­ OVERDARE Studio ¸ŞÅ¸µ¥ÀÌÅÍ¸¦ Ã£Áö ¸øÇß"
-"½À´Ï´Ù."
+"Epic Games Launcherë¥¼ í†µí•´ ì»´í“¨í„°ì—ì„œ OVERDARE Studio ë©”íƒ€ë°ì´í„°ë¥¼ ì°¾ì§€ ëª»í–ˆ"
+"ìŠµë‹ˆë‹¤."
 
 #: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:378
 msgid "Sets the verbosity level (e.g., -v 2, --verbose 3)"
-msgstr "»ó¼¼ Ãâ·Â ¼öÁØ ¼³Á¤(¿¹: -v 2, --verbose 3)"
+msgstr "ìƒì„¸ ì¶œë ¥ ìˆ˜ì¤€ ì„¤ì •(ì˜ˆ: -v 2, --verbose 3)"
 
 #: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:384
 msgid "Enables professional-grade development tools for OVERDARE developers"
-msgstr "OVERDARE °³¹ßÀÚ¸¦ À§ÇÑ Àü¹®°¡¿ë °³¹ß µµ±¸ È°¼ºÈ­"
+msgstr "OVERDARE ê°œë°œìë¥¼ ìœ„í•œ ì „ë¬¸ê°€ìš© ê°œë°œ ë„êµ¬ í™œì„±í™”"
 
 #: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Utilities.cs:88
 #, csharp-format
@@ -212,8 +212,8 @@ msgid ""
 "Execution of `{0} {1}` failed. {2} requires `{0}` to function properly with "
 "the provided arguments: `{1}`."
 msgstr ""
-"`{0} {1}` ½ÇÇà¿¡ ½ÇÆĞÇß½À´Ï´Ù. {2}´Â(Àº) Á¦°øµÈ ÀÎ¼ö `{1}`·Î `{0}`ÀÌ(°¡) Á¤»ó"
-"ÀûÀ¸·Î µ¿ÀÛÇØ¾ß ÇÕ´Ï´Ù."
+"`{0} {1}` ì‹¤í–‰ì— ì‹¤íŒ¨í–ˆìŠµë‹ˆë‹¤. {2}ëŠ”(ì€) ì œê³µëœ ì¸ìˆ˜ `{1}`ë¡œ `{0}`ì´(ê°€) ì •ìƒ"
+"ì ìœ¼ë¡œ ë™ì‘í•´ì•¼ í•©ë‹ˆë‹¤."
 
 #: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Utilities.cs:103
 #, csharp-format
@@ -221,12 +221,12 @@ msgid ""
 "Unable to execute `{0}`. It appears that `{0}` is not installed or is "
 "inaccessible. {1} requires `{0}` to function properly."
 msgstr ""
-"`{0}`À»(¸¦) ½ÇÇàÇÒ ¼ö ¾ø½À´Ï´Ù. `{0}`ÀÌ(°¡) ¼³Ä¡µÇ¾î ÀÖÁö ¾Ê°Å³ª Á¢±ÙÇÒ ¼ö ¾ø"
-"´Â °Í °°½À´Ï´Ù. {1}Àº(´Â) Á¤»ó µ¿ÀÛÀ» À§ÇØ `{0}`ÀÌ(°¡) ÇÊ¿äÇÕ´Ï´Ù."
+"`{0}`ì„(ë¥¼) ì‹¤í–‰í•  ìˆ˜ ì—†ìŠµë‹ˆë‹¤. `{0}`ì´(ê°€) ì„¤ì¹˜ë˜ì–´ ìˆì§€ ì•Šê±°ë‚˜ ì ‘ê·¼í•  ìˆ˜ ì—†"
+"ëŠ” ê²ƒ ê°™ìŠµë‹ˆë‹¤. {1}ì€(ëŠ”) ì •ìƒ ë™ì‘ì„ ìœ„í•´ `{0}`ì´(ê°€) í•„ìš”í•©ë‹ˆë‹¤."
 
 #: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Utilities.cs:133
 msgid "Rojo project path cannot be null or empty."
-msgstr "Rojo ÇÁ·ÎÁ§Æ® °æ·Î´Â ºñ¾î ÀÖ°Å³ª nullÀÏ ¼ö ¾ø½À´Ï´Ù."
+msgstr "Rojo í”„ë¡œì íŠ¸ ê²½ë¡œëŠ” ë¹„ì–´ ìˆê±°ë‚˜ nullì¼ ìˆ˜ ì—†ìŠµë‹ˆë‹¤."
 
 #: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Utilities.cs:143
 #, csharp-format
@@ -234,17 +234,17 @@ msgid ""
 "Rojo project file does not exist at the specified path. Tried paths {0} and "
 "{1}"
 msgstr ""
-"ÁöÁ¤µÈ °æ·Î¿¡ Rojo ÇÁ·ÎÁ§Æ® ÆÄÀÏÀÌ Á¸ÀçÇÏÁö ¾Ê½À´Ï´Ù. ½ÃµµÇÑ °æ·Î: {0}, {1}"
+"ì§€ì •ëœ ê²½ë¡œì— Rojo í”„ë¡œì íŠ¸ íŒŒì¼ì´ ì¡´ì¬í•˜ì§€ ì•ŠìŠµë‹ˆë‹¤. ì‹œë„í•œ ê²½ë¡œ: {0}, {1}"
 
 #: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Utilities.cs:224
 #, csharp-format
 msgid "OVERDARE World file input path is ambiguous. {0} matched."
-msgstr "OVERDARE ¿ùµå ÆÄÀÏ ÀÔ·Â °æ·Î°¡ ¸ğÈ£ÇÕ´Ï´Ù. {0}°³°¡ ÀÏÄ¡ÇÕ´Ï´Ù."
+msgstr "OVERDARE ì›”ë“œ íŒŒì¼ ì…ë ¥ ê²½ë¡œê°€ ëª¨í˜¸í•©ë‹ˆë‹¤. {0}ê°œê°€ ì¼ì¹˜í•©ë‹ˆë‹¤."
 
 #: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Utilities.cs:232
 msgid "OVERDARE World file input path does not match any files."
-msgstr "OVERDARE ¿ùµå ÆÄÀÏ ÀÔ·Â °æ·Î¿Í ÀÏÄ¡ÇÏ´Â ÆÄÀÏÀÌ ¾ø½À´Ï´Ù."
+msgstr "OVERDARE ì›”ë“œ íŒŒì¼ ì…ë ¥ ê²½ë¡œì™€ ì¼ì¹˜í•˜ëŠ” íŒŒì¼ì´ ì—†ìŠµë‹ˆë‹¤."
 
 #: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Utilities.cs:306
 msgid "OVERDARE World file output path does not match any files."
-msgstr "OVERDARE ¿ùµå ÆÄÀÏ Ãâ·Â °æ·Î¿Í ÀÏÄ¡ÇÏ´Â ÆÄÀÏÀÌ ¾ø½À´Ï´Ù."
+msgstr "OVERDARE ì›”ë“œ íŒŒì¼ ì¶œë ¥ ê²½ë¡œì™€ ì¼ì¹˜í•˜ëŠ” íŒŒì¼ì´ ì—†ìŠµë‹ˆë‹¤."

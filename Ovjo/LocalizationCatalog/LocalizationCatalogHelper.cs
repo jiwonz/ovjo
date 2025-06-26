@@ -1,6 +1,7 @@
 ﻿using System.Globalization;
 using System.Reflection;
 using NGettext;
+using Serilog;
 
 namespace Ovjo.LocalizationCatalog
 {
@@ -15,6 +16,7 @@ namespace Ovjo.LocalizationCatalog
             );
             var resourceName =
                 $"Ovjo.locales.{uiCulture.TwoLetterISOLanguageName}.LC_MESSAGES.{catalogName}.mo";
+            Log.Debug($"Loading localization resource at {resourceName}");
 
             var stream = assembly.GetManifestResourceStream(resourceName);
 
