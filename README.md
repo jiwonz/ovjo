@@ -1,5 +1,5 @@
 <div align="center">
-    <a href="https://rojo.space"><img src="https://github.com/user-attachments/assets/b9f65064-e622-4aa0-9f12-194bdb25473c" alt="Rojo" height="217" /></a>
+    <img src="https://github.com/user-attachments/assets/b9f65064-e622-4aa0-9f12-194bdb25473c" alt="Ovjo" height="100" />
 </div>
 
 <hr />
