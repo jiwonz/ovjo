@@ -1,10 +1,10 @@
-﻿using System.Diagnostics;
-using System.Text.Json.Serialization;
-using System.Text.RegularExpressions;
-using FluentResults;
+﻿using FluentResults;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Serilog;
+using System.Diagnostics;
+using System.Text.Json.Serialization;
+using System.Text.RegularExpressions;
 using static Ovjo.LocalizationCatalog.Ovjo;
 
 namespace Ovjo
@@ -364,48 +364,75 @@ namespace Ovjo
                 )
                 {
                     Log.Debug($"new creatable thing! the parent: {ovdrParent.GetFullName()}");
-                    luaInstance = robloxInstance switch
+                    Result<Overdare.UScriptClass.LuaInstance> conversionResult =
+                        robloxInstance switch
+                        {
+                            RobloxFiles.LocalScript localScript =>
+                                Result.Ok<Overdare.UScriptClass.LuaInstance>(
+                                    new Overdare.UScriptClass.LuaLocalScript
+                                    {
+                                        Name =
+                                            robloxInstance.Name == "LocalScript"
+                                                ? null
+                                                : robloxInstance.Name,
+                                        Source = localScript.Source,
+                                    }
+                                ),
+                            RobloxFiles.Script script =>
+                                Result.Ok<Overdare.UScriptClass.LuaInstance>(
+                                    new Overdare.UScriptClass.LuaScript
+                                    {
+                                        Name =
+                                            robloxInstance.Name == "Script"
+                                                ? null
+                                                : robloxInstance.Name,
+                                        Source = script.Source,
+                                    }
+                                ),
+                            RobloxFiles.ModuleScript moduleScript =>
+                                Result.Ok<Overdare.UScriptClass.LuaInstance>(
+                                    new Overdare.UScriptClass.LuaModuleScript
+                                    {
+                                        Name =
+                                            robloxInstance.Name == "ModuleScript"
+                                                ? null
+                                                : robloxInstance.Name,
+                                        Source = moduleScript.Source,
+                                    }
+                                ),
+                            RobloxFiles.Folder folder =>
+                                Result.Ok<Overdare.UScriptClass.LuaInstance>(
+                                    new Overdare.UScriptClass.LuaFolder
+                                    {
+                                        Name =
+                                            robloxInstance.Name == "Folder"
+                                                ? null
+                                                : robloxInstance.Name,
+                                    }
+                                ),
+                            _ => Result.Fail(
+                                _(
+                                    "Roblox Instance({0}) is not supported to be converted to LuaInstance.",
+                                    robloxInstance.GetFullName()
+                                )
+                            ),
+                        };
+                    if (conversionResult.IsFailed)
                     {
-                        RobloxFiles.LocalScript localScript =>
-                            new Overdare.UScriptClass.LuaLocalScript
-                            {
-                                Name =
-                                    robloxInstance.Name == "LocalScript"
-                                        ? null
-                                        : robloxInstance.Name,
-                                Source = localScript.Source,
-                            },
-                        RobloxFiles.Script script => new Overdare.UScriptClass.LuaScript
-                        {
-                            Name = robloxInstance.Name == "Script" ? null : robloxInstance.Name,
-                            Source = script.Source,
-                        },
-                        RobloxFiles.ModuleScript moduleScript =>
-                            new Overdare.UScriptClass.LuaModuleScript
-                            {
-                                Name =
-                                    robloxInstance.Name == "ModuleScript"
-                                        ? null
-                                        : robloxInstance.Name,
-                                Source = moduleScript.Source,
-                            },
-                        RobloxFiles.Folder folder => new Overdare.UScriptClass.LuaFolder
-                        {
-                            Name = robloxInstance.Name == "Folder" ? null : robloxInstance.Name,
-                        },
-                        _ => throw new NotSupportedException(
-                            _(
-                                "Roblox Instance({0}) is not supported to be converted to LuaInstance.",
-                                robloxInstance.Name
+                        return Result
+                            .Fail(
+                                _(
+                                    "Failed to convert Roblox Instance({0}) to LuaInstance.",
+                                    robloxInstance.GetFullName()
+                                )
                             )
-                        ),
-                    };
+                            .WithReasons(conversionResult.Errors);
+                    }
+                    luaInstance = conversionResult.Value;
                 }
 
                 // If luaInstance is not a default named, then set its name to Roblox Instance's name
-                // should not be custom named if has LoadedActor already
-                if (luaInstance.SavedActor == null)
-                    luaInstance.Name = luaInstance.Name != null ? robloxInstance.Name : null;
+                luaInstance.Name = luaInstance.Name != null ? robloxInstance.Name : null;
                 luaInstance.Parent = ovdrParent;
                 Log.Debug($"New parent's children count: {ovdrParent.GetChildren().Length}");
                 foreach (var child in robloxInstance.GetChildren())
