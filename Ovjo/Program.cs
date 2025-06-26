@@ -70,7 +70,7 @@ namespace Ovjo
                 return result.Reasons.Count > 1
                     ? $"""
                         {mainReason.Message}
-                        Reasons ({result.Reasons.Count - 1}):
+                        {_("Reasons ({0})", result.Reasons.Count - 1)}:
                         {reasonBlock}
                         """
                     : $"""
@@ -99,7 +99,7 @@ namespace Ovjo
                 _("Abort syncback"),
             ];
             var choice = Prompt.Select(
-                "No input file was given. Please choose from the following available options",
+                _("No input file was given. Please choose from the following available options"),
                 Enumerable.Range(0, messages.Length),
                 textSelector: i => messages[i]
             );
@@ -172,9 +172,6 @@ namespace Ovjo
                     (project, input, rbxl) =>
                     {
                         project = ExpectResult(UtilityFunctions.ResolveRojoProject(project));
-                        input = ExpectResult(
-                            UtilityFunctions.ResolveOverdareWorldInput(input, project)
-                        );
                         bool isResyncbacked = false;
                         if (string.IsNullOrWhiteSpace(input))
                         {
@@ -186,6 +183,12 @@ namespace Ovjo
                             }
                             input = inputResult.Value.Input;
                             isResyncbacked = inputResult.Value.IsResyncbacked;
+                        }
+                        else
+                        {
+                            input = ExpectResult(
+                                UtilityFunctions.ResolveOverdareWorldInput(input, project)
+                            );
                         }
                         ExpectResult(LibOvjo.Syncback(project, input, rbxl, isResyncbacked));
                     },

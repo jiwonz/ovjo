@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-06-26 15:44+0900\n"
-"PO-Revision-Date: 2025-06-26 15:45+0900\n"
+"POT-Creation-Date: 2025-06-27 00:01+0900\n"
+"PO-Revision-Date: 2025-06-27 00:15+0900\n"
 "Last-Translator: EMAIL@ADDRESS\n"
 "Language-Team: Korean\n"
 "Language: ko\n"
@@ -19,7 +19,7 @@ msgstr ""
 "Plural-Forms: nplurals=1; plural=0;\n"
 "X-Generator: Poedit 3.6\n"
 
-#: LibOvjo.cs:42
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\LibOvjo.cs:42
 msgid ""
 "`rojo syncback` is required to perform `LibOvjo.Syncback`, but failed to "
 "check."
@@ -27,7 +27,7 @@ msgstr ""
 "`LibOvjo.Syncback`을(를) 수행하려면 `rojo syncback`이 필요하지만 확인에 실패"
 "했습니다."
 
-#: LibOvjo.cs:112
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\LibOvjo.cs:112
 #, csharp-format
 msgid ""
 "LuaCode property was found in this OVERDARE Instance({0}) but its Roblox "
@@ -36,57 +36,65 @@ msgstr ""
 "이 OVERDARE 인스턴스({0})에서 LuaCode 속성이 발견되었으나, 해당 Roblox 클래스"
 "는 LuaSourceContainer가 아닙니다."
 
-#: LibOvjo.cs:128 LibOvjo.cs:146
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\LibOvjo.cs:128
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\LibOvjo.cs:146
 #, csharp-format
 msgid "Failed to convert LuaInstance({0}) to Roblox Instance."
 msgstr "LuaInstance({0})를 Roblox 인스턴스로 변환하는 데 실패했습니다."
 
-#: LibOvjo.cs:185
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\LibOvjo.cs:185
 msgid "Failed to run `rojo syncback`."
 msgstr "`rojo syncback` 실행에 실패했습니다."
 
-#: LibOvjo.cs:189 LibOvjo.cs:305
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\LibOvjo.cs:189
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\LibOvjo.cs:305
 #, csharp-format
 msgid "rojo exited with code 0 with stderr: {0}"
 msgstr "rojo가 코드 0으로 종료되었으나 stderr: {0}"
 
-#: LibOvjo.cs:205
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\LibOvjo.cs:205
 msgid "Failed to parse rojo project JSON."
 msgstr "rojo 프로젝트 JSON을 파싱하는 데 실패했습니다."
 
-#: LibOvjo.cs:274
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\LibOvjo.cs:274
 msgid ""
 "`rojo build` is required to perform `LibOvjo.Build`, but failed to check."
 msgstr ""
 "`LibOvjo.Build`를(을) 수행하려면 `rojo build`가 필요하지만 확인에 실패했습니"
 "다."
 
-#: LibOvjo.cs:301
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\LibOvjo.cs:301
 msgid "Failed to run `rojo build`."
 msgstr "`rojo build` 실행에 실패했습니다."
 
-#: LibOvjo.cs:398
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\LibOvjo.cs:398
 #, csharp-format
 msgid "Roblox Instance({0}) is not supported to be converted to LuaInstance."
 msgstr "Roblox 인스턴스({0})는 LuaInstance로 변환을 지원하지 않습니다."
 
-#: LibOvjo.cs:419 LibOvjo.cs:437
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\LibOvjo.cs:419
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\LibOvjo.cs:437
 #, csharp-format
 msgid "Failed to visit Roblox Instance({0}) from the built place file."
 msgstr "빌드된 place 파일에서 Roblox 인스턴스({0})를 방문하는 데 실패했습니다."
 
-#: LibOvjo.cs:474
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\LibOvjo.cs:474
 msgid ""
 "`rojo sourcemap` is required to perform `LibOvjo.Sync`, but failed to check."
 msgstr ""
 "`LibOvjo.Sync`를(을) 수행하려면 `rojo sourcemap`이 필요하지만 확인에 실패했습"
 "니다."
 
-#: Program.cs:95
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:73
+#, csharp-format
+msgid "Reasons ({0})"
+msgstr "원인 ({0})"
+
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:95
 msgid "Select an input file via the GUI"
 msgstr "GUI를 통해 입력 파일을 선택하세요"
 
-#: Program.cs:97
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:97
 msgid ""
 "Perform re-syncback(build the current world and then perform a syncback, but "
 "the world will not be updated.)"
@@ -94,53 +102,65 @@ msgstr ""
 "재동기화 수행(현재 월드를 빌드한 후 동기화를 수행하지만, 월드는 업데이트되지 "
 "않습니다.)"
 
-#: Program.cs:99
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:99
 msgid "Abort syncback"
 msgstr "동기화 중단"
 
-#: Program.cs:116
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:102
+msgid ""
+"No input file was given. Please choose from the following available options"
+msgstr ""
+"입력 파일이 제공되지 않았습니다. 다음 사용 가능한 옵션 중에서 선택해 주세요"
+
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:116
 msgid "Failed to open the file dialog."
 msgstr "파일 대화상자를 여는 데 실패했습니다."
 
-#: Program.cs:122 Program.cs:145
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:122
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:145
 msgid "No input file was given. Please provide a valid .umap file."
 msgstr "입력 파일이 제공되지 않았습니다. 올바른 .umap 파일을 제공해 주세요."
 
-#: Program.cs:123 Program.cs:146
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:123
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:146
 msgid "Aborted by the user."
 msgstr "사용자에 의해 중단되었습니다."
 
-#: Program.cs:159
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:159
 msgid ""
 "Performs 'syncback' for the provided project, using the `input` file given"
 msgstr ""
 "제공된 프로젝트에 대해 '동기화'를 수행하며, 지정된 `input` 파일을 사용합니다"
 
-#: Program.cs:162 Program.cs:200 Program.cs:266
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:162
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:203
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:269
 msgid "Path to the project"
 msgstr "프로젝트 경로"
 
-#: Program.cs:164 Program.cs:268
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:164
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:271
 msgid "Path to the input file"
 msgstr "입력 파일 경로"
 
-#: Program.cs:165 Program.cs:204
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:165
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:207
 msgid "Path to the rbxl file"
 msgstr "rbxl 파일 경로"
 
-#: Program.cs:198
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:201
 msgid "Builds the project into OVERDARE world"
 msgstr "프로젝트를 OVERDARE 월드로 빌드합니다"
 
-#: Program.cs:202
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:205
 msgid "Path to the output file"
 msgstr "출력 파일 경로"
 
-#: Program.cs:207
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:210
 msgid "Assumes 'yes' to all prompts, useful for scripting"
 msgstr "모든 프롬프트에 '예'로 간주(스크립트 실행에 유용)"
 
-#: Program.cs:240
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:243
 msgid ""
 "The output directory already contains files other than the current output "
 "file. Would you like to recycle those files?"
@@ -148,52 +168,52 @@ msgstr ""
 "출력 디렉터리에 현재 출력 파일 이외의 파일이 이미 존재합니다. 해당 파일들을 "
 "휴지통으로 이동하시겠습니까?"
 
-#: Program.cs:263
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:266
 msgid ""
 "Synchronizes Lua sources between the project and the input OVERDARE world"
 msgstr "프로젝트와 입력 OVERDARE 월드 간에 Lua 소스를 동기화합니다"
 
-#: Program.cs:269
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:272
 msgid "Watches source files"
 msgstr "소스 파일 감시"
 
-#: Program.cs:292
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:295
 msgid "Initializes a new ovjo project from OVERDARE Studio"
 msgstr "OVERDARE Studio에서 새로운 ovjo 프로젝트를 초기화합니다"
 
-#: Program.cs:314
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:317
 msgid "Useful commands for OVERDARE"
 msgstr "OVERDARE를 위한 유용한 명령어"
 
-#: Program.cs:316
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:319
 msgid "Prints what will be opened"
 msgstr "열릴 항목을 출력합니다"
 
-#: Program.cs:317
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:320
 msgid "Opens OVERDARE Studio"
 msgstr "OVERDARE Studio 열기"
 
-#: Program.cs:319
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:322
 msgid "Opens OVERDARE documentation in the browser"
 msgstr "브라우저에서 OVERDARE 문서 열기"
 
-#: Program.cs:323
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:326
 msgid "Opens OVERDARE Creator Hub in the browser"
 msgstr "브라우저에서 OVERDARE Creator Hub 열기"
 
-#: Program.cs:326
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:329
 msgid "Opens OVERDARE Forum in the browser"
 msgstr "브라우저에서 OVERDARE 포럼 열기"
 
-#: Program.cs:407
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:410
 msgid "Sets the verbosity level (e.g., -v 2, --verbose 3)"
 msgstr "상세 출력 수준 설정(예: -v 2, --verbose 3)"
 
-#: Program.cs:413
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:416
 msgid "Enables professional-grade development tools for OVERDARE developers"
 msgstr "OVERDARE 개발자를 위한 전문가용 개발 도구 활성화"
 
-#: Utilities.cs:88
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Utilities.cs:88
 #, csharp-format
 msgid ""
 "Execution of `{0} {1}` failed. {2} requires `{0}` to function properly with "
@@ -202,7 +222,7 @@ msgstr ""
 "`{0} {1}` 실행에 실패했습니다. {2}는(은) 제공된 인수 `{1}`로 `{0}`이(가) 정상"
 "적으로 동작해야 합니다."
 
-#: Utilities.cs:103
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Utilities.cs:103
 #, csharp-format
 msgid ""
 "Unable to execute `{0}`. It appears that `{0}` is not installed or is "
@@ -211,7 +231,7 @@ msgstr ""
 "`{0}`을(를) 실행할 수 없습니다. `{0}`이(가) 설치되어 있지 않거나 접근할 수 없"
 "는 것 같습니다. {1}은(는) 정상 동작을 위해 `{0}`이(가) 필요합니다."
 
-#: Utilities.cs:120
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Utilities.cs:120
 msgid ""
 "Failed to find OVERDARE Studio metadata in the computer via Epic Games "
 "Launcher."
@@ -219,11 +239,11 @@ msgstr ""
 "Epic Games Launcher를 통해 컴퓨터에서 OVERDARE Studio 메타데이터를 찾지 못했"
 "습니다."
 
-#: Utilities.cs:132
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Utilities.cs:132
 msgid "Rojo project path cannot be null or empty."
 msgstr "Rojo 프로젝트 경로는 비어 있거나 null일 수 없습니다."
 
-#: Utilities.cs:142
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Utilities.cs:142
 #, csharp-format
 msgid ""
 "Rojo project file does not exist at the specified path. Tried paths {0} and "
@@ -231,15 +251,15 @@ msgid ""
 msgstr ""
 "지정된 경로에 Rojo 프로젝트 파일이 존재하지 않습니다. 시도한 경로: {0}, {1}"
 
-#: Utilities.cs:223
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Utilities.cs:223
 #, csharp-format
 msgid "OVERDARE World file input path is ambiguous. {0} matched."
 msgstr "OVERDARE 월드 파일 입력 경로가 모호합니다. {0}개가 일치합니다."
 
-#: Utilities.cs:231
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Utilities.cs:231
 msgid "OVERDARE World file input path does not match any files."
 msgstr "OVERDARE 월드 파일 입력 경로와 일치하는 파일이 없습니다."
 
-#: Utilities.cs:305
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Utilities.cs:305
 msgid "OVERDARE World file output path does not match any files."
 msgstr "OVERDARE 월드 파일 출력 경로와 일치하는 파일이 없습니다."
