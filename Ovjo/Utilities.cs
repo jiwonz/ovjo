@@ -131,7 +131,7 @@ namespace Ovjo
             {
                 return Result.Fail(_("Rojo project path cannot be null or empty."));
             }
-            var defaultProjectInDirectory = Path.Combine(path, "project.json");
+            var defaultProjectInDirectory = Path.Combine(path, "default.project.json");
             if (Directory.Exists(path) && File.Exists(defaultProjectInDirectory))
             {
                 return Result.Ok(defaultProjectInDirectory);
