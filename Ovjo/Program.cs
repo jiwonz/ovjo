@@ -1,13 +1,13 @@
-﻿using FluentResults;
+﻿using System.CommandLine;
+using System.CommandLine.Builder;
+using System.CommandLine.Parsing;
+using System.Diagnostics;
+using FluentResults;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Serilog;
 using Serilog.Events;
 using Sharprompt;
-using System.CommandLine;
-using System.CommandLine.Builder;
-using System.CommandLine.Parsing;
-using System.Diagnostics;
 using static Ovjo.LocalizationCatalog.Ovjo;
 
 namespace Ovjo
@@ -19,6 +19,22 @@ namespace Ovjo
         private const string _ovdrForumUrl = "https://forum.overdare.com/";
         private const string _ovdrCreatorUrl = "https://create.overdare.com/";
         private const string _ovdrDocsUrl = "https://docs.overdare.com/";
+
+        static Program()
+        {
+#if WINDOWS
+            NativeDllExtractor.Extract(
+                Environment.Is64BitProcess
+                    ? "Ovjo.win_x64.native.nfd.dll"
+                    : "Ovjo.win_x86.native.nfd.dll",
+                Environment.Is64BitProcess ? "nfd.dll" : "nfd_x86.dll"
+            );
+#elif LINUX
+            NativeDllExtractor.Extract("Ovjo.linux_x64.native.libnfd.so", "libnfd.so");
+#elif OSX
+            NativeDllExtractor.Extract("Ovjo.osx_x64.native.libnfd.dylib", "libnfd.dylib");
+#endif
+        }
 
         private class ResultLogger : IResultLogger
         {

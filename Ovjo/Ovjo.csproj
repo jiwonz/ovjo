@@ -30,10 +30,9 @@
     <ProjectReference Include="..\..\UAssetAPI\UAssetAPI\UAssetAPI.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <Content
-      Include="..\..\NativeFileDialogSharp\NativeFileDialogSharp\runtimes\**"
-      PackagePath="runtimes"
-      Visible="false"
-    />
+    <EmbeddedResource Include="..\..\NativeFileDialogSharp\NativeFileDialogSharp\runtimes\**" />
   </ItemGroup>
+  <PropertyGroup>
+    <DefineConstants>WINDOWS;LINUX;OSX;DEBUG;TRACE</DefineConstants>
+  </PropertyGroup>
 </Project>
