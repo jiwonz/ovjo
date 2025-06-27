@@ -1,10 +1,10 @@
-﻿using System.Diagnostics;
-using System.Reflection;
-using System.Text;
-using FluentResults;
+﻿using FluentResults;
 using Microsoft.VisualBasic.FileIO;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System.Diagnostics;
+using System.Reflection;
+using System.Text;
 using static Ovjo.LocalizationCatalog.Ovjo;
 
 namespace Ovjo
@@ -130,6 +130,11 @@ namespace Ovjo
             if (string.IsNullOrWhiteSpace(path))
             {
                 return Result.Fail(_("Rojo project path cannot be null or empty."));
+            }
+            var defaultProjectInDirectory = Path.Combine(path, "project.json");
+            if (Directory.Exists(path) && File.Exists(defaultProjectInDirectory))
+            {
+                return Result.Ok(defaultProjectInDirectory);
             }
             if (!File.Exists(path))
             {
