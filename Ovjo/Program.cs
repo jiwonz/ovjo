@@ -1,13 +1,13 @@
-﻿using System.CommandLine;
-using System.CommandLine.Builder;
-using System.CommandLine.Parsing;
-using System.Diagnostics;
-using FluentResults;
+﻿using FluentResults;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Serilog;
 using Serilog.Events;
 using Sharprompt;
+using System.CommandLine;
+using System.CommandLine.Builder;
+using System.CommandLine.Parsing;
+using System.Diagnostics;
 using static Ovjo.LocalizationCatalog.Ovjo;
 
 namespace Ovjo
@@ -88,7 +88,56 @@ namespace Ovjo
             };
         }
 
-        private static Result<(string Input, bool IsResyncbacked)> TryGetUMapInput(string project)
+        private static Result<string> SelectInputFromGui()
+        {
+            var result = NativeFileDialogSharp.Dialog.FileOpen(
+                "umap",
+                Directory.GetCurrentDirectory()
+            );
+            if (result.IsError)
+            {
+                return Result
+                    .Fail(_("Failed to open the file dialog."))
+                    .WithReason(new Error(result.ErrorMessage));
+            }
+            if (result.IsCancelled)
+            {
+                return Result
+                    .Fail(_("No input file was given. Please provide a valid .umap file."))
+                    .WithReason(new Error(_("Aborted by the user.")));
+            }
+            return Result.Ok(result.Path);
+        }
+
+        private static Result<string> TryGetUMapInput(string project, string action)
+        {
+            string[] messages = [_("Select an input file via the GUI"), _("Abort {0}", action)];
+            var choice = Prompt.Select(
+                _("No input file was given. Please choose from the following available options"),
+                Enumerable.Range(0, messages.Length),
+                textSelector: i => messages[i]
+            );
+            switch (choice)
+            {
+                case 0:
+                    var result = SelectInputFromGui();
+                    if (result.IsFailed)
+                    {
+                        return Result
+                            .Fail(_("Failed to open the file dialog."))
+                            .WithReasons(result.Errors);
+                    }
+                    return result.Value;
+                default:
+                    return Result
+                        .Fail(_("No input file was given. Please provide a valid .umap file."))
+                        .WithReason(new Error(_("Aborted by the user.")));
+            }
+        }
+
+        private static Result<(string Input, bool IsResyncbacked)> TryGetUMapInputForSyncback(
+            string project
+        )
         {
             string[] messages =
             [
@@ -96,7 +145,7 @@ namespace Ovjo
                 _(
                     "Perform re-syncback(build the current world and then perform a syncback, but the world will not be updated.)"
                 ),
-                _("Abort syncback"),
+                _("Abort {0}", "syncback"),
             ];
             var choice = Prompt.Select(
                 _("No input file was given. Please choose from the following available options"),
@@ -106,23 +155,14 @@ namespace Ovjo
             switch (choice)
             {
                 case 0:
-                    var result = NativeFileDialogSharp.Dialog.FileOpen(
-                        "umap",
-                        Directory.GetCurrentDirectory()
-                    );
-                    if (result.IsError)
+                    var result = SelectInputFromGui();
+                    if (result.IsFailed)
                     {
                         return Result
                             .Fail(_("Failed to open the file dialog."))
-                            .WithReason(new Error(result.ErrorMessage));
+                            .WithReasons(result.Errors);
                     }
-                    if (result.IsCancelled)
-                    {
-                        return Result
-                            .Fail(_("No input file was given. Please provide a valid .umap file."))
-                            .WithReason(new Error(_("Aborted by the user.")));
-                    }
-                    return Result.Ok((result.Path, false));
+                    return Result.Ok((result.Value, false));
                 case 1:
                     // This fallback is supported because the .ovjowld file is a build artifact of Overdare, which contains the world data in a compressed format.
                     // .ovjowld는 스크립트 소스를 포함하지 않으므로, 해당 .ovjowld를 빌드한 후, 오버데어 월드로 불러와야 합니다.
@@ -175,14 +215,9 @@ namespace Ovjo
                         bool isResyncbacked = false;
                         if (string.IsNullOrWhiteSpace(input))
                         {
-                            var inputResult = TryGetUMapInput(project);
-                            if (inputResult.IsFailed)
-                            {
-                                ExpectResult(inputResult);
-                                return;
-                            }
-                            input = inputResult.Value.Input;
-                            isResyncbacked = inputResult.Value.IsResyncbacked;
+                            var inputResult = ExpectResult(TryGetUMapInputForSyncback(project));
+                            input = inputResult.Input;
+                            isResyncbacked = inputResult.IsResyncbacked;
                         }
                         else
                         {
@@ -219,6 +254,7 @@ namespace Ovjo
                     (project, output, rbxl, yes) =>
                     {
                         project = ExpectResult(UtilityFunctions.ResolveRojoProject(project));
+                        // TO-DO: Make optional saving file via GUI if not given
                         output = ExpectResult(
                             UtilityFunctions.ResolveOverdareWorldOutput(output, project)
                         );
@@ -279,9 +315,16 @@ namespace Ovjo
                     (project, input, watch) =>
                     {
                         project = ExpectResult(UtilityFunctions.ResolveRojoProject(project));
-                        input = ExpectResult(
-                            UtilityFunctions.ResolveOverdareWorldInput(input, project)
-                        );
+                        if (string.IsNullOrWhiteSpace(input))
+                        {
+                            input = ExpectResult(TryGetUMapInput(project, "sync"));
+                        }
+                        else
+                        {
+                            input = ExpectResult(
+                                UtilityFunctions.ResolveOverdareWorldInput(input, project)
+                            );
+                        }
                         ExpectResult(LibOvjo.Sync(project, input, watch));
                     },
                     projectArg,

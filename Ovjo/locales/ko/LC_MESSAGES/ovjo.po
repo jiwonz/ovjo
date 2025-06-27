@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-06-27 08:50+0900\n"
-"PO-Revision-Date: 2025-06-27 08:52+0900\n"
+"POT-Creation-Date: 2025-06-27 09:05+0900\n"
+"PO-Revision-Date: 2025-06-27 09:06+0900\n"
 "Last-Translator: EMAIL@ADDRESS\n"
 "Language-Team: Korean\n"
 "Language: ko\n"
@@ -95,11 +95,43 @@ msgstr ""
 msgid "Reasons ({0})"
 msgstr "원인 ({0})"
 
-#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:95
+#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:100
+#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:127
+#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:162
+msgid "Failed to open the file dialog."
+msgstr "파일 대화상자를 여는 데 실패했습니다."
+
+#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:106
+#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:133
+#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:185
+msgid "No input file was given. Please provide a valid .umap file."
+msgstr "입력 파일이 제공되지 않았습니다. 올바른 .umap 파일을 제공해 주세요."
+
+#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:107
+#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:134
+#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:186
+msgid "Aborted by the user."
+msgstr "사용자에 의해 중단되었습니다."
+
+#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:114
+#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:144
 msgid "Select an input file via the GUI"
 msgstr "GUI를 통해 입력 파일을 선택하세요"
 
-#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:97
+#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:114
+#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:148
+#, csharp-format
+msgid "Abort {0}"
+msgstr "{0} 작업 취소"
+
+#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:116
+#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:151
+msgid ""
+"No input file was given. Please choose from the following available options"
+msgstr ""
+"입력 파일이 제공되지 않았습니다. 다음 사용 가능한 옵션 중에서 선택해 주세요"
+
+#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:146
 msgid ""
 "Perform re-syncback(build the current world and then perform a syncback, but "
 "the world will not be updated.)"
@@ -107,65 +139,41 @@ msgstr ""
 "재동기화 수행(현재 월드를 빌드한 후 동기화를 수행하지만, 월드는 업데이트되지 "
 "않습니다.)"
 
-#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:99
-msgid "Abort syncback"
-msgstr "동기화 중단"
-
-#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:102
-msgid ""
-"No input file was given. Please choose from the following available options"
-msgstr ""
-"입력 파일이 제공되지 않았습니다. 다음 사용 가능한 옵션 중에서 선택해 주세요"
-
-#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:116
-msgid "Failed to open the file dialog."
-msgstr "파일 대화상자를 여는 데 실패했습니다."
-
-#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:122
-#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:145
-msgid "No input file was given. Please provide a valid .umap file."
-msgstr "입력 파일이 제공되지 않았습니다. 올바른 .umap 파일을 제공해 주세요."
-
-#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:123
-#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:146
-msgid "Aborted by the user."
-msgstr "사용자에 의해 중단되었습니다."
-
-#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:159
+#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:199
 msgid ""
 "Performs 'syncback' for the provided project, using the `input` file given"
 msgstr ""
 "제공된 프로젝트에 대해 '동기화'를 수행하며, 지정된 `input` 파일을 사용합니다"
 
-#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:162
-#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:203
-#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:269
+#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:202
+#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:238
+#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:305
 msgid "Path to the project"
 msgstr "프로젝트 경로"
 
-#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:164
-#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:271
+#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:204
+#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:307
 msgid "Path to the input file"
 msgstr "입력 파일 경로"
 
-#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:165
-#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:207
+#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:205
+#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:242
 msgid "Path to the rbxl file"
 msgstr "rbxl 파일 경로"
 
-#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:201
+#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:236
 msgid "Builds the project into OVERDARE world"
 msgstr "프로젝트를 OVERDARE 월드로 빌드합니다"
 
-#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:205
+#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:240
 msgid "Path to the output file"
 msgstr "출력 파일 경로"
 
-#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:210
+#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:245
 msgid "Assumes 'yes' to all prompts, useful for scripting"
 msgstr "모든 프롬프트에 '예'로 간주(스크립트 실행에 유용)"
 
-#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:243
+#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:279
 msgid ""
 "The output directory already contains files other than the current output "
 "file. Would you like to recycle those files?"
@@ -173,48 +181,48 @@ msgstr ""
 "출력 디렉터리에 현재 출력 파일 이외의 파일이 이미 존재합니다. 해당 파일들을 "
 "휴지통으로 이동하시겠습니까?"
 
-#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:266
+#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:302
 msgid ""
 "Synchronizes Lua sources between the project and the input OVERDARE world"
 msgstr "프로젝트와 입력 OVERDARE 월드 간에 Lua 소스를 동기화합니다"
 
-#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:272
+#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:308
 msgid "Watches source files"
 msgstr "소스 파일 감시"
 
-#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:295
+#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:338
 msgid "Initializes a new ovjo project from OVERDARE Studio"
 msgstr "OVERDARE Studio에서 새로운 ovjo 프로젝트를 초기화합니다"
 
-#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:317
+#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:360
 msgid "Useful commands for OVERDARE"
 msgstr "OVERDARE를 위한 유용한 명령어"
 
-#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:319
+#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:362
 msgid "Prints what will be opened"
 msgstr "열릴 항목을 출력합니다"
 
-#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:320
+#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:363
 msgid "Opens OVERDARE Studio"
 msgstr "OVERDARE Studio 열기"
 
-#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:322
+#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:365
 msgid "Opens OVERDARE documentation in the browser"
 msgstr "브라우저에서 OVERDARE 문서 열기"
 
-#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:326
+#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:369
 msgid "Opens OVERDARE Creator Hub in the browser"
 msgstr "브라우저에서 OVERDARE Creator Hub 열기"
 
-#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:329
+#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:372
 msgid "Opens OVERDARE Forum in the browser"
 msgstr "브라우저에서 OVERDARE 포럼 열기"
 
-#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:410
+#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:453
 msgid "Sets the verbosity level (e.g., -v 2, --verbose 3)"
 msgstr "상세 출력 수준 설정(예: -v 2, --verbose 3)"
 
-#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:416
+#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:459
 msgid "Enables professional-grade development tools for OVERDARE developers"
 msgstr "OVERDARE 개발자를 위한 전문가용 개발 도구 활성화"
 
@@ -268,3 +276,6 @@ msgstr "OVERDARE 월드 파일 입력 경로와 일치하는 파일이 없습니
 #: C:\Users\admin\source\repos\ovjo\Ovjo\Utilities.cs:305
 msgid "OVERDARE World file output path does not match any files."
 msgstr "OVERDARE 월드 파일 출력 경로와 일치하는 파일이 없습니다."
+
+#~ msgid "Abort syncback"
+#~ msgstr "동기화 중단"

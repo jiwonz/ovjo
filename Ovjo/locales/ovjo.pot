@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-06-27 08:50+0900\n"
+"POT-Creation-Date: 2025-06-27 09:05+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -85,120 +85,128 @@ msgstr ""
 msgid "Reasons ({0})"
 msgstr ""
 
-#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:95
+#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:100
+#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:127
+#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:162
+msgid "Failed to open the file dialog."
+msgstr ""
+
+#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:106
+#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:133
+#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:185
+msgid "No input file was given. Please provide a valid .umap file."
+msgstr ""
+
+#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:107
+#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:134
+#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:186
+msgid "Aborted by the user."
+msgstr ""
+
+#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:114
+#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:144
 msgid "Select an input file via the GUI"
 msgstr ""
 
-#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:97
+#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:114
+#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:148
+#, csharp-format
+msgid "Abort {0}"
+msgstr ""
+
+#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:116
+#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:151
+msgid ""
+"No input file was given. Please choose from the following available options"
+msgstr ""
+
+#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:146
 msgid ""
 "Perform re-syncback(build the current world and then perform a syncback, but "
 "the world will not be updated.)"
 msgstr ""
 
-#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:99
-msgid "Abort syncback"
-msgstr ""
-
-#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:102
-msgid ""
-"No input file was given. Please choose from the following available options"
-msgstr ""
-
-#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:116
-msgid "Failed to open the file dialog."
-msgstr ""
-
-#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:122
-#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:145
-msgid "No input file was given. Please provide a valid .umap file."
-msgstr ""
-
-#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:123
-#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:146
-msgid "Aborted by the user."
-msgstr ""
-
-#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:159
+#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:199
 msgid ""
 "Performs 'syncback' for the provided project, using the `input` file given"
 msgstr ""
 
-#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:162
-#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:203
-#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:269
+#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:202
+#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:238
+#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:305
 msgid "Path to the project"
 msgstr ""
 
-#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:164
-#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:271
+#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:204
+#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:307
 msgid "Path to the input file"
 msgstr ""
 
-#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:165
-#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:207
+#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:205
+#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:242
 msgid "Path to the rbxl file"
 msgstr ""
 
-#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:201
+#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:236
 msgid "Builds the project into OVERDARE world"
 msgstr ""
 
-#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:205
+#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:240
 msgid "Path to the output file"
 msgstr ""
 
-#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:210
+#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:245
 msgid "Assumes 'yes' to all prompts, useful for scripting"
 msgstr ""
 
-#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:243
+#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:279
 msgid ""
 "The output directory already contains files other than the current output "
 "file. Would you like to recycle those files?"
 msgstr ""
 
-#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:266
+#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:302
 msgid ""
 "Synchronizes Lua sources between the project and the input OVERDARE world"
 msgstr ""
 
-#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:272
+#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:308
 msgid "Watches source files"
 msgstr ""
 
-#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:295
+#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:338
 msgid "Initializes a new ovjo project from OVERDARE Studio"
 msgstr ""
 
-#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:317
+#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:360
 msgid "Useful commands for OVERDARE"
 msgstr ""
 
-#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:319
+#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:362
 msgid "Prints what will be opened"
 msgstr ""
 
-#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:320
+#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:363
 msgid "Opens OVERDARE Studio"
 msgstr ""
 
-#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:322
+#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:365
 msgid "Opens OVERDARE documentation in the browser"
 msgstr ""
 
-#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:326
+#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:369
 msgid "Opens OVERDARE Creator Hub in the browser"
 msgstr ""
 
-#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:329
+#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:372
 msgid "Opens OVERDARE Forum in the browser"
 msgstr ""
 
-#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:410
+#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:453
 msgid "Sets the verbosity level (e.g., -v 2, --verbose 3)"
 msgstr ""
 
-#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:416
+#: C:\Users\admin\source\repos\ovjo\Ovjo\Program.cs:459
 msgid "Enables professional-grade development tools for OVERDARE developers"
 msgstr ""
 
