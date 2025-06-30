@@ -1,10 +1,10 @@
-﻿using FluentResults;
+﻿using System.Diagnostics;
+using System.Text.Json.Serialization;
+using System.Text.RegularExpressions;
+using FluentResults;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Serilog;
-using System.Diagnostics;
-using System.Text.Json.Serialization;
-using System.Text.RegularExpressions;
 using static Ovjo.LocalizationCatalog.Ovjo;
 
 namespace Ovjo
@@ -506,7 +506,7 @@ namespace Ovjo
             }
 
             HashSet<string> watchingFiles = [];
-            void VisitRobloxSourcemap(
+            Result VisitRobloxSourcemap(
                 SourcemapChild source,
                 Overdare.UScriptClass.LuaInstance ovdrParent
             )
@@ -535,7 +535,14 @@ namespace Ovjo
                         Log.Warning(
                             $"Sourcemap child {source.Name}({source.ClassName}) not found in Overdare LuaInstance {ovdrParent.GetFullName()}. Please re-build the project."
                         );
-                        return;
+                        return Result.Fail(
+                            _(
+                                "Sourcemap child {0}({1}) not found in Overdare LuaInstance {2}. Please re-build the project.",
+                                source.Name,
+                                source.ClassName,
+                                ovdrParent.GetFullName()
+                            )
+                        );
                     }
                 }
                 // 로블록스에도 있고 오버데어에도 있는 경우 -> 스크립트 내용 동기화 (스크립트는 편집중에 동기화가 가능하기 때문에)
@@ -554,7 +561,7 @@ namespace Ovjo
                         Log.Warning(
                             $"Sourcemap child {source.Name}({source.ClassName}) has no file paths. Skipping script source sync."
                         );
-                        return;
+                        return Result.Ok();
                     }
                     var sourceFilePath = filePaths.FirstOrDefault(fp =>
                     {
@@ -566,7 +573,7 @@ namespace Ovjo
                         Log.Warning(
                             $"Sourcemap child {source.Name}({source.ClassName}) has no Lua source file. Skipping script source sync."
                         );
-                        return;
+                        return Result.Ok();
                     }
                     watchingFiles.Add(Path.GetFullPath(sourceFilePath));
                     if (ovdrChild is Overdare.UScriptClass.BaseLuaScript luaScript)
@@ -585,11 +592,24 @@ namespace Ovjo
                     }
                 }
                 if (source.Children == null)
-                    return;
+                    return Result.Ok();
                 foreach (var child in source.Children)
                 {
-                    VisitRobloxSourcemap(child, ovdrChild);
+                    var result = VisitRobloxSourcemap(child, ovdrChild);
+                    if (result.IsFailed)
+                    {
+                        return Result
+                            .Fail(
+                                _(
+                                    "Failed to visit Roblox sourcemap child {0}({1}) from the built place file.",
+                                    child.Name,
+                                    child.ClassName
+                                )
+                            )
+                            .WithReasons(result.Errors);
+                    }
                 }
+                return Result.Ok();
             }
 
             // TO-DO: VisitOverdareInstance로 오버데어에서 추가된 스크립트를 프로젝트에 추가하는 기능 구현
@@ -643,23 +663,20 @@ namespace Ovjo
             };
 
             string lastSourcemapData = string.Empty;
-            void ReadSourcemap()
+            Result ReadSourcemap()
             {
                 if (string.IsNullOrEmpty(lastSourcemapData))
                 {
-                    Log.Warning("No sourcemap data received yet.");
-                    return;
+                    return Result.Fail(_("No sourcemap data received yet."));
                 }
                 var source = JsonConvert.DeserializeObject<SourcemapChild>(lastSourcemapData);
                 if (source == null)
                 {
-                    Log.Warning("Failed to deserialize sourcemap child.");
-                    return;
+                    return Result.Fail(_("Failed to deserialize sourcemap child."));
                 }
                 if (source.Children == null)
                 {
-                    Log.Warning(umapPath + " has no children in the sourcemap child.");
-                    return;
+                    return Result.Fail(_("The sourcemap child {0} has no children.", source.Name));
                 }
 
                 Log.Verbose(
@@ -668,13 +685,25 @@ namespace Ovjo
                 foreach (var child in source.Children)
                 {
                     Log.Verbose($"Visiting Roblox Instance: {child.Name}");
-                    VisitRobloxSourcemap(child, world.Map.LuaDataModel);
+                    var result = VisitRobloxSourcemap(child, world.Map.LuaDataModel);
+                    if (result.IsFailed)
+                    {
+                        return Result
+                            .Fail(
+                                _(
+                                    "Failed to visit Roblox Instance {0} from the built place file.",
+                                    child.Name
+                                )
+                            )
+                            .WithReasons(result.Errors);
+                    }
                 }
                 foreach (var child in world.Map.LuaDataModel.GetChildren())
                 {
                     Log.Verbose($"Visiting Overdare Instance: {child.GetFullName()}");
                     VisitOverdareInstance(child, source);
                 }
+                return Result.Ok();
             }
             process.OutputDataReceived += (sender, e) =>
             {
@@ -682,7 +711,12 @@ namespace Ovjo
                     return;
                 Log.Debug($"[StandardOut] {e.Data}");
                 lastSourcemapData = e.Data;
-                ReadSourcemap();
+                var result = ReadSourcemap();
+                if (result.IsFailed)
+                {
+                    process.Kill(); // 실패시 프로세스 종료
+                    Program.ExpectResult(result);
+                }
             };
 
             process.Start();

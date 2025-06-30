@@ -527,7 +527,7 @@ namespace Ovjo
             return result.Value;
         }
 
-        private static void ExpectResult(Result result)
+        internal static void ExpectResult(Result result)
         {
             if (result.IsFailed)
             {
