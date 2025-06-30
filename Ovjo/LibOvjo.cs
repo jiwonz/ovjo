@@ -240,13 +240,23 @@ namespace Ovjo
                         .ToArray();
                     if (props.Length > 0)
                     {
-                        JObject propsObject = new(
-                            props.Select(tuple => new JProperty(tuple.Key, tuple.Value))
-                        );
-                        File.WriteAllText(
-                            Path.Combine(path, "init.meta.json"),
-                            propsObject.ToString(Formatting.Indented)
-                        );
+                        var metaFilePath = Path.Combine(path, "init.meta.json");
+                        JObject propsObject;
+                        if (File.Exists(metaFilePath))
+                        {
+                            propsObject = JObject.Parse(File.ReadAllText(metaFilePath));
+                        }
+                        else
+                        {
+                            propsObject = new();
+                        }
+
+                        foreach (var prop in props)
+                        {
+                            propsObject[prop.Key] = prop.Value; // This line replaces or adds safely
+                        }
+
+                        File.WriteAllText(metaFilePath, propsObject.ToString(Formatting.Indented));
                     }
                 }
                 if (thereWasAModification)
