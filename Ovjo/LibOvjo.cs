@@ -747,7 +747,12 @@ namespace Ovjo
                     if (!watchingFiles.Contains(e.FullPath))
                         return;
                     watchingFiles.Clear();
-                    ReadSourcemap();
+                    var result = ReadSourcemap();
+                    if (result.IsFailed)
+                    {
+                        process.Kill(); // 실패시 프로세스 종료
+                        Program.ExpectResult(result);
+                    }
                 };
                 // watch 모드에서는 사용자가 종료할 때까지 대기
                 Console.WriteLine("Watching for changes... Press Enter to exit.");
