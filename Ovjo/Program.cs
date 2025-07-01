@@ -409,6 +409,7 @@ namespace Ovjo
                 Command studioCommand = new("studio", _("Opens OVERDARE Studio"));
                 studioCommand.AddOption(dryRun);
                 Command docsCommand = new("docs", _("Opens OVERDARE documentation in the browser"));
+                Argument<string?> query = new("query", _("Optional query to search in docs"));
                 docsCommand.AddOption(dryRun);
                 Command creatorCommand = new(
                     "creator",
@@ -447,17 +448,23 @@ namespace Ovjo
                 }
 
                 docsCommand.SetHandler(
-                    (dryRun) =>
+                    (dryRun, query) =>
                     {
+                        var url = _ovdrDocsUrl;
+                        if (!string.IsNullOrEmpty(query))
+                        {
+                            url += $"?q={query}";
+                        }
                         if (dryRun)
                         {
-                            Console.WriteLine(_ovdrDocsUrl);
+                            Console.WriteLine(url);
                             return;
                         }
-                        Log.Information($"Opening OVERDARE Documentation at {_ovdrDocsUrl}");
-                        OpenUrl(_ovdrDocsUrl);
+                        Log.Information($"Opening OVERDARE Documentation at {url}");
+                        OpenUrl(url);
                     },
-                    dryRun
+                    dryRun,
+                    query
                 );
 
                 creatorCommand.SetHandler(
