@@ -373,6 +373,36 @@ namespace Ovjo
                 });
             }
 
+            Command exportCommand = new(
+                "export",
+                _(
+                    "Exports a ovjo world file into OVERDARE world for debugging and analyzing purpose"
+                )
+            );
+            {
+                Argument<string> input = new("world", _("Path to the ovjo world file"));
+                input.SetDefaultValue(".ovjowld");
+                Option<string> output = new(["--out", "-o"], _("Path to the output file"));
+
+                exportCommand.AddArgument(input);
+                exportCommand.AddOption(output);
+
+                exportCommand.SetHandler(
+                    (input, output) =>
+                    {
+                        ExpectResult(
+                            Result.Try(() =>
+                            {
+                                var world = World.Open(input);
+                                world.ExportAsOverdare(output);
+                            })
+                        );
+                    },
+                    input,
+                    output
+                );
+            }
+
             Command ovdrCommand = new("ovdr", _("Useful commands for OVERDARE"));
             {
                 Option<bool> dryRun = new(["--dry-run"], _("Prints what will be opened"));
@@ -480,6 +510,7 @@ namespace Ovjo
             rootCommand.AddCommand(syncbackCommand);
             rootCommand.AddCommand(ovdrCommand);
             rootCommand.AddCommand(buildCommand);
+            rootCommand.AddCommand(exportCommand);
 
             CommandLineBuilder commandLineBuilder = new(rootCommand);
             commandLineBuilder.AddMiddleware(
