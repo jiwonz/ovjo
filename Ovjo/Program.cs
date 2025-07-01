@@ -373,12 +373,43 @@ namespace Ovjo
                 });
             }
 
+            Command exportCommand = new(
+                "export",
+                _(
+                    "Exports a ovjo world file into OVERDARE world for debugging and analyzing purpose"
+                )
+            );
+            {
+                Argument<string> input = new("world", _("Path to the ovjo world file"));
+                input.SetDefaultValue(".ovjowld");
+                Option<string> output = new(["--out", "-o"], _("Path to the output file"));
+
+                exportCommand.AddArgument(input);
+                exportCommand.AddOption(output);
+
+                exportCommand.SetHandler(
+                    (input, output) =>
+                    {
+                        ExpectResult(
+                            Result.Try(() =>
+                            {
+                                var world = World.Open(input);
+                                world.ExportAsOverdare(output);
+                            })
+                        );
+                    },
+                    input,
+                    output
+                );
+            }
+
             Command ovdrCommand = new("ovdr", _("Useful commands for OVERDARE"));
             {
                 Option<bool> dryRun = new(["--dry-run"], _("Prints what will be opened"));
                 Command studioCommand = new("studio", _("Opens OVERDARE Studio"));
                 studioCommand.AddOption(dryRun);
                 Command docsCommand = new("docs", _("Opens OVERDARE documentation in the browser"));
+                Argument<string?> query = new("query", _("Optional query to search in docs"));
                 docsCommand.AddOption(dryRun);
                 Command creatorCommand = new(
                     "creator",
@@ -417,17 +448,23 @@ namespace Ovjo
                 }
 
                 docsCommand.SetHandler(
-                    (dryRun) =>
+                    (dryRun, query) =>
                     {
+                        var url = _ovdrDocsUrl;
+                        if (!string.IsNullOrEmpty(query))
+                        {
+                            url += $"?q={query}";
+                        }
                         if (dryRun)
                         {
-                            Console.WriteLine(_ovdrDocsUrl);
+                            Console.WriteLine(url);
                             return;
                         }
-                        Log.Information($"Opening OVERDARE Documentation at {_ovdrDocsUrl}");
-                        OpenUrl(_ovdrDocsUrl);
+                        Log.Information($"Opening OVERDARE Documentation at {url}");
+                        OpenUrl(url);
                     },
-                    dryRun
+                    dryRun,
+                    query
                 );
 
                 creatorCommand.SetHandler(
@@ -480,6 +517,7 @@ namespace Ovjo
             rootCommand.AddCommand(syncbackCommand);
             rootCommand.AddCommand(ovdrCommand);
             rootCommand.AddCommand(buildCommand);
+            rootCommand.AddCommand(exportCommand);
 
             CommandLineBuilder commandLineBuilder = new(rootCommand);
             commandLineBuilder.AddMiddleware(
