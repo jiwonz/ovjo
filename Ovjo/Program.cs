@@ -189,7 +189,10 @@ namespace Ovjo
                         Path.Combine(tempFile, Path.GetFileNameWithoutExtension(tempFile)),
                         "umap"
                     );
-                    ExpectResult(LibOvjo.Build(project, newUmapPath, null));
+                    ExpectResult(
+                        LibOvjo.Build(project, newUmapPath, null),
+                        _("Failed to build the project into OVERDARE world for syncback.")
+                    );
                     AppDomain.CurrentDomain.ProcessExit += (s, e) =>
                     {
                         if (Directory.Exists(tempFile))
@@ -227,21 +230,39 @@ namespace Ovjo
                 syncbackCommand.SetHandler(
                     (project, input, rbxl) =>
                     {
-                        project = ExpectResult(UtilityFunctions.ResolveRojoProject(project));
+                        project = ExpectResult(
+                            UtilityFunctions.ResolveRojoProject(project),
+                            _(
+                                "Failed to resolve the project. Please ensure the project path is correct."
+                            )
+                        );
                         bool isResyncbacked = false;
                         if (string.IsNullOrWhiteSpace(input))
                         {
-                            var inputResult = ExpectResult(TryGetUMapInputForSyncback(project));
+                            var inputResult = ExpectResult(
+                                TryGetUMapInputForSyncback(project),
+                                _(
+                                    "Failed to get input file for syncback. Please provide a valid .umap file."
+                                )
+                            );
                             input = inputResult.Input;
                             isResyncbacked = inputResult.IsResyncbacked;
                         }
                         else
                         {
                             input = ExpectResult(
-                                UtilityFunctions.ResolveOverdareWorldInput(input, project)
+                                UtilityFunctions.ResolveOverdareWorldInput(input, project),
+                                _(
+                                    "Failed to resolve the input file. Please ensure the input path is correct."
+                                )
                             );
                         }
-                        ExpectResult(LibOvjo.Syncback(project, input, rbxl, isResyncbacked));
+                        ExpectResult(
+                            LibOvjo.Syncback(project, input, rbxl, isResyncbacked),
+                            _(
+                                "Failed to perform syncback for the project. Please ensure the project is valid and the input path is correct."
+                            )
+                        );
                     },
                     projectArg,
                     inputOpt,
@@ -269,10 +290,18 @@ namespace Ovjo
                 buildCommand.SetHandler(
                     (project, output, rbxl, yes) =>
                     {
-                        project = ExpectResult(UtilityFunctions.ResolveRojoProject(project));
+                        project = ExpectResult(
+                            UtilityFunctions.ResolveRojoProject(project),
+                            _(
+                                "Failed to resolve the project. Please ensure the project path is correct."
+                            )
+                        );
                         // TO-DO: Make optional saving file via GUI if not given
                         output = ExpectResult(
-                            UtilityFunctions.ResolveOverdareWorldOutput(output, project)
+                            UtilityFunctions.ResolveOverdareWorldOutput(output, project),
+                            _(
+                                "Failed to resolve the output file. Please ensure the output path is correct."
+                            )
                         );
                         var filesExceptCurrent = Directory
                             .GetFileSystemEntries(
@@ -304,7 +333,12 @@ namespace Ovjo
                                 }
                             }
                         }
-                        ExpectResult(LibOvjo.Build(project, output, rbxl));
+                        ExpectResult(
+                            LibOvjo.Build(project, output, rbxl),
+                            _(
+                                "Failed to build the project into OVERDARE world. Please ensure the project is valid and the output path is correct."
+                            )
+                        );
                     },
                     projectArg,
                     outputOpt,
@@ -330,18 +364,36 @@ namespace Ovjo
                 syncCommand.SetHandler(
                     (project, input, watch) =>
                     {
-                        project = ExpectResult(UtilityFunctions.ResolveRojoProject(project));
+                        project = ExpectResult(
+                            UtilityFunctions.ResolveRojoProject(project),
+                            _(
+                                "Failed to resolve the project. Please ensure the project path is correct."
+                            )
+                        );
                         if (string.IsNullOrWhiteSpace(input))
                         {
-                            input = ExpectResult(TryGetUMapInput(project, "sync"));
+                            input = ExpectResult(
+                                TryGetUMapInput(project, "sync"),
+                                _(
+                                    "Failed to get input file for sync. Please provide a valid .umap file."
+                                )
+                            );
                         }
                         else
                         {
                             input = ExpectResult(
-                                UtilityFunctions.ResolveOverdareWorldInput(input, project)
+                                UtilityFunctions.ResolveOverdareWorldInput(input, project),
+                                _(
+                                    "Failed to resolve the input file. Please ensure the input path is correct."
+                                )
                             );
                         }
-                        ExpectResult(LibOvjo.Sync(project, input, watch));
+                        ExpectResult(
+                            LibOvjo.Sync(project, input, watch),
+                            _(
+                                "Failed to synchronize the project's Lua sources with the input OVERDARE world's Lua sources."
+                            )
+                        );
                     },
                     projectArg,
                     inputOpt,
@@ -356,7 +408,12 @@ namespace Ovjo
             {
                 initCommand.SetHandler(() =>
                 {
-                    var sandboxMetadata = ExpectResult(UtilityFunctions.TryFindSandboxMetadata());
+                    var sandboxMetadata = ExpectResult(
+                        UtilityFunctions.TryFindSandboxMetadata(),
+                        _(
+                            "Failed to find OVERDARE Studio metadata. Please ensure OVERDARE Studio is installed via Epic Games Launcher."
+                        )
+                    );
                     string umapPath = sandboxMetadata.GetDefaultUMapPath();
 
                     string currentDirectoryPath = Directory.GetCurrentDirectory();
@@ -369,7 +426,12 @@ namespace Ovjo
                         )
                     );
 
-                    ExpectResult(LibOvjo.Syncback(_defaultRojoProjectPath, umapPath));
+                    ExpectResult(
+                        LibOvjo.Syncback(_defaultRojoProjectPath, umapPath),
+                        _(
+                            "Failed to initialize the project. Failed to syncback the default project with the umap file from OVERDARE Studio."
+                        )
+                    );
                 });
             }
 
@@ -395,7 +457,8 @@ namespace Ovjo
                             {
                                 var world = World.Open(input);
                                 world.ExportAsOverdare(output);
-                            })
+                            }),
+                            _("Failed to export the world file.")
                         );
                     },
                     input,
@@ -422,7 +485,12 @@ namespace Ovjo
                 studioCommand.SetHandler(
                     (dryRun) =>
                     {
-                        var metadata = ExpectResult(UtilityFunctions.TryFindSandboxMetadata());
+                        var metadata = ExpectResult(
+                            UtilityFunctions.TryFindSandboxMetadata(),
+                            _(
+                                "Failed to find OVERDARE Studio metadata. Please ensure OVERDARE Studio is installed via Epic Games Launcher."
+                            )
+                        );
                         if (dryRun)
                         {
                             Console.WriteLine(metadata.ProgramPath);
@@ -554,24 +622,24 @@ namespace Ovjo
             return await parser.InvokeAsync(args);
         }
 
-        private static T ExpectResult<T>(Result<T> result)
+        private static T ExpectResult<T>(Result<T> result, string failMessage)
         {
             if (result.IsFailed)
             {
-                result.Log(LogLevel.Error);
+                Result.Fail(failMessage).WithReasons(result.Errors).Log(LogLevel.Error);
                 Environment.Exit(1);
-                throw new InvalidOperationException("unreachable");
+                throw new UnreachableException("unreachable");
             }
             return result.Value;
         }
 
-        internal static void ExpectResult(Result result)
+        internal static void ExpectResult(Result result, string failMessage)
         {
             if (result.IsFailed)
             {
-                result.Log(LogLevel.Error);
+                Result.Fail(failMessage).WithReasons(result.Errors).Log(LogLevel.Error);
                 Environment.Exit(1);
-                throw new InvalidOperationException("unreachable");
+                throw new UnreachableException("unreachable");
             }
         }
     }

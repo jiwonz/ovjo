@@ -1,10 +1,10 @@
-﻿using FluentResults;
+﻿using System.Diagnostics;
+using System.Reflection;
+using System.Text;
+using FluentResults;
 using Microsoft.VisualBasic.FileIO;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using System.Diagnostics;
-using System.Reflection;
-using System.Text;
 using static Ovjo.LocalizationCatalog.Ovjo;
 
 namespace Ovjo
@@ -343,6 +343,19 @@ namespace Ovjo
                 if (Directory.Exists(filePath))
                     Directory.Delete(filePath, true);
             }
+        }
+    }
+
+    internal static class InstanceDebugger
+    {
+        public static string Format(RobloxFiles.Instance instance)
+        {
+            return $"Roblox::Instance::{instance.ClassName}({instance.GetFullName()})";
+        }
+
+        public static string Format(Overdare.UScriptClass.LuaInstance instance)
+        {
+            return $"Overdare::LuaInstance::{instance.ClassName}({instance.GetFullName()})";
         }
     }
 

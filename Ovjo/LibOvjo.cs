@@ -109,8 +109,8 @@ namespace Ovjo
                             default:
                                 return Result.Fail(
                                     _(
-                                        "LuaCode property was found in this OVERDARE Instance({0}) but its Roblox class equivalent is not a LuaSourceContainer.",
-                                        source.ClassName
+                                        "LuaCode property was found in this {0} but its Roblox class equivalent is not a LuaSourceContainer.",
+                                        InstanceDebugger.Format(source)
                                     )
                                 );
                         }
@@ -125,8 +125,8 @@ namespace Ovjo
                         return Result
                             .Fail(
                                 _(
-                                    "Failed to convert LuaInstance({0}) to Roblox Instance.",
-                                    child.ClassName
+                                    "Failed to convert {0} to Roblox Instance.",
+                                    InstanceDebugger.Format(child)
                                 )
                             )
                             .WithReasons(conversionResult.Errors);
@@ -143,8 +143,8 @@ namespace Ovjo
                     return Result
                         .Fail(
                             _(
-                                "Failed to convert LuaInstance({0}) to Roblox Instance.",
-                                child.ClassName
+                                "Failed to convert {0} to Roblox Instance.",
+                                InstanceDebugger.Format(child)
                             )
                         )
                         .WithReasons(conversionResult.Errors);
@@ -422,8 +422,8 @@ namespace Ovjo
                                 ),
                             _ => Result.Fail(
                                 _(
-                                    "Roblox Instance({0}) is not supported to be converted to LuaInstance.",
-                                    robloxInstance.GetFullName()
+                                    "{0} is not supported to be converted to OVERDARE Instance.",
+                                    InstanceDebugger.Format(robloxInstance)
                                 )
                             ),
                         };
@@ -432,8 +432,8 @@ namespace Ovjo
                         return Result
                             .Fail(
                                 _(
-                                    "Failed to convert Roblox Instance({0}) to LuaInstance.",
-                                    robloxInstance.GetFullName()
+                                    "Failed to convert {0} to OVERDARE Instance.",
+                                    InstanceDebugger.Format(robloxInstance)
                                 )
                             )
                             .WithReasons(conversionResult.Errors);
@@ -453,8 +453,8 @@ namespace Ovjo
                         return Result
                             .Fail(
                                 _(
-                                    "Failed to visit Roblox Instance({0}) from the built place file.",
-                                    child.Name
+                                    "Failed to visit {0} from the built place file.",
+                                    InstanceDebugger.Format(child)
                                 )
                             )
                             .WithReasons(visitResult.Errors);
@@ -471,8 +471,8 @@ namespace Ovjo
                     return Result
                         .Fail(
                             _(
-                                "Failed to visit Roblox Instance({0}) from the built place file.",
-                                instance.Name
+                                "Failed to visit {0} from the built place file.",
+                                InstanceDebugger.Format(instance)
                             )
                         )
                         .WithReasons(visitResult.Errors);
@@ -543,21 +543,21 @@ namespace Ovjo
                     {
                         // 오버데어에 없는데 로블록스에 있는 경우 -> 경고 (오버데어 스튜디오에서 편집중에 오버데어 인스턴스를 생성해서 동기화할 수 없기때문에)
                         Log.Warning(
-                            $"Sourcemap child {source.Name}({source.ClassName}) not found in Overdare LuaInstance {ovdrParent.GetFullName()}. Please re-build the project."
+                            $"Sourcemap child {source.Name}({source.ClassName}) not found in {InstanceDebugger.Format(ovdrParent)}. Please re-build the project."
                         );
                         return Result.Fail(
                             _(
-                                "Sourcemap child {0}({1}) not found in Overdare LuaInstance {2}. Please re-build the project.",
+                                "Sourcemap child {0}({1}) not found in {2}. Please re-build the project.",
                                 source.Name,
                                 source.ClassName,
-                                ovdrParent.GetFullName()
+                                InstanceDebugger.Format(ovdrParent)
                             )
                         );
                     }
                 }
                 // 로블록스에도 있고 오버데어에도 있는 경우 -> 스크립트 내용 동기화 (스크립트는 편집중에 동기화가 가능하기 때문에)
                 Log.Information(
-                    $"Two instances {source.Name}({source.ClassName}) and {ovdrChild.GetFullName()} are valid."
+                    $"Two instances {source.Name}({source.ClassName}) and {InstanceDebugger.Format(ovdrChild)} are valid."
                 );
                 if (
                     source.ClassName == "Script"
@@ -686,7 +686,13 @@ namespace Ovjo
                 }
                 if (source.Children == null)
                 {
-                    return Result.Fail(_("The sourcemap child {0} has no children.", source.Name));
+                    return Result.Fail(
+                        _(
+                            "The sourcemap child {0}({1}) has no children.",
+                            source.Name,
+                            source.ClassName
+                        )
+                    );
                 }
 
                 Log.Verbose(
@@ -694,15 +700,16 @@ namespace Ovjo
                 );
                 foreach (var child in source.Children)
                 {
-                    Log.Verbose($"Visiting Roblox Instance: {child.Name}");
+                    Log.Verbose($"Visiting Roblox Instance: {child.Name}({child.ClassName})");
                     var result = VisitRobloxSourcemap(child, world.Map.LuaDataModel);
                     if (result.IsFailed)
                     {
                         return Result
                             .Fail(
                                 _(
-                                    "Failed to visit Roblox Instance {0} from the built place file.",
-                                    child.Name
+                                    "Failed to visit Roblox Instance {0}({1}) from the built place file.",
+                                    child.Name,
+                                    child.ClassName
                                 )
                             )
                             .WithReasons(result.Errors);
