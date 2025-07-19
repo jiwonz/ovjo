@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-07-18 21:12+0900\n"
+"POT-Creation-Date: 2025-07-18 21:36+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -107,6 +107,14 @@ msgstr ""
 #: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\LibOvjo.cs:710
 #, csharp-format
 msgid "Failed to visit Roblox Instance {0}({1}) from the built place file."
+msgstr ""
+
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\LibOvjo.cs:735
+msgid "Failed to read sourcemap data."
+msgstr ""
+
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\LibOvjo.cs:763
+msgid "Failed to read sourcemap data after file change."
 msgstr ""
 
 #: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:89

@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-07-18 21:12+0900\n"
-"PO-Revision-Date: 2025-07-18 21:16+0900\n"
+"POT-Creation-Date: 2025-07-18 21:36+0900\n"
+"PO-Revision-Date: 2025-07-18 21:36+0900\n"
 "Last-Translator: EMAIL@ADDRESS\n"
 "Language-Team: Korean\n"
 "Language: ko\n"
@@ -122,6 +122,14 @@ msgstr "소스맵 자식 {0}({1})에 하위 항목이 없습니다."
 msgid "Failed to visit Roblox Instance {0}({1}) from the built place file."
 msgstr ""
 "빌드된 place 파일에서 Roblox 인스턴스 {0}({1})에 방문하는 데 실패했습니다."
+
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\LibOvjo.cs:735
+msgid "Failed to read sourcemap data."
+msgstr "소스맵 데이터를 읽는 데 실패했습니다."
+
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\LibOvjo.cs:763
+msgid "Failed to read sourcemap data after file change."
+msgstr "파일 변경 후 소스맵 데이터를 읽는 데 실패했습니다."
 
 #: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:89
 #, csharp-format

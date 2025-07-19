@@ -93,27 +93,45 @@ namespace Ovjo
                 {
                     // Remove reference attribute for Creatable LuaInstance
                     robloxSource.Attributes.Remove(_overdareReferenceAttributeName);
-                    if (source is Overdare.UScriptClass.BaseLuaScript luaScript)
+                    switch (source)
                     {
-                        //Log.Debug($"Got Source file {luaScript.GetFullName()}: {luaScript.Source}");
-                        switch (robloxSource)
-                        {
-                            case RobloxFiles.Script script:
-                                script.Source = luaScript.Source;
-                                //Log.Debug($"Source written: {script.Source.ToString().Length}");
-                                break;
-                            case RobloxFiles.ModuleScript moduleScript:
-                                moduleScript.Source = luaScript.Source;
-                                //Log.Debug($"Source written: {moduleScript.Source.ToString().Length}");
-                                break;
-                            default:
+                        case Overdare.UScriptClass.BaseLuaScript luaScript:
+                            //Log.Debug($"Got Source file {luaScript.GetFullName()}: {luaScript.Source}");
+                            switch (robloxSource)
+                            {
+                                case RobloxFiles.Script script:
+                                    script.Source = luaScript.Source;
+                                    //Log.Debug($"Source written: {script.Source.ToString().Length}");
+                                    break;
+                                case RobloxFiles.ModuleScript moduleScript:
+                                    moduleScript.Source = luaScript.Source;
+                                    //Log.Debug($"Source written: {moduleScript.Source.ToString().Length}");
+                                    break;
+                                default:
+                                    return Result.Fail(
+                                        _(
+                                            "LuaCode property was found in this {0} but its Roblox class equivalent is not a LuaSourceContainer.",
+                                            InstanceDebugger.Format(source)
+                                        )
+                                    );
+                            }
+                            break;
+                        case Overdare.UScriptClass.LuaStringValue luaStringValue:
+                            if (robloxSource is RobloxFiles.StringValue stringValue)
+                            {
+                                stringValue.Value = luaStringValue.Value;
+                                //Log.Debug($"StringValue written: {stringValue.Value}");
+                            }
+                            else
+                            {
                                 return Result.Fail(
                                     _(
-                                        "LuaCode property was found in this {0} but its Roblox class equivalent is not a LuaSourceContainer.",
+                                        "LuaCode property was found in this {0} but its Roblox class equivalent is not a StringValue.",
                                         InstanceDebugger.Format(source)
                                     )
                                 );
-                        }
+                            }
+                            break;
                     }
                 }
 
@@ -418,6 +436,17 @@ namespace Ovjo
                                             robloxInstance.Name == "Folder"
                                                 ? null
                                                 : robloxInstance.Name,
+                                    }
+                                ),
+                            RobloxFiles.StringValue stringValue =>
+                                Result.Ok<Overdare.UScriptClass.LuaInstance>(
+                                    new Overdare.UScriptClass.LuaStringValue
+                                    {
+                                        Name =
+                                            robloxInstance.Name == "StringValue"
+                                                ? null
+                                                : robloxInstance.Name,
+                                        Value = stringValue.Value,
                                     }
                                 ),
                             _ => Result.Fail(
@@ -732,7 +761,7 @@ namespace Ovjo
                 if (result.IsFailed)
                 {
                     process.Kill(); // 실패시 프로세스 종료
-                    Program.ExpectResult(result);
+                    Program.ExpectResult(result, _("Failed to read sourcemap data."));
                 }
             };
 
@@ -758,7 +787,10 @@ namespace Ovjo
                     if (result.IsFailed)
                     {
                         process.Kill(); // 실패시 프로세스 종료
-                        Program.ExpectResult(result);
+                        Program.ExpectResult(
+                            result,
+                            _("Failed to read sourcemap data after file change.")
+                        );
                     }
                 };
                 // watch 모드에서는 사용자가 종료할 때까지 대기
