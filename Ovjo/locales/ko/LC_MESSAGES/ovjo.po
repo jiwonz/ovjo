@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-07-18 21:36+0900\n"
-"PO-Revision-Date: 2025-07-18 21:36+0900\n"
+"POT-Creation-Date: 2025-07-20 01:39+0900\n"
+"PO-Revision-Date: 2025-07-20 01:41+0900\n"
 "Last-Translator: EMAIL@ADDRESS\n"
 "Language-Team: Korean\n"
 "Language: ko\n"
@@ -27,7 +27,7 @@ msgstr ""
 "`LibOvjo.Syncback`을(를) 수행하려면 `rojo syncback`이 필요하지만 확인에 실패"
 "했습니다."
 
-#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\LibOvjo.cs:112
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\LibOvjo.cs:113
 #, csharp-format
 msgid ""
 "LuaCode property was found in this {0} but its Roblox class equivalent is "
@@ -36,98 +36,107 @@ msgstr ""
 "이 {0}에서 LuaCode 속성이 발견되었으나, 해당 Roblox 클래스는 "
 "LuaSourceContainer가 아닙니다."
 
-#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\LibOvjo.cs:128
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\LibOvjo.cs:129
+#, csharp-format
+msgid ""
+"LuaStringValue({0}) was found but its Roblox class equivalent is not a "
+"StringValue."
+msgstr ""
+"LuaStringValue({0})가 발견되었지만, 해당하는 Roblox 클래스는 StringValue가 아"
+"닙니다."
+
 #: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\LibOvjo.cs:146
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\LibOvjo.cs:164
 #, csharp-format
 msgid "Failed to convert {0} to Roblox Instance."
 msgstr "{0}를 Roblox 인스턴스로 변환하는 데 실패했습니다."
 
-#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\LibOvjo.cs:185
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\LibOvjo.cs:203
 msgid "Failed to run `rojo syncback`."
 msgstr "`rojo syncback` 실행에 실패했습니다."
 
-#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\LibOvjo.cs:189
-#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\LibOvjo.cs:315
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\LibOvjo.cs:207
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\LibOvjo.cs:333
 #, csharp-format
 msgid "rojo exited with code 0 with stderr: {0}"
 msgstr "rojo가 코드 0으로 종료되었으나 stderr: {0}"
 
-#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\LibOvjo.cs:205
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\LibOvjo.cs:223
 msgid "Failed to parse rojo project JSON."
 msgstr "rojo 프로젝트 JSON을 파싱하는 데 실패했습니다."
 
-#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\LibOvjo.cs:284
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\LibOvjo.cs:302
 msgid ""
 "`rojo build` is required to perform `LibOvjo.Build`, but failed to check."
 msgstr ""
 "`LibOvjo.Build`를(을) 수행하려면 `rojo build`가 필요하지만 확인에 실패했습니"
 "다."
 
-#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\LibOvjo.cs:311
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\LibOvjo.cs:329
 msgid "Failed to run `rojo build`."
 msgstr "`rojo build` 실행에 실패했습니다."
 
-#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\LibOvjo.cs:425
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\LibOvjo.cs:454
 #, csharp-format
 msgid "{0} is not supported to be converted to OVERDARE Instance."
 msgstr "{0}는 OVERDARE 인스턴스로 변환을 지원하지 않습니다."
 
-#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\LibOvjo.cs:435
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\LibOvjo.cs:464
 #, csharp-format
 msgid "Failed to convert {0} to OVERDARE Instance."
 msgstr "{0}를 OVERDARE 인스턴스로 변환하는 데 실패했습니다."
 
-#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\LibOvjo.cs:456
-#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\LibOvjo.cs:474
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\LibOvjo.cs:485
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\LibOvjo.cs:503
 #, csharp-format
 msgid "Failed to visit {0} from the built place file."
 msgstr "빌드된 place 파일에서 {0}를 방문하는 데 실패했습니다."
 
-#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\LibOvjo.cs:511
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\LibOvjo.cs:540
 msgid ""
 "`rojo sourcemap` is required to perform `LibOvjo.Sync`, but failed to check."
 msgstr ""
 "`LibOvjo.Sync`를(을) 수행하려면 `rojo sourcemap`이 필요하지만 확인에 실패했습"
 "니다."
 
-#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\LibOvjo.cs:550
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\LibOvjo.cs:579
 #, csharp-format
 msgid "Sourcemap child {0}({1}) not found in {2}. Please re-build the project."
 msgstr ""
 "{2}에서 소스맵 자식 {0}({1})을(를) 찾을 수 없습니다. 프로젝트를 다시 빌드해 "
 "주세요."
 
-#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\LibOvjo.cs:614
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\LibOvjo.cs:643
 #, csharp-format
 msgid ""
 "Failed to visit Roblox sourcemap child {0}({1}) from the built place file."
 msgstr ""
 "빌드된 place 파일에서 Roblox 소스맵 자식 {0}({1})에 방문하는 데 실패했습니다."
 
-#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\LibOvjo.cs:680
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\LibOvjo.cs:709
 msgid "No sourcemap data received yet."
 msgstr "아직 소스맵 데이터를 받지 못했습니다."
 
-#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\LibOvjo.cs:685
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\LibOvjo.cs:714
 msgid "Failed to deserialize sourcemap child."
 msgstr "소스맵 자식의 역직렬화에 실패했습니다."
 
-#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\LibOvjo.cs:691
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\LibOvjo.cs:720
 #, csharp-format
 msgid "The sourcemap child {0}({1}) has no children."
 msgstr "소스맵 자식 {0}({1})에 하위 항목이 없습니다."
 
-#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\LibOvjo.cs:710
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\LibOvjo.cs:739
 #, csharp-format
 msgid "Failed to visit Roblox Instance {0}({1}) from the built place file."
 msgstr ""
 "빌드된 place 파일에서 Roblox 인스턴스 {0}({1})에 방문하는 데 실패했습니다."
 
-#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\LibOvjo.cs:735
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\LibOvjo.cs:764
 msgid "Failed to read sourcemap data."
 msgstr "소스맵 데이터를 읽는 데 실패했습니다."
 
-#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\LibOvjo.cs:763
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\LibOvjo.cs:792
 msgid "Failed to read sourcemap data after file change."
 msgstr "파일 변경 후 소스맵 데이터를 읽는 데 실패했습니다."
 
@@ -191,24 +200,24 @@ msgstr ""
 "제공된 프로젝트에 대해 '동기화'를 수행하며, 지정된 `input` 파일을 사용합니다"
 
 #: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:221
-#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:275
-#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:355
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:282
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:369
 msgid "Path to the project"
 msgstr "프로젝트 경로"
 
 #: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:223
-#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:357
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:371
 msgid "Path to the input file"
 msgstr "입력 파일 경로"
 
 #: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:224
-#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:279
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:286
 msgid "Path to the rbxl file"
 msgstr "rbxl 파일 경로"
 
 #: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:236
-#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:296
-#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:370
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:303
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:384
 msgid ""
 "Failed to resolve the project. Please ensure the project path is correct."
 msgstr "프로젝트를 찾지 못했습니다. 프로젝트 경로가 올바른지 확인해 주세요."
@@ -221,7 +230,7 @@ msgstr ""
 "주세요."
 
 #: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:256
-#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:387
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:401
 msgid ""
 "Failed to resolve the input file. Please ensure the input path is correct."
 msgstr "입력 파일을 찾지 못했습니다. 입력 경로가 올바른지 확인해 주세요."
@@ -234,25 +243,33 @@ msgstr ""
 "프로젝트 동기화에 실패했습니다. 프로젝트가 유효하고 입력 경로가 올바른지 확인"
 "해 주세요."
 
-#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:273
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:268
+#, csharp-format
+msgid ""
+"Successfully performed syncback for the project '{0}' with input file '{1}'."
+msgstr ""
+"입력 파일 '{1}'을(를) 사용하여 프로젝트 '{0}'의 동기화가 성공적으로 완료되었"
+"습니다."
+
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:280
 msgid "Builds the project into OVERDARE world"
 msgstr "프로젝트를 OVERDARE 월드로 빌드합니다"
 
-#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:277
-#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:447
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:284
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:468
 msgid "Path to the output file"
 msgstr "출력 파일 경로"
 
-#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:282
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:289
 msgid "Assumes 'yes' to all prompts, useful for scripting"
 msgstr "모든 프롬프트에 '예'로 간주(스크립트 실행에 유용)"
 
-#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:303
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:310
 msgid ""
 "Failed to resolve the output file. Please ensure the output path is correct."
 msgstr "출력 파일을 찾지 못했습니다. 출력 경로가 올바른지 확인해 주세요."
 
-#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:324
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:331
 msgid ""
 "The output directory already contains files other than the current output "
 "file. Would you like to recycle those files?"
@@ -260,7 +277,7 @@ msgstr ""
 "출력 디렉터리에 현재 출력 파일 이외의 파일이 이미 존재합니다. 해당 파일들을 "
 "휴지통으로 이동하시겠습니까?"
 
-#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:339
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:346
 msgid ""
 "Failed to build the project into OVERDARE world. Please ensure the project "
 "is valid and the output path is correct."
@@ -268,22 +285,27 @@ msgstr ""
 "OVERDARE 월드로 프로젝트를 빌드하는 데 실패했습니다. 프로젝트가 유효하고 출"
 "력 경로가 올바른지 확인해 주세요."
 
-#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:352
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:351
+#, csharp-format
+msgid "Successfully built the project '{0}' into OVERDARE world '{1}'."
+msgstr "프로젝트 '{0}'이(가) OVERDARE 월드 '{1}'로 성공적으로 빌드되었습니다."
+
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:366
 msgid ""
 "Synchronizes Lua sources between the project and the input OVERDARE world"
 msgstr "프로젝트와 입력 OVERDARE 월드 간에 Lua 소스를 동기화합니다"
 
-#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:358
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:372
 msgid "Watches source files"
 msgstr "소스 파일 감시"
 
-#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:378
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:392
 msgid "Failed to get input file for sync. Please provide a valid .umap file."
 msgstr ""
 "동기화에 사용할 입력 파일을 가져오지 못했습니다. 유효한 .umap 파일을 제공해 "
 "주세요."
 
-#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:394
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:408
 msgid ""
 "Failed to synchronize the project's Lua sources with the input OVERDARE "
 "world's Lua sources."
@@ -291,12 +313,18 @@ msgstr ""
 "프로젝트의 Lua 소스를 입력된 OVERDARE 월드의 Lua 소스와 동기화하는 데 실패했"
 "습니다."
 
-#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:406
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:413
+#, csharp-format
+msgid "Successfully synchronized the project '{0}' with the input file '{1}'."
+msgstr ""
+"입력 파일 '{1}'과(와) 프로젝트 '{0}'의 동기화가 성공적으로 완료되었습니다."
+
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:427
 msgid "Initializes a new ovjo project from OVERDARE Studio"
 msgstr "OVERDARE Studio에서 새로운 ovjo 프로젝트를 초기화합니다"
 
-#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:414
-#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:491
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:435
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:512
 msgid ""
 "Failed to find OVERDARE Studio metadata. Please ensure OVERDARE Studio is "
 "installed via Epic Games Launcher."
@@ -304,7 +332,7 @@ msgstr ""
 "OVERDARE Studio 메타데이터를 찾지 못했습니다. Epic Games Launcher를 통해 "
 "OVERDARE Studio가 설치되어 있는지 확인해 주세요."
 
-#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:432
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:453
 msgid ""
 "Failed to initialize the project. Failed to syncback the default project "
 "with the umap file from OVERDARE Studio."
@@ -312,53 +340,53 @@ msgstr ""
 "프로젝트 초기화에 실패했습니다. OVERDARE Studio에서 가져온 umap 파일로 기본 "
 "프로젝트를 동기화하는 데 실패했습니다."
 
-#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:441
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:462
 msgid ""
 "Exports a ovjo world file into OVERDARE world for debugging and analyzing "
 "purpose"
 msgstr "디버깅 및 분석을 위해 ovjo 월드 파일을 OVERDARE 월드로 내보냅니다"
 
-#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:445
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:466
 msgid "Path to the ovjo world file"
 msgstr "ovjo 월드 파일 경로"
 
-#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:461
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:482
 msgid "Failed to export the world file."
 msgstr "월드 파일을 내보내는 데 실패했습니다."
 
-#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:469
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:490
 msgid "Useful commands for OVERDARE"
 msgstr "OVERDARE를 위한 유용한 명령어"
 
-#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:471
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:492
 msgid "Prints what will be opened"
 msgstr "열릴 항목을 출력합니다"
 
-#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:472
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:493
 msgid "Opens OVERDARE Studio"
 msgstr "OVERDARE Studio 열기"
 
-#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:474
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:495
 msgid "Opens OVERDARE documentation in the browser"
 msgstr "브라우저에서 OVERDARE 문서 열기"
 
-#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:475
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:496
 msgid "Optional query to search in docs"
 msgstr "문서에서 검색할 선택적 쿼리"
 
-#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:479
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:500
 msgid "Opens OVERDARE Creator Hub in the browser"
 msgstr "브라우저에서 OVERDARE Creator Hub 열기"
 
-#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:482
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:503
 msgid "Opens OVERDARE Forum in the browser"
 msgstr "브라우저에서 OVERDARE 포럼 열기"
 
-#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:574
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:595
 msgid "Sets the verbosity level (e.g., -v 2, --verbose 3)"
 msgstr "상세 출력 수준 설정(예: -v 2, --verbose 3)"
 
-#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:580
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:602
 msgid "Enables professional-grade development tools for OVERDARE developers"
 msgstr "OVERDARE 개발자를 위한 전문가용 개발 도구 활성화"
 

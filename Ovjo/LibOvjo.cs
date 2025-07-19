@@ -126,7 +126,7 @@ namespace Ovjo
                             {
                                 return Result.Fail(
                                     _(
-                                        "LuaCode property was found in this {0} but its Roblox class equivalent is not a StringValue.",
+                                        "LuaStringValue({0}) was found but its Roblox class equivalent is not a StringValue.",
                                         InstanceDebugger.Format(source)
                                     )
                                 );
@@ -210,7 +210,7 @@ namespace Ovjo
                         )
                     );
             }
-            Log.Information(process.StandardOutput.ReadToEnd());
+            Log.Debug(process.StandardOutput.ReadToEnd());
 
             // Extract attributes and properties into init.meta.json files
             // We need to do this because `rojo syncback` just edits the rojo project JSON file for the attributes and properties.
@@ -279,7 +279,7 @@ namespace Ovjo
                 }
                 if (thereWasAModification)
                 {
-                    Log.Information("Modified rojo project JSON with init.meta.json files.");
+                    Log.Debug("Modified rojo project JSON with init.meta.json files.");
                     File.WriteAllText(
                         rojoProjectPath,
                         syncbackProjectJson.ToString(Formatting.Indented)
@@ -585,7 +585,7 @@ namespace Ovjo
                     }
                 }
                 // 로블록스에도 있고 오버데어에도 있는 경우 -> 스크립트 내용 동기화 (스크립트는 편집중에 동기화가 가능하기 때문에)
-                Log.Information(
+                Log.Debug(
                     $"Two instances {source.Name}({source.ClassName}) and {InstanceDebugger.Format(ovdrChild)} are valid."
                 );
                 if (

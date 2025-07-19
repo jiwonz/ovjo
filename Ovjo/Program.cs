@@ -263,6 +263,13 @@ namespace Ovjo
                                 "Failed to perform syncback for the project. Please ensure the project is valid and the input path is correct."
                             )
                         );
+                        Log.Information(
+                            _(
+                                "Successfully performed syncback for the project '{0}' with input file '{1}'.",
+                                project,
+                                input
+                            )
+                        );
                     },
                     projectArg,
                     inputOpt,
@@ -339,6 +346,13 @@ namespace Ovjo
                                 "Failed to build the project into OVERDARE world. Please ensure the project is valid and the output path is correct."
                             )
                         );
+                        Log.Information(
+                            _(
+                                "Successfully built the project '{0}' into OVERDARE world '{1}'.",
+                                project,
+                                output
+                            )
+                        );
                     },
                     projectArg,
                     outputOpt,
@@ -392,6 +406,13 @@ namespace Ovjo
                             LibOvjo.Sync(project, input, watch),
                             _(
                                 "Failed to synchronize the project's Lua sources with the input OVERDARE world's Lua sources."
+                            )
+                        );
+                        Log.Information(
+                            _(
+                                "Successfully synchronized the project '{0}' with the input file '{1}'.",
+                                project,
+                                input
                             )
                         );
                     },
@@ -576,6 +597,7 @@ namespace Ovjo
             {
                 ArgumentHelpName = "level",
             };
+            verboseOption.SetDefaultValue(1);
             RootCommand rootCommand = new(
                 _("Enables professional-grade development tools for OVERDARE developers")
             );

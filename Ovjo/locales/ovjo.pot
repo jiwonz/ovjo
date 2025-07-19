@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-07-18 21:36+0900\n"
+"POT-Creation-Date: 2025-07-20 01:39+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -23,97 +23,104 @@ msgid ""
 "check."
 msgstr ""
 
-#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\LibOvjo.cs:112
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\LibOvjo.cs:113
 #, csharp-format
 msgid ""
 "LuaCode property was found in this {0} but its Roblox class equivalent is "
 "not a LuaSourceContainer."
 msgstr ""
 
-#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\LibOvjo.cs:128
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\LibOvjo.cs:129
+#, csharp-format
+msgid ""
+"LuaStringValue({0}) was found but its Roblox class equivalent is not a "
+"StringValue."
+msgstr ""
+
 #: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\LibOvjo.cs:146
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\LibOvjo.cs:164
 #, csharp-format
 msgid "Failed to convert {0} to Roblox Instance."
 msgstr ""
 
-#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\LibOvjo.cs:185
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\LibOvjo.cs:203
 msgid "Failed to run `rojo syncback`."
 msgstr ""
 
-#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\LibOvjo.cs:189
-#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\LibOvjo.cs:315
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\LibOvjo.cs:207
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\LibOvjo.cs:333
 #, csharp-format
 msgid "rojo exited with code 0 with stderr: {0}"
 msgstr ""
 
-#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\LibOvjo.cs:205
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\LibOvjo.cs:223
 msgid "Failed to parse rojo project JSON."
 msgstr ""
 
-#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\LibOvjo.cs:284
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\LibOvjo.cs:302
 msgid ""
 "`rojo build` is required to perform `LibOvjo.Build`, but failed to check."
 msgstr ""
 
-#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\LibOvjo.cs:311
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\LibOvjo.cs:329
 msgid "Failed to run `rojo build`."
 msgstr ""
 
-#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\LibOvjo.cs:425
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\LibOvjo.cs:454
 #, csharp-format
 msgid "{0} is not supported to be converted to OVERDARE Instance."
 msgstr ""
 
-#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\LibOvjo.cs:435
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\LibOvjo.cs:464
 #, csharp-format
 msgid "Failed to convert {0} to OVERDARE Instance."
 msgstr ""
 
-#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\LibOvjo.cs:456
-#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\LibOvjo.cs:474
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\LibOvjo.cs:485
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\LibOvjo.cs:503
 #, csharp-format
 msgid "Failed to visit {0} from the built place file."
 msgstr ""
 
-#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\LibOvjo.cs:511
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\LibOvjo.cs:540
 msgid ""
 "`rojo sourcemap` is required to perform `LibOvjo.Sync`, but failed to check."
 msgstr ""
 
-#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\LibOvjo.cs:550
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\LibOvjo.cs:579
 #, csharp-format
 msgid "Sourcemap child {0}({1}) not found in {2}. Please re-build the project."
 msgstr ""
 
-#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\LibOvjo.cs:614
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\LibOvjo.cs:643
 #, csharp-format
 msgid ""
 "Failed to visit Roblox sourcemap child {0}({1}) from the built place file."
 msgstr ""
 
-#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\LibOvjo.cs:680
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\LibOvjo.cs:709
 msgid "No sourcemap data received yet."
 msgstr ""
 
-#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\LibOvjo.cs:685
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\LibOvjo.cs:714
 msgid "Failed to deserialize sourcemap child."
 msgstr ""
 
-#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\LibOvjo.cs:691
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\LibOvjo.cs:720
 #, csharp-format
 msgid "The sourcemap child {0}({1}) has no children."
 msgstr ""
 
-#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\LibOvjo.cs:710
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\LibOvjo.cs:739
 #, csharp-format
 msgid "Failed to visit Roblox Instance {0}({1}) from the built place file."
 msgstr ""
 
-#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\LibOvjo.cs:735
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\LibOvjo.cs:764
 msgid "Failed to read sourcemap data."
 msgstr ""
 
-#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\LibOvjo.cs:763
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\LibOvjo.cs:792
 msgid "Failed to read sourcemap data after file change."
 msgstr ""
 
@@ -173,24 +180,24 @@ msgid ""
 msgstr ""
 
 #: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:221
-#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:275
-#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:355
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:282
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:369
 msgid "Path to the project"
 msgstr ""
 
 #: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:223
-#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:357
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:371
 msgid "Path to the input file"
 msgstr ""
 
 #: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:224
-#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:279
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:286
 msgid "Path to the rbxl file"
 msgstr ""
 
 #: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:236
-#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:296
-#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:370
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:303
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:384
 msgid ""
 "Failed to resolve the project. Please ensure the project path is correct."
 msgstr ""
@@ -201,7 +208,7 @@ msgid ""
 msgstr ""
 
 #: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:256
-#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:387
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:401
 msgid ""
 "Failed to resolve the input file. Please ensure the input path is correct."
 msgstr ""
@@ -212,119 +219,135 @@ msgid ""
 "valid and the input path is correct."
 msgstr ""
 
-#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:273
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:268
+#, csharp-format
+msgid ""
+"Successfully performed syncback for the project '{0}' with input file '{1}'."
+msgstr ""
+
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:280
 msgid "Builds the project into OVERDARE world"
 msgstr ""
 
-#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:277
-#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:447
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:284
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:468
 msgid "Path to the output file"
 msgstr ""
 
-#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:282
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:289
 msgid "Assumes 'yes' to all prompts, useful for scripting"
 msgstr ""
 
-#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:303
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:310
 msgid ""
 "Failed to resolve the output file. Please ensure the output path is correct."
 msgstr ""
 
-#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:324
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:331
 msgid ""
 "The output directory already contains files other than the current output "
 "file. Would you like to recycle those files?"
 msgstr ""
 
-#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:339
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:346
 msgid ""
 "Failed to build the project into OVERDARE world. Please ensure the project "
 "is valid and the output path is correct."
 msgstr ""
 
-#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:352
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:351
+#, csharp-format
+msgid "Successfully built the project '{0}' into OVERDARE world '{1}'."
+msgstr ""
+
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:366
 msgid ""
 "Synchronizes Lua sources between the project and the input OVERDARE world"
 msgstr ""
 
-#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:358
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:372
 msgid "Watches source files"
 msgstr ""
 
-#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:378
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:392
 msgid "Failed to get input file for sync. Please provide a valid .umap file."
 msgstr ""
 
-#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:394
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:408
 msgid ""
 "Failed to synchronize the project's Lua sources with the input OVERDARE "
 "world's Lua sources."
 msgstr ""
 
-#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:406
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:413
+#, csharp-format
+msgid "Successfully synchronized the project '{0}' with the input file '{1}'."
+msgstr ""
+
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:427
 msgid "Initializes a new ovjo project from OVERDARE Studio"
 msgstr ""
 
-#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:414
-#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:491
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:435
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:512
 msgid ""
 "Failed to find OVERDARE Studio metadata. Please ensure OVERDARE Studio is "
 "installed via Epic Games Launcher."
 msgstr ""
 
-#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:432
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:453
 msgid ""
 "Failed to initialize the project. Failed to syncback the default project "
 "with the umap file from OVERDARE Studio."
 msgstr ""
 
-#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:441
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:462
 msgid ""
 "Exports a ovjo world file into OVERDARE world for debugging and analyzing "
 "purpose"
 msgstr ""
 
-#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:445
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:466
 msgid "Path to the ovjo world file"
 msgstr ""
 
-#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:461
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:482
 msgid "Failed to export the world file."
 msgstr ""
 
-#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:469
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:490
 msgid "Useful commands for OVERDARE"
 msgstr ""
 
-#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:471
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:492
 msgid "Prints what will be opened"
 msgstr ""
 
-#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:472
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:493
 msgid "Opens OVERDARE Studio"
 msgstr ""
 
-#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:474
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:495
 msgid "Opens OVERDARE documentation in the browser"
 msgstr ""
 
-#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:475
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:496
 msgid "Optional query to search in docs"
 msgstr ""
 
-#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:479
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:500
 msgid "Opens OVERDARE Creator Hub in the browser"
 msgstr ""
 
-#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:482
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:503
 msgid "Opens OVERDARE Forum in the browser"
 msgstr ""
 
-#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:574
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:595
 msgid "Sets the verbosity level (e.g., -v 2, --verbose 3)"
 msgstr ""
 
-#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:580
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\Program.cs:602
 msgid "Enables professional-grade development tools for OVERDARE developers"
 msgstr ""
 
