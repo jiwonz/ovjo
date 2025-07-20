@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-07-20 01:39+0900\n"
+"POT-Creation-Date: 2025-07-20 21:27+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -98,29 +98,35 @@ msgid ""
 "Failed to visit Roblox sourcemap child {0}({1}) from the built place file."
 msgstr ""
 
-#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\LibOvjo.cs:709
-msgid "No sourcemap data received yet."
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\LibOvjo.cs:684
+#, csharp-format
+msgid ""
+"Unable to find {0}({1}) in Roblox sourcemap({2}). Please add it manually."
 msgstr ""
 
 #: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\LibOvjo.cs:714
+msgid "No sourcemap data received yet."
+msgstr ""
+
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\LibOvjo.cs:719
 msgid "Failed to deserialize sourcemap child."
 msgstr ""
 
-#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\LibOvjo.cs:720
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\LibOvjo.cs:725
 #, csharp-format
 msgid "The sourcemap child {0}({1}) has no children."
 msgstr ""
 
-#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\LibOvjo.cs:739
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\LibOvjo.cs:744
 #, csharp-format
 msgid "Failed to visit Roblox Instance {0}({1}) from the built place file."
 msgstr ""
 
-#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\LibOvjo.cs:764
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\LibOvjo.cs:769
 msgid "Failed to read sourcemap data."
 msgstr ""
 
-#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\LibOvjo.cs:792
+#: C:\Users\Dongd5ng\source\repos\ovjo\Ovjo\LibOvjo.cs:797
 msgid "Failed to read sourcemap data after file change."
 msgstr ""
 

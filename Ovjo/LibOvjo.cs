@@ -679,8 +679,13 @@ namespace Ovjo
                     if (sourcemapChild == null)
                     {
                         // 로블록스에 없는데 오버데어에 있는 경우
-                        Log.Warning(
-                            $"Should add {source.GetFullName()}({source.ClassName}) in {sourcemapParent.FilePaths?[0]}"
+                        Log.Information(
+                            _(
+                                "Unable to find {0}({1}) in Roblox sourcemap({2}). Please add it manually.",
+                                source.GetFullName(),
+                                source.ClassName,
+                                sourcemapParent.FilePaths?[0] ?? string.Empty
+                            )
                         );
                     }
                 }
